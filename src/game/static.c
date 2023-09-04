@@ -3,20 +3,16 @@
 #include "engine/object.h"
 #include "engine/util.h"
 
+#include "game/texture_index.h"
 #include "game/static.h"
 
 #define FRAMES 8
 
 static object_t frames[FRAMES];
 static const char *frame_paths[FRAMES] = {
-	"rom:/static0.i4.sprite",
-	"rom:/static1.i4.sprite",
-	"rom:/static2.i4.sprite",
-	"rom:/static3.i4.sprite",
-	"rom:/static4.i4.sprite",
-	"rom:/static5.i4.sprite",
-	"rom:/static6.i4.sprite",
-	"rom:/static7.i4.sprite",
+	TX_STATIC0, TX_STATIC1, TX_STATIC2,
+	TX_STATIC3, TX_STATIC4, TX_STATIC5,
+	TX_STATIC6, TX_STATIC7,
 };
 
 static float timer = 0.0f;

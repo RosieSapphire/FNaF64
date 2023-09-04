@@ -7,6 +7,7 @@
 #include "game/bonnie.h"
 #include "game/chica.h"
 #include "game/foxy.h"
+#include "game/texture_index.h"
 #include "game/fan.h"
 
 #define ANIM_FRAMES 3
@@ -14,9 +15,7 @@
 static float timer;
 static object_t anim[ANIM_FRAMES];
 static const char *anim_paths[ANIM_FRAMES] = {
-	"rom:/fan0.ci8.sprite",
-	"rom:/fan1.ci8.sprite",
-	"rom:/fan2.ci8.sprite",
+	TX_FAN0, TX_FAN1, TX_FAN2,
 };
 
 void fan_load(void)

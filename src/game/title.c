@@ -9,6 +9,7 @@
 #include "game/ui.h"
 #include "game/game.h"
 #include "game/settings.h"
+#include "game/texture_index.h"
 #include "game/title.h"
 
 static float face_timer = 0.0f;
@@ -24,10 +25,7 @@ static object_t night_atlas;
 
 object_t freddy_face[4];
 const char *freddy_face_paths[4] = {
-	"rom:/title0.ci8.sprite",
-	"rom:/title1.ci8.sprite",
-	"rom:/title2.ci8.sprite",
-	"rom:/title3.ci8.sprite",
+	TX_FRED_FACE0, TX_FRED_FACE1, TX_FRED_FACE2, TX_FRED_FACE3,
 };
 
 object_t star;
@@ -35,10 +33,8 @@ object_t selector;
 object_t title_text;
 object_t option_text[4];
 const char *option_text_paths[4] = {
-	"rom:/new_game.ia4.sprite",
-	"rom:/continue.ia4.sprite",
-	"rom:/night_6.ia4.sprite",
-	"rom:/custom_night.ia4.sprite",
+	TX_TITLE_NEWGAME, TX_TITLE_CONTINUE,
+	TX_TITLE_6THNIGHT, TX_TITLE_CUSTOMNIGHT,
 };
 
 object_t settings_text;
@@ -55,9 +51,9 @@ static void _title_load(void)
 
 	settings_triggered = false;
 	objects_load(freddy_face, 4, freddy_face_paths);
-	object_load(&star, "rom:/star.ia4.sprite");
-	object_load(&selector, "rom:/selector.ia4.sprite");
-	object_load(&title_text, "rom:/title_text.ia4.sprite");
+	object_load(&star, TX_TITLE_STAR);
+	object_load(&selector, TX_TITLE_SELECTOR);
+	object_load(&title_text, TX_TITLE_TEXT);
 	objects_load(option_text, 4, option_text_paths);
 	object_load(&night_text, "rom:/night.ia4.sprite");
 	object_load(&night_atlas, "rom:/night_atlas.ia4.sprite");

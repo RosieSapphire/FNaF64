@@ -8,6 +8,7 @@
 #include "game/bonnie.h"
 #include "game/chica.h"
 #include "game/settings.h"
+#include "game/texture_index.h"
 #include "game/buttons.h"
 
 typedef struct {
@@ -44,14 +45,14 @@ static int button_state_get_index(button_state_t *states, bool left_door)
 
 object_t button[8];
 static const char *button_paths[8] = {
-	"rom:/button_left_none.ci8.sprite",
-	"rom:/button_left_door.ci8.sprite",
-	"rom:/button_left_light.ci8.sprite",
-	"rom:/button_left_door_light.ci8.sprite",
-	"rom:/button_right_none.ci8.sprite",
-	"rom:/button_right_door.ci8.sprite",
-	"rom:/button_right_light.ci8.sprite",
-	"rom:/button_right_door_light.ci8.sprite",
+	TX_BUTTON_LEFT00,
+	TX_BUTTON_LEFT10,
+	TX_BUTTON_LEFT01,
+	TX_BUTTON_LEFT11,
+	TX_BUTTON_RIGHT00,
+	TX_BUTTON_RIGHT10,
+	TX_BUTTON_RIGHT01,
+	TX_BUTTON_RIGHT11,
 };
 
 void buttons_load(void)
