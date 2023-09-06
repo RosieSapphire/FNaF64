@@ -4,4 +4,5 @@ build/
 *.z64
 *.sh
 assets/
+assets_backup/
 filesystem/
