@@ -9,7 +9,6 @@ typedef struct {
 	bool is_loaded;
 } object_t;
 
-void object_debug_init(void);
 void object_load(object_t *o, const char *path);
 void objects_load(object_t *o, int num, const char **paths);
 void object_unload(object_t *o);

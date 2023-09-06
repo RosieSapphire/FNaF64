@@ -1,14 +1,8 @@
-#include "engine/debug.h"
 #include "engine/object.h"
 #include "engine/util.h"
 
 static int loaded = 0;
 static int local_loaded = 0;
-
-void object_debug_init(void)
-{
-	debug_add("Objects loaded", &local_loaded, DV_INT);
-}
 
 void object_load(object_t *o, const char *path)
 {

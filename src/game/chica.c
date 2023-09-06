@@ -3,7 +3,6 @@
 #include "engine/object.h"
 #include "engine/sfx.h"
 #include "engine/util.h"
-#include "engine/debug.h"
 
 #include "game/camera.h"
 #include "game/buttons.h"

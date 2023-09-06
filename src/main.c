@@ -6,7 +6,6 @@
 #include "engine/scene.h"
 #include "engine/sfx.h"
 #include "engine/perspective.h"
-#include "engine/debug.h"
 #include "engine/update.h"
 
 #include "game/static.h"
@@ -34,8 +33,6 @@ static void n64_init(void)
 	debug_init_isviewer();
 	debug_init_usblog();
 
-	debug_load();
-
 	audio_init(32000, 4);
 	mixer_init(SFXC_COUNT);
 
@@ -62,7 +59,6 @@ int main(void)
 	sfx_load();
 	blip_load();
 	static_load();
-	object_debug_init();
 
 	enum scene scene = SCENE_MAIN_GAME;
 	long ticks_last = get_ticks();
@@ -94,7 +90,6 @@ int main(void)
 		surface_t *dsp = display_get();
 		rdpq_attach(dsp, NULL);
 		(*draw_funcs[scene])();
-		// debug_draw();
 		rdpq_detach_show();
 
 		static enum scene scene_last = SCENE_MAIN_GAME;

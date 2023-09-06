@@ -1,7 +1,6 @@
 #include <stdlib.h>
 
 #include "engine/util.h"
-#include "engine/debug.h"
 #include "engine/object.h"
 #include "engine/sfx.h"
 

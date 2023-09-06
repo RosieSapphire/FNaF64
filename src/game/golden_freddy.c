@@ -2,7 +2,6 @@
 
 #include "engine/object.h"
 #include "engine/util.h"
-#include "engine/debug.h"
 #include "engine/sfx.h"
 
 #include "game/office.h"
@@ -25,12 +24,6 @@ void golden_freddy_load(void)
 	object_load(&yellow_scare, "rom:/yellow_scare.ci8.sprite");
 	jumpscare_timer = 0.0f;
 	golden_freddy_progress = 0;
-
-        /*
-	debug_add("G. Freddy Attempt Timer", &attempt_timer, DV_FLOAT);
-	debug_add("G. Freddy Progress", &golden_freddy_progress, DV_INT);
-	debug_add("G. Freddy Scare Timer", &jumpscare_timer, DV_FLOAT);
-        */
 }
 
 void golden_freddy_draw_in_room(void)
