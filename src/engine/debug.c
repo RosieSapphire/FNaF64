@@ -10,7 +10,7 @@ rdpq_font_t *font;
 void debug_load(void)
 {
 	vals = malloc(0);
-	font = rdpq_font_load("rom:/debug_font.font64");
+	font = rdpq_font_load("rom:/custom/debug_font.font64");
 	rdpq_font_style(font, 0, &(rdpq_fontstyle_t){
 		.color = RGBA32(0xFF, 0xFF, 0xFF, 0xFF),
 	});

@@ -4,10 +4,11 @@
 #include "engine/util.h"
 #include "engine/sfx.h"
 
-#include "game/foxy.h"
 #include "game/camera.h"
 #include "game/buttons.h"
 #include "game/ui.h"
+#include "game/texture_index.h"
+#include "game/foxy.h"
 
 int foxy_ai_level = 0;
 static float move_timer;
@@ -24,19 +25,11 @@ object_t foxy_run[FOXY_RUN_FRAMES];
 static float fox_song_timer = 0.0f;
 
 static const char *foxy_run_paths[FOXY_RUN_FRAMES] = {
-	"rom:/cam_2b_run0.ci8.sprite",
-	"rom:/cam_2b_run1.ci8.sprite",
-	"rom:/cam_2b_run2.ci8.sprite",
-	"rom:/cam_2b_run3.ci8.sprite",
-	"rom:/cam_2b_run4.ci8.sprite",
-	"rom:/cam_2b_run5.ci8.sprite",
-	"rom:/cam_2b_run6.ci8.sprite",
-	"rom:/cam_2b_run7.ci8.sprite",
-	"rom:/cam_2b_run8.ci8.sprite",
-	"rom:/cam_2b_run9.ci8.sprite",
-	"rom:/cam_2b_run10.ci8.sprite",
-	"rom:/cam_2b_run11.ci8.sprite",
-	"rom:/cam_2b_run12.ci8.sprite",
+	TX_CAM_2B_FOX00, TX_CAM_2B_FOX01, TX_CAM_2B_FOX02,
+	TX_CAM_2B_FOX03, TX_CAM_2B_FOX04, TX_CAM_2B_FOX05,
+	TX_CAM_2B_FOX06, TX_CAM_2B_FOX07, TX_CAM_2B_FOX08,
+	TX_CAM_2B_FOX09, TX_CAM_2B_FOX10, TX_CAM_2B_FOX11,
+	TX_CAM_2B_FOX12,
 };
 
 #define MOVE_INTERVAL 5.01f
@@ -66,7 +59,7 @@ static void _foxy_update_stun_timer(double dt)
 		stun_timer = 50 + (rand() % 1000);
 		return;
 	}
-
+ 
 	stun_timer -= dt * 60;
 	stun_timer = clampf(stun_timer, 0, 1005);
 }

@@ -14,6 +14,7 @@
 #include "game/foxy.h"
 #include "game/golden_freddy.h"
 #include "game/settings.h"
+#include "game/texture_index.h"
 #include "game/camera.h"
 
 #define FLIP_FRAMES 11
@@ -34,10 +35,7 @@ const int cam_button_pos[CAM_COUNT][2] = {
 };
 
 static const char *fox_paths[4] = {
-	"rom:/cam_1c_foxy0.ci8.sprite",
-	"rom:/cam_1c_foxy1.ci8.sprite",
-	"rom:/cam_1c_foxy2.ci8.sprite",
-	"rom:/cam_1c_foxy3.ci8.sprite",
+	TX_CAM_1C0, TX_CAM_1C1, TX_CAM_1C2, TX_CAM_1C3,
 };
 
 static const int which_cam_lut[CAM_COUNT][4] = {
@@ -60,79 +58,79 @@ typedef struct {
 } camera_state_t;
 
 camera_state_t cam_1a_states[] = {
-	{"rom:/cam_1a_all.ci8.sprite", FREDDY_BIT | BONNIE_BIT | CHICA_BIT},
-	{"rom:/cam_1a_fred_chic.ci8.sprite", FREDDY_BIT | CHICA_BIT},
-	{"rom:/cam_1a_bon_fred.ci8.sprite", FREDDY_BIT | BONNIE_BIT},
-	{"rom:/cam_1a_fred.ci8.sprite", FREDDY_BIT},
-	{"rom:/cam_1a_empty.ci8.sprite", 0},
+	{TX_CAM_1A_ALL,       FREDDY_BIT | BONNIE_BIT | CHICA_BIT},
+	{TX_CAM_1A_CHIC_FRED, FREDDY_BIT | CHICA_BIT},
+	{TX_CAM_1A_BON_FRED,  FREDDY_BIT | BONNIE_BIT},
+	{TX_CAM_1A_FRED,      FREDDY_BIT},
+	{TX_CAM_1A_EMPTY,     0},
 };
 
 camera_state_t cam_1b_states[] = {
-	{"rom:/cam_1b_empty.ci8.sprite", 0},
-	{"rom:/cam_1b_empty.ci8.sprite", FREDDY_BIT},
-	{"rom:/cam_1b_chica0.ci8.sprite", FREDDY_BIT | CHICA_BIT},
-	{"rom:/cam_1b_chica1.ci8.sprite", FREDDY_BIT | CHICA_BIT | ROOM_SPOT_BIT},
-	{"rom:/cam_1b_bonnie0.ci8.sprite", FREDDY_BIT | BONNIE_BIT},
-	{"rom:/cam_1b_bonnie1.ci8.sprite", FREDDY_BIT | BONNIE_BIT | ROOM_SPOT_BIT},
-	{"rom:/cam_1b_chica0.ci8.sprite", FREDDY_BIT | CHICA_BIT | BONNIE_BIT},
-	{"rom:/cam_1b_chica1.ci8.sprite", FREDDY_BIT | CHICA_BIT | BONNIE_BIT | ROOM_SPOT_BIT},
-	{"rom:/cam_1b_bonnie0.ci8.sprite", BONNIE_BIT},
-	{"rom:/cam_1b_bonnie1.ci8.sprite", BONNIE_BIT | ROOM_SPOT_BIT},
-	{"rom:/cam_1b_chica0.ci8.sprite", CHICA_BIT},
-	{"rom:/cam_1b_chica1.ci8.sprite", CHICA_BIT | ROOM_SPOT_BIT},
-	{"rom:/cam_1b_chica0.ci8.sprite", CHICA_BIT | BONNIE_BIT},
-	{"rom:/cam_1b_chica1.ci8.sprite", CHICA_BIT | BONNIE_BIT | ROOM_SPOT_BIT},
+	{TX_CAM_1B_EMPTY, 0},
+	{TX_CAM_1B_EMPTY, FREDDY_BIT},
+	{TX_CAM_1B_CHIC0, FREDDY_BIT | CHICA_BIT},
+	{TX_CAM_1B_CHIC1, FREDDY_BIT | CHICA_BIT | ROOM_SPOT_BIT},
+	{TX_CAM_1B_BON0,  FREDDY_BIT | BONNIE_BIT},
+	{TX_CAM_1B_BON1,  FREDDY_BIT | BONNIE_BIT | ROOM_SPOT_BIT},
+	{TX_CAM_1B_CHIC0, FREDDY_BIT | CHICA_BIT | BONNIE_BIT},
+	{TX_CAM_1B_CHIC1, FREDDY_BIT | CHICA_BIT | BONNIE_BIT | ROOM_SPOT_BIT},
+	{TX_CAM_1B_BON0,  BONNIE_BIT},
+	{TX_CAM_1B_BON1,  BONNIE_BIT | ROOM_SPOT_BIT},
+	{TX_CAM_1B_CHIC0, CHICA_BIT},
+	{TX_CAM_1B_CHIC1, CHICA_BIT | ROOM_SPOT_BIT},
+	{TX_CAM_1B_CHIC0, CHICA_BIT | BONNIE_BIT},
+	{TX_CAM_1B_CHIC1, CHICA_BIT | BONNIE_BIT | ROOM_SPOT_BIT},
 };
 
 camera_state_t cam_2a_states[] = {
-	{"rom:/cam_2a_empty.ci8.sprite", 0},
-	{"rom:/cam_2a_bonnie.ci8.sprite", BONNIE_BIT},
-	{"rom:/cam_2a_bonnie.ci8.sprite", BONNIE_BIT | ROOM_SPOT_BIT},
+	{TX_CAM_2A_EMPTY, 0},
+	{TX_CAM_2A_BON,   BONNIE_BIT},
+	{TX_CAM_2A_BON,   BONNIE_BIT | ROOM_SPOT_BIT},
 };
 
 camera_state_t cam_2b_states[] = {
-	{"rom:/cam_2b_empty.ci8.sprite", 0},
-	{"rom:/cam_2b_bonnie0.ci8.sprite", BONNIE_BIT},
-	{"rom:/cam_2b_bonnie0.ci8.sprite", BONNIE_BIT | ROOM_SPOT_BIT},
+	{TX_CAM_2B_EMPTY, 0},
+	{TX_CAM_2B_BON0,  BONNIE_BIT},
+	{TX_CAM_2B_BON0,  BONNIE_BIT | ROOM_SPOT_BIT},
 };
 
 camera_state_t cam_3_states[] = {
-	{"rom:/cam_3_empty.ci8.sprite", 0},
-	{"rom:/cam_3_bonnie.ci8.sprite", BONNIE_BIT},
-	{"rom:/cam_3_bonnie.ci8.sprite", BONNIE_BIT | ROOM_SPOT_BIT},
+	{TX_CAM_3_EMPTY, 0},
+	{TX_CAM_3_BON,   BONNIE_BIT},
+	{TX_CAM_3_BON,   BONNIE_BIT | ROOM_SPOT_BIT},
 };
 
 camera_state_t cam_4a_states[] = {
-	{"rom:/cam_4a_empty.ci8.sprite", 0},
-	{"rom:/cam_4a_chica0.ci8.sprite", CHICA_BIT},
-	{"rom:/cam_4a_chica1.ci8.sprite", CHICA_BIT | ROOM_SPOT_BIT},
-	{"rom:/cam_4a_chica0.ci8.sprite", FREDDY_BIT | CHICA_BIT},
-	{"rom:/cam_4a_chica1.ci8.sprite", FREDDY_BIT | CHICA_BIT | ROOM_SPOT_BIT},
-	{"rom:/cam_4a_freddy.ci8.sprite", FREDDY_BIT},
+	{TX_CAM_4A_EMPTY, 0},
+	{TX_CAM_4A_CHIC0, CHICA_BIT},
+	{TX_CAM_4A_CHIC1, CHICA_BIT | ROOM_SPOT_BIT},
+	{TX_CAM_4A_CHIC0, FREDDY_BIT | CHICA_BIT},
+	{TX_CAM_4A_CHIC1, FREDDY_BIT | CHICA_BIT | ROOM_SPOT_BIT},
+	{TX_CAM_4A_FRED,  FREDDY_BIT},
 };
 
 camera_state_t cam_4b_states[] = {
-	{"rom:/cam_4b_empty.ci8.sprite", 0},
-	{"rom:/cam_4b_chica0.ci8.sprite", CHICA_BIT},
-	{"rom:/cam_4b_chica0.ci8.sprite", CHICA_BIT | ROOM_SPOT_BIT},
-	{"rom:/cam_4b_chica0.ci8.sprite", FREDDY_BIT | CHICA_BIT},
-	{"rom:/cam_4b_chica0.ci8.sprite", FREDDY_BIT | CHICA_BIT | ROOM_SPOT_BIT},
-	{"rom:/cam_4b_freddy.ci8.sprite", FREDDY_BIT},
+	{TX_CAM_4B_EMPTY, 0},
+	{TX_CAM_4B_CHIC0, CHICA_BIT},
+	{TX_CAM_4B_CHIC0, CHICA_BIT | ROOM_SPOT_BIT},
+	{TX_CAM_4B_CHIC0, FREDDY_BIT | CHICA_BIT},
+	{TX_CAM_4B_CHIC0, FREDDY_BIT | CHICA_BIT | ROOM_SPOT_BIT},
+	{TX_CAM_4B_FRED,  FREDDY_BIT},
 };
 
 camera_state_t cam_5_states[] = {
-	{"rom:/cam_5_empty.ci8.sprite", 0},
-	{"rom:/cam_5_bonnie0.ci8.sprite", BONNIE_BIT},
-	{"rom:/cam_5_bonnie1.ci8.sprite", BONNIE_BIT | ROOM_SPOT_BIT},
+	{TX_CAM_5_EMPTY, 0},
+	{TX_CAM_5_BON0,  BONNIE_BIT},
+	{TX_CAM_5_BON1,  BONNIE_BIT | ROOM_SPOT_BIT},
 };
 
 camera_state_t cam_7_states[] = {
-	{"rom:/cam_7_empty.ci8.sprite", 0},
-	{"rom:/cam_7_chica0.ci8.sprite", CHICA_BIT},
-	{"rom:/cam_7_chica1.ci8.sprite", CHICA_BIT | ROOM_SPOT_BIT},
-	{"rom:/cam_7_freddy.ci8.sprite", FREDDY_BIT},
-	{"rom:/cam_7_freddy.ci8.sprite", FREDDY_BIT | CHICA_BIT},
-	{"rom:/cam_7_freddy.ci8.sprite", FREDDY_BIT | CHICA_BIT | ROOM_SPOT_BIT},
+	{TX_CAM_7_EMPTY, 0},
+	{TX_CAM_7_CHIC0, CHICA_BIT},
+	{TX_CAM_7_CHIC1, CHICA_BIT | ROOM_SPOT_BIT},
+	{TX_CAM_7_FRED,  FREDDY_BIT},
+	{TX_CAM_7_FRED,  FREDDY_BIT | CHICA_BIT},
+	{TX_CAM_7_FRED,  FREDDY_BIT | CHICA_BIT | ROOM_SPOT_BIT},
 };
 
 int cam_state_counts[CAM_COUNT] = {
@@ -177,30 +175,17 @@ int cam_selected = CAM_1A;
 
 rspq_block_t *border_block;
 
+const char *button_paths[2] = {TX_CAM_BUTTON0, TX_CAM_BUTTON1};
 object_t map;
-
 object_t buttons[2];
-const char *button_paths[2] = {
-	"rom:/cam_button0.ci8.sprite",
-	"rom:/cam_button1.ci8.sprite",
-};
-
 object_t name_atlas;
 object_t missing_footage;
 
 object_t flip_anim[FLIP_FRAMES];
 const char *flip_anim_paths[FLIP_FRAMES] = {
-	"rom:/camflip0.ci8.sprite",
-	"rom:/camflip1.ci8.sprite",
-	"rom:/camflip2.ci8.sprite",
-	"rom:/camflip3.ci8.sprite",
-	"rom:/camflip4.ci8.sprite",
-	"rom:/camflip5.ci8.sprite",
-	"rom:/camflip6.ci8.sprite",
-	"rom:/camflip7.ci8.sprite",
-	"rom:/camflip8.ci8.sprite",
-	"rom:/camflip9.ci8.sprite",
-	"rom:/camflip10.ci8.sprite",
+	TX_CAM_FLIP00, TX_CAM_FLIP01, TX_CAM_FLIP02, TX_CAM_FLIP03,
+	TX_CAM_FLIP04, TX_CAM_FLIP05, TX_CAM_FLIP06, TX_CAM_FLIP07,
+	TX_CAM_FLIP08, TX_CAM_FLIP09, TX_CAM_FLIP10,
 };
 
 object_t views[CAM_COUNT];
@@ -259,10 +244,10 @@ void camera_load(void)
 	rdpq_fill_rectangle(10, 230, 311, 231); // bottom
 	border_block = rspq_block_end();
 
-	object_load(&map, "rom:/map.ia4.sprite");
+	object_load(&map, TX_CAM_MAP);
 	objects_load(buttons, 2, button_paths);
-	object_load(&name_atlas, "rom:/cam_name_atlas.ia4.sprite");
-	object_load(&missing_footage, "rom:/missing_footage.i4.sprite");
+	object_load(&name_atlas, TX_CAM_NAME_ATLAS);
+	object_load(&missing_footage, TX_CAM_CORRUPTED);
 	objects_load(flip_anim, FLIP_FRAMES, flip_anim_paths);
 
 	wav64_play(&robotvoice_sfx, SFXC_ROBOTVOICE);
@@ -352,7 +337,7 @@ void camera_view_draw(void)
 			return;
 		}
 
-		object_load(views_extra, "rom:/cam_2a_dark.ci8.sprite");
+		object_load(views_extra, TX_CAM_2A_DARK);
 		object_draw(views_extra[0], view_turn, 0, 0, 0);
 		perspective_end();
 		return;
@@ -364,7 +349,7 @@ void camera_view_draw(void)
 			break;
 		}
 
-		object_load(views_extra + 1, "rom:/cam_2b_golden.ci8.sprite");
+		object_load(views_extra + 1, TX_CAM_2B_GOLD);
 		object_draw(views_extra[1], view_turn, 0, 0, 0);
 		perspective_end();
 		return;
@@ -375,6 +360,7 @@ void camera_view_draw(void)
 		perspective_end();
 
 		rdpq_set_mode_standard();
+		rdpq_mode_alphacompare(true);
 		object_draw(missing_footage, 294, 90, 0, 0);
 		return;
 
@@ -385,10 +371,9 @@ void camera_view_draw(void)
 	int bot_cams[2] = {bonnie_cam, chica_cam};
 	int bot_req_cams[2] = {CAM_2B, CAM_4B};
 	const char *side_paths[2][2] = {
-		{"rom:/cam_2b_bonnie1.ci8.sprite",
-			"rom:/cam_2b_bonnie2.ci8.sprite"},
-		{"rom:/cam_4b_chica1.ci8.sprite",
-			"rom:/cam_4b_chica2.ci8.sprite"}};
+		{TX_CAM_2B_BON0, TX_CAM_2B_BON1},
+		{TX_CAM_4B_CHIC0, TX_CAM_4B_CHIC1}
+	};
 
 	/* Handle face glitching for Bonnie and Chica */
 	int glitch_val = camera_states[cam_selected] >> 5;

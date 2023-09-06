@@ -7,6 +7,7 @@
 
 #include "game/buttons.h"
 #include "game/camera.h"
+#include "game/texture_index.h"
 #include "game/bonnie.h"
 
 #define MOVE_TIMER 4.97f
@@ -57,17 +58,10 @@ static const int new_cam_lut[CAM_COUNT + 2][2] = {
 
 object_t bonnie_scare[BONNIE_SCARE_FRAMES];
 const char *bonnie_scare_paths[BONNIE_SCARE_FRAMES] = {
-	"rom:/bonnie_scare0.ci8.sprite",
-	"rom:/bonnie_scare1.ci8.sprite",
-	"rom:/bonnie_scare2.ci8.sprite",
-	"rom:/bonnie_scare3.ci8.sprite",
-	"rom:/bonnie_scare4.ci8.sprite",
-	"rom:/bonnie_scare5.ci8.sprite",
-	"rom:/bonnie_scare6.ci8.sprite",
-	"rom:/bonnie_scare7.ci8.sprite",
-	"rom:/bonnie_scare8.ci8.sprite",
-	"rom:/bonnie_scare9.ci8.sprite",
-	"rom:/bonnie_scare10.ci8.sprite",
+        TX_BONNIE_SCARE00, TX_BONNIE_SCARE01, TX_BONNIE_SCARE02,
+        TX_BONNIE_SCARE03, TX_BONNIE_SCARE04, TX_BONNIE_SCARE05,
+        TX_BONNIE_SCARE06, TX_BONNIE_SCARE07, TX_BONNIE_SCARE08,
+        TX_BONNIE_SCARE09, TX_BONNIE_SCARE10,
 };
 
 void bonnie_load(void)

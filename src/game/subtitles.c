@@ -152,7 +152,7 @@ static const char *night_1_dialogue[] = {
 
 void subtitles_load(void)
 {
-	sub_font = rdpq_font_load("rom:/debug_font.font64");
+	sub_font = rdpq_font_load("rom:/custom/debug_font.font64");
 	rdpq_font_style(sub_font, 0, &(rdpq_fontstyle_t){
 		.color = RGBA32(0xFF, 0xFF, 0xFF, 0xFF),
 	});

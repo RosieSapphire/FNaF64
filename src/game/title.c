@@ -33,8 +33,7 @@ object_t selector;
 object_t title_text;
 object_t option_text[4];
 const char *option_text_paths[4] = {
-	TX_TITLE_NEWGAME, TX_TITLE_CONTINUE,
-	TX_TITLE_6THNIGHT, TX_TITLE_CUSTOMNIGHT,
+	TX_NEWGAME, TX_CONTINUE, TX_6THNIGHT, TX_CUSTOMNIGHT,
 };
 
 object_t settings_text;
@@ -51,16 +50,16 @@ static void _title_load(void)
 
 	settings_triggered = false;
 	objects_load(freddy_face, 4, freddy_face_paths);
-	object_load(&star, TX_TITLE_STAR);
-	object_load(&selector, TX_TITLE_SELECTOR);
+	object_load(&star, TX_STAR);
+	object_load(&selector, TX_SELECTOR);
 	object_load(&title_text, TX_TITLE_TEXT);
 	objects_load(option_text, 4, option_text_paths);
-	object_load(&night_text, "rom:/night.ia4.sprite");
-	object_load(&night_atlas, "rom:/night_atlas.ia4.sprite");
-	object_load(&settings_text, "rom:/settings_text.ia4.sprite");
-	object_load(&settings_option_text, "rom:/settings_opts.ia4.sprite");
-	object_load(&bind_buttons_text, "rom:/bind_buttons_text.ia4.sprite");
-	object_load(&setting_descs, "rom:/setting_descs.ia4.sprite");
+	object_load(&night_text, TX_NIGHT_TEXT);
+	object_load(&night_atlas, TX_NIGHT_NUM_ATLAS);
+	object_load(&settings_text, TX_SETTINGS_TEXT);
+	object_load(&settings_option_text, TX_SETTINGS_OPTS);
+	object_load(&bind_buttons_text, TX_BIND_BUTTONS_TEXT);
+	object_load(&setting_descs, TX_SETTINGS_DESCS);
 
 	blip_trigger(true);
 	wav64_play(&static_sfx, SFXC_STATIC);

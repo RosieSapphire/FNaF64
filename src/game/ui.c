@@ -5,6 +5,7 @@
 #include "game/buttons.h"
 #include "game/game.h"
 #include "game/settings.h"
+#include "game/texture_index.h"
 #include "game/ui.h"
 
 int power_usage;
@@ -26,13 +27,13 @@ void ui_load(void)
 	power_left = 999;
 	power_timer = 0.0f;
 
-	object_load(&am, "rom:/am.ia4.sprite");
-	object_load(&night_text, "rom:/night.ia4.sprite");
-	object_load(&hour_atlas, "rom:/hour_atlas.ia4.sprite");
-	object_load(&night_atlas, "rom:/night_atlas.ia4.sprite");
-	object_load(&power_left_text, "rom:/power_left.ia4.sprite");
-	object_load(&usage_text, "rom:/usage_text.ia4.sprite");
-	object_load(&usage_atlas, "rom:/usage_atlas.ci8.sprite");
+	object_load(&am, TX_AM_SMALL);
+	object_load(&night_text, TX_NIGHT_TEXT);
+	object_load(&hour_atlas, TX_HOUR_ATLAS);
+	object_load(&night_atlas, TX_NIGHT_NUM_ATLAS);
+	object_load(&power_left_text, TX_POWER_LEFT_TEXT);
+	object_load(&usage_text, TX_USAGE_TEXT);
+	object_load(&usage_atlas, TX_USAGE_ATLAS);
 }
 
 void ui_unload(void)

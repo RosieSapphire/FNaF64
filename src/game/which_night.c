@@ -7,6 +7,7 @@
 #include "game/chica.h"
 #include "game/foxy.h"
 #include "game/freddy.h"
+#include "game/texture_index.h"
 #include "game/which_night.h"
 
 object_t which_night_atlas;
@@ -27,7 +28,7 @@ static void _which_night_load(void)
 	if(is_loaded)
 		return;
 	timer = 0.0f;
-	object_load(&which_night_atlas, "rom:/which_night.i4.sprite");
+	object_load(&which_night_atlas, TX_WHICH_NIGHT_ATLAS);
 	is_loaded = true;
 	blip_trigger(true);
 

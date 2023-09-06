@@ -34,7 +34,7 @@ float time_since_load;
 
 static float circus_timer;
 
-int settings_flags = 0; // SET_SUBTITLES_BIT;
+int settings_flags = SET_ROBOT_CHEAT_BIT;
 
 static void _game_load(void)
 {

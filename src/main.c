@@ -30,11 +30,9 @@ static void n64_init(void)
 
 	dfs_init(DFS_DEFAULT_LOCATION);
 
-	/*
-	rdpq_debug_start();
+	// rdpq_debug_start();
 	debug_init_isviewer();
 	debug_init_usblog();
-	*/
 
 	debug_load();
 
@@ -66,7 +64,7 @@ int main(void)
 	static_load();
 	object_debug_init();
 
-	enum scene scene = SCENE_TITLE_SCREEN;
+	enum scene scene = SCENE_MAIN_GAME;
 	long ticks_last = get_ticks();
 
 	while(1) {

@@ -6,6 +6,7 @@
 #include "game/bonnie.h"
 #include "game/chica.h"
 #include "game/foxy.h"
+#include "game/texture_index.h"
 #include "game/custom_night.h"
 
 object_t face_icons;
@@ -27,9 +28,9 @@ static void _custom_night_load(void)
 		return;
 
 	ai_selected = 0;
-	object_load(&face_icons, "rom:/face_icons.ci8.sprite");
-	object_load(&buttons, "rom:/ai_buttons.ci4.sprite");
-	object_load(&nums, "rom:/ai_nums.ia4.sprite");
+	object_load(&face_icons, TX_FACE_ATLAS);
+	object_load(&buttons, TX_AI_BUTTONS);
+	object_load(&nums, TX_AI_NUM_ATLAS);
 
 	is_loaded = true;
 }
