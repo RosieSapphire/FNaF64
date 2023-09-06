@@ -3,6 +3,5 @@ build/
 *.pak
 *.z64
 *.sh
-assets/
-assets_backup/
+assets*/
 filesystem/
