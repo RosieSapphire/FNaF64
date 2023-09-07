@@ -53,7 +53,8 @@ do
 done
 
 # Sound
+rename 's/ /_/g' $FNAF_AUD_DIR/*
 for i in $(cat refs/audio.txt)
 do
-	cp -rvf $FNAF_AUD_DIR/$i assets/$i
+	ffmpeg -i $FNAF_AUD_DIR/$i -ar 22050 -ac 1 assets/$i
 done
