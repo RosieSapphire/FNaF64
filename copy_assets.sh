@@ -1,10 +1,11 @@
 #!/bin/sh
 
 FNAF_IMG_DIR=$1
+FNAF_AUD_DIR=$2
 
-if [ "$#" -ne 1 ]
+if [ "$#" -ne 2 ]
 then
-	echo "Usage: ./copy_assets.sh [fnafdumpdir]"
+	echo "Usage: ./copy_assets.sh [image-dir] [audio-dir]"
 	exit 1
 fi
 
@@ -37,4 +38,10 @@ for i in 431.png 440.png 441.png 442.png
 do
 	convert assets/ci8/$i -gravity east \
 		-crop 320x240+0+0 +repage assets/ci8/$i
+done
+
+# Sound
+for i in $(cat refs/audio.txt)
+do
+	cp -rvf $FNAF_AUD_DIR/$i assets/$i
 done
