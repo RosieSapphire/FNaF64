@@ -8,3 +8,4 @@ assets/i4/
 assets/*.wav
 assets/*.png
 filesystem/
+tmp/
