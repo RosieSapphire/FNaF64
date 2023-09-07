@@ -5,3 +5,56 @@ A near 1:1 port of Five Nights at Freddy's 1 to the Nintendo 64.
 Unfortunately, for the time being, it is unplayable in it's current state
 due to needing to add the ability to supply your own copy of the game and
 extract the assets, [similar to the SM64 Decomp Project.](https://github.com/n64decomp/sm64)
+
+I would like to give a special thanks to [Rasky](https://github.com/rasky) and
+[Buu342](https://github.com/buu342) for helping me along my Nintendo 64 development
+journey, and I'm really happy with this so far.
+
+# Prerequisites
+## Software
+* [CTFAK 2.0](https://github.com/CTFAK/CTFAK2.0)
+* [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
+* [Ares](https://ares-emu.net)
+
+Note: Currently CTFAK really only works on Windows from my understanding.
+
+## Extracting Assets
+Once you have CTFAK installed, open it up and enter the path to your
+legally obtained Five Nights at Freddy's executable file.
+Hit enter with the `Parameters` section empty, and it will load
+all the data from the game.
+
+Once it's ready, press 3 to use the `Image Dumper`, and then
+press 4 to use the `Sound Dumper`. After both of these processes
+are finished, you can hit 0 to exit the program.
+
+# Compilation
+## Dependencies
+* [ImageMagick](https://imagemagick.org)
+* [Libdragon](https://github.com/DragonMinded/libdragon) (and all of it's dependencies)
+
+## Converting Assets and Compiling
+In order for the assets of Five Nights at Freddy's to fit on a Nintendo 64 is
+for it to be compressed, both in color depth and in image size. With the help of
+a handy-dandy tool I wrote in bash, which utilizes ImageMagick, we can convert
+the textures after copying them to a temporary directory.
+
+```
+git clone https://github.com/RosieSapphire/FNaF64.git fnaf
+cd fnaf/
+mkdir tmp
+cp -rvf /mnt/c/<CTFAK Directory>/Dumps/fnaf/* tmp/
+./copy_assets.sh tmp/Images/ tmp/Sounds/
+```
+
+After this, you should be good to build the ROM.
+
+```
+make -j4
+```
+
+Now you can run it, or put it on an N64 Flashcart via
+SD card or with the [UNFLoader](https://github.com/buu342) developed by Buu342.
+
+Have fun!
+
