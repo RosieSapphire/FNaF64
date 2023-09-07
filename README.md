@@ -34,10 +34,12 @@ are finished, you can hit 0 to exit the program.
 * [Libdragon](https://github.com/DragonMinded/libdragon) (and all of it's dependencies)
 
 ## Converting Assets and Compiling
-In order for the assets of Five Nights at Freddy's to fit on a Nintendo 64 is
-for it to be compressed, both in color depth and in image size. With the help of
+In order for the assets of Five Nights at Freddy's to fit on a Nintendo 64, they
+have to be compressed, both in color depth and image size. With the help of
 a handy-dandy tool I wrote in bash, which utilizes ImageMagick, we can convert
 the textures after copying them to a temporary directory.
+
+This will be done inside of WSL, so if you don't have that set up, you should do so now.
 
 ```
 git clone https://github.com/RosieSapphire/FNaF64.git fnaf
@@ -58,3 +60,12 @@ SD card or with the [UNFLoader](https://github.com/buu342) developed by Buu342.
 
 Have fun!
 
+# To-Do List
+| Task | Description |
+|--|--|
+| Random for Pic | There is a random value that dictates what you'll see in certain cameras |
+| Death Moaning | When a robot gets into your room and your camera is up, you should head moaning |
+| New Game Newspaper | When pressing new game, a newspaper clipping should fade in and out |
+| Save Data EEPROM4K | Currently, there is no way to actually save the game |
+| Finishing Subtitles | So far, there are only subtitles for night 1 |
+| Goofy Mode | I actually don't know what I wanna do with this. lol |
