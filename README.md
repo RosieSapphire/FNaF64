@@ -46,8 +46,9 @@ This will be done inside of WSL, so if you don't have that set up, you should do
 git clone https://github.com/RosieSapphire/FNaF64.git fnaf
 cd fnaf/
 mkdir tmp
-cp -rvf /mnt/c/<CTFAK Directory>/Dumps/fnaf/* tmp/
+cp -rvf /mnt/c/<CTFAK Directory>/Dumps/Five\ Nights\ at\ Freddys/* tmp/
 ./copy_assets.sh tmp/Images/ tmp/Sounds/
+rm -rf tmp/
 ```
 
 After this, you should be good to build the ROM.
