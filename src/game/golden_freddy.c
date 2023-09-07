@@ -8,6 +8,7 @@
 #include "game/camera.h"
 #include "game/hallucinations.h"
 #include "game/bonnie.h"
+#include "game/texture_index.h"
 #include "game/golden_freddy.h"
 
 static float attempt_timer;
@@ -20,8 +21,8 @@ int golden_freddy_progress;
 void golden_freddy_load(void)
 {
 	attempt_timer = 0;
-	object_load(&yellow_bear, "rom:/yellow_bear.ci8.sprite");
-	object_load(&yellow_scare, "rom:/yellow_scare.ci8.sprite");
+	object_load(&yellow_bear, TX_GOLDEN_FREDDY_SIT);
+	object_load(&yellow_scare, TX_GOLDEN_FREDDY_SCARE);
 	jumpscare_timer = 0.0f;
 	golden_freddy_progress = 0;
 }

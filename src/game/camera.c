@@ -375,7 +375,7 @@ void camera_view_draw(void)
 		{TX_CAM_4B_CHIC0, TX_CAM_4B_CHIC1}
 	};
 
-	/* Handle face glitching for Bonnie and Chica */
+	// Handle face glitching for Bonnie and Chica
 	int glitch_val = camera_states[cam_selected] >> 5;
 	for(int i = 0; i < 2; i++) {
 		if(cam_selected != bot_req_cams[i] ||

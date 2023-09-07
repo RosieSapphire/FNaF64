@@ -8,6 +8,7 @@
 #include "game/chica.h"
 #include "game/foxy.h"
 #include "game/settings.h"
+#include "game/texture_index.h"
 #include "game/night_end.h"
 
 static object_t six, five, am;
@@ -30,9 +31,9 @@ static void _night_end_load(void)
 		night_beat_flags |= (night_num == 7) * MODE_20_BEATEN_BIT;
 
 	night_num++;
-	object_load(&six, "rom:/six.i4.sprite");
-	object_load(&five, "rom:/five.i4.sprite");
-	object_load(&am, "rom:/am_big.i4.sprite");
+	object_load(&six, TX_END_SIX);
+	object_load(&five, TX_END_FIVE);
+	object_load(&am, TX_END_AM);
 	wav64_play(&chimes_sfx, SFXC_AMBIENCE);
 	played_cheer = false;
 

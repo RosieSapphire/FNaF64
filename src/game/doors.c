@@ -7,6 +7,7 @@
 #include "game/bonnie.h"
 #include "game/chica.h"
 #include "game/foxy.h"
+#include "game/texture_index.h"
 #include "game/doors.h"
 
 #define LEFT    0
@@ -16,21 +17,11 @@
 float door_timers[2];
 object_t frames[FRAMES];
 const char *frame_paths[FRAMES] = {
-	"rom:/left_door0.ci8.sprite",
-	"rom:/left_door1.ci8.sprite",
-	"rom:/left_door2.ci8.sprite",
-	"rom:/left_door3.ci8.sprite",
-	"rom:/left_door4.ci8.sprite",
-	"rom:/left_door5.ci8.sprite",
-	"rom:/left_door6.ci8.sprite",
-	"rom:/left_door7.ci8.sprite",
-	"rom:/left_door8.ci8.sprite",
-	"rom:/left_door9.ci8.sprite",
-	"rom:/left_door10.ci8.sprite",
-	"rom:/left_door11.ci8.sprite",
-	"rom:/left_door12.ci8.sprite",
-	"rom:/left_door13.ci8.sprite",
-	"rom:/left_door14.ci8.sprite",
+	TX_DOOR_ANIM00, TX_DOOR_ANIM01, TX_DOOR_ANIM02,
+	TX_DOOR_ANIM03, TX_DOOR_ANIM04, TX_DOOR_ANIM05,
+	TX_DOOR_ANIM06, TX_DOOR_ANIM07, TX_DOOR_ANIM08,
+	TX_DOOR_ANIM09, TX_DOOR_ANIM10, TX_DOOR_ANIM11,
+	TX_DOOR_ANIM12, TX_DOOR_ANIM13, TX_DOOR_ANIM14,
 };
 
 void doors_load(void)

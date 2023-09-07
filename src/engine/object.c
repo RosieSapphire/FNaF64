@@ -12,6 +12,7 @@ void object_load(object_t *o, const char *path)
 	o->is_loaded = true;
 	loaded++;
 	local_loaded = loaded - 8;
+	debugf("%d loaded (%s)\n", local_loaded, path);
 }
 
 void objects_load(object_t *o, int num, const char **paths)

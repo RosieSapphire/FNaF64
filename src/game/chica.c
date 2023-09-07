@@ -6,6 +6,7 @@
 
 #include "game/camera.h"
 #include "game/buttons.h"
+#include "game/texture_index.h"
 #include "game/chica.h"
 
 #define MOVE_TIMER 4.98f
@@ -57,14 +58,9 @@ static const int new_cam_lut[CAM_COUNT + 2][2] = {
 
 object_t chica_scare[CHICA_SCARE_FRAMES];
 const char *chica_scare_paths[CHICA_SCARE_FRAMES] = {
-	"rom:/chica_scare0.ci8.sprite",
-	"rom:/chica_scare1.ci8.sprite",
-	"rom:/chica_scare2.ci8.sprite",
-	"rom:/chica_scare3.ci8.sprite",
-	"rom:/chica_scare4.ci8.sprite",
-	"rom:/chica_scare5.ci8.sprite",
-	"rom:/chica_scare6.ci8.sprite",
-	"rom:/chica_scare7.ci8.sprite",
+	TX_CHICA_SCARE0, TX_CHICA_SCARE1, TX_CHICA_SCARE2,
+	TX_CHICA_SCARE3, TX_CHICA_SCARE4, TX_CHICA_SCARE5,
+	TX_CHICA_SCARE6, TX_CHICA_SCARE7,
 };
 
 void chica_load(void)

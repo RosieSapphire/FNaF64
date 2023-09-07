@@ -8,29 +8,18 @@
 #include "game/game.h"
 #include "game/office.h"
 #include "game/settings.h"
+#include "game/texture_index.h"
 #include "game/powerdown.h"
 
 #define FREDDY_SCARE_FRAMES 18
 static object_t freddy_scare[FREDDY_SCARE_FRAMES];
 static const char *freddy_scare_paths[FREDDY_SCARE_FRAMES] = {
-	"rom:/freddy_dark_scare0.ci8.sprite",
-	"rom:/freddy_dark_scare1.ci8.sprite",
-	"rom:/freddy_dark_scare2.ci8.sprite",
-	"rom:/freddy_dark_scare3.ci8.sprite",
-	"rom:/freddy_dark_scare4.ci8.sprite",
-	"rom:/freddy_dark_scare5.ci8.sprite",
-	"rom:/freddy_dark_scare6.ci8.sprite",
-	"rom:/freddy_dark_scare7.ci8.sprite",
-	"rom:/freddy_dark_scare8.ci8.sprite",
-	"rom:/freddy_dark_scare9.ci8.sprite",
-	"rom:/freddy_dark_scare10.ci8.sprite",
-	"rom:/freddy_dark_scare11.ci8.sprite",
-	"rom:/freddy_dark_scare12.ci8.sprite",
-	"rom:/freddy_dark_scare13.ci8.sprite",
-	"rom:/freddy_dark_scare14.ci8.sprite",
-	"rom:/freddy_dark_scare15.ci8.sprite",
-	"rom:/freddy_dark_scare16.ci8.sprite",
-	"rom:/freddy_dark_scare17.ci8.sprite",
+	TX_FREDDY_SCARE_DARK00, TX_FREDDY_SCARE_DARK01, TX_FREDDY_SCARE_DARK02,
+	TX_FREDDY_SCARE_DARK04, TX_FREDDY_SCARE_DARK05, TX_FREDDY_SCARE_DARK06,
+	TX_FREDDY_SCARE_DARK07, TX_FREDDY_SCARE_DARK08, TX_FREDDY_SCARE_DARK09,
+	TX_FREDDY_SCARE_DARK10, TX_FREDDY_SCARE_DARK11, TX_FREDDY_SCARE_DARK12,
+	TX_FREDDY_SCARE_DARK13, TX_FREDDY_SCARE_DARK14, TX_FREDDY_SCARE_DARK15,
+	TX_FREDDY_SCARE_DARK16, TX_FREDDY_SCARE_DARK17,
 };
 
 static object_t room_views[2];

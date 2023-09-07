@@ -3,6 +3,7 @@
 
 #include "game/static.h"
 #include "game/blip.h"
+#include "game/texture_index.h"
 #include "game/game_over.h"
 
 static bool is_loaded = false;
@@ -14,8 +15,8 @@ static void _game_over_load(void)
 {
 	if(is_loaded)
 		return;
-	object_load(&over_screen, "rom:/over_screen.ci8.sprite");
-	object_load(&over_text, "rom:/game_over_text.ia4.sprite");
+	object_load(&over_screen, TX_GAME_OVER_SCREEN);
+	object_load(&over_text, TX_GAME_OVER_TEXT);
 	over_timer = 0.0f;
 	blip_trigger(true);
 

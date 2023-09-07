@@ -4,16 +4,15 @@
 #include "engine/util.h"
 #include "engine/sfx.h"
 
+#include "game/texture_index.h"
 #include "game/hallucinations.h"
 
 #define NUM_HALLUC 4
 
 static object_t visuals[NUM_HALLUC];
 static const char *visual_paths[NUM_HALLUC] = {
-	"rom:/halluc0.ci8.sprite",
-	"rom:/halluc1.ci8.sprite",
-	"rom:/halluc2.ci8.sprite",
-	"rom:/halluc3.ci8.sprite",
+	TX_HALLUCINATION0, TX_HALLUCINATION1,
+	TX_HALLUCINATION2, TX_HALLUCINATION3,
 };
 
 static bool is_running;

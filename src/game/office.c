@@ -12,6 +12,7 @@
 #include "game/foxy.h"
 #include "game/freddy.h"
 #include "game/settings.h"
+#include "game/texture_index.h"
 #include "game/office.h"
 
 #define ROOM_VIEWS 5
@@ -23,41 +24,24 @@ int flicker_rand;
 
 static object_t room_views[ROOM_VIEWS];
 static const char *room_view_paths[ROOM_VIEWS] = {
-	"rom:/room_normal.ci8.sprite",
-	"rom:/room_left_empty.ci8.sprite",
-	"rom:/room_right_empty.ci8.sprite",
-	"rom:/room_left_bonnie.ci8.sprite",
-	"rom:/room_right_chica.ci8.sprite",
+	TX_ROOM_NORMAL, TX_ROOM_LEFT_EMPTY, TX_ROOM_RIGHT_EMPTY,
+	TX_ROOM_LEFT_BONNIE, TX_ROOM_RIGHT_CHICA,
 };
 
 object_t foxy_scare[FOXY_SCARE_FRAMES];
 const char *foxy_scare_paths[FOXY_SCARE_FRAMES] = {
-	"rom:/foxy_scare0.ci8.sprite",
-	"rom:/foxy_scare1.ci8.sprite",
-	"rom:/foxy_scare2.ci8.sprite",
-	"rom:/foxy_scare3.ci8.sprite",
-	"rom:/foxy_scare4.ci8.sprite",
-	"rom:/foxy_scare5.ci8.sprite",
-	"rom:/foxy_scare6.ci8.sprite",
-	"rom:/foxy_scare7.ci8.sprite",
+	TX_FOXY_SCARE0, TX_FOXY_SCARE1, TX_FOXY_SCARE2,
+	TX_FOXY_SCARE3, TX_FOXY_SCARE4, TX_FOXY_SCARE5,
+	TX_FOXY_SCARE6, TX_FOXY_SCARE7,
 };
 
 object_t freddy_scare[FREDDY_SCARE_FRAMES];
 const char *freddy_scare_paths[FREDDY_SCARE_FRAMES] = {
-	"rom:/freddy_room_scare0.ci8.sprite",
-	"rom:/freddy_room_scare1.ci8.sprite",
-	"rom:/freddy_room_scare2.ci8.sprite",
-	"rom:/freddy_room_scare3.ci8.sprite",
-	"rom:/freddy_room_scare4.ci8.sprite",
-	"rom:/freddy_room_scare5.ci8.sprite",
-	"rom:/freddy_room_scare6.ci8.sprite",
-	"rom:/freddy_room_scare7.ci8.sprite",
-	"rom:/freddy_room_scare8.ci8.sprite",
-	"rom:/freddy_room_scare9.ci8.sprite",
-	"rom:/freddy_room_scare10.ci8.sprite",
-	"rom:/freddy_room_scare11.ci8.sprite",
-	"rom:/freddy_room_scare12.ci8.sprite",
-	"rom:/freddy_room_scare13.ci8.sprite",
+	TX_FREDDY_SCARE_ROOM00, TX_FREDDY_SCARE_ROOM01, TX_FREDDY_SCARE_ROOM02,
+	TX_FREDDY_SCARE_ROOM03, TX_FREDDY_SCARE_ROOM04, TX_FREDDY_SCARE_ROOM05,
+	TX_FREDDY_SCARE_ROOM06, TX_FREDDY_SCARE_ROOM07, TX_FREDDY_SCARE_ROOM08,
+	TX_FREDDY_SCARE_ROOM09, TX_FREDDY_SCARE_ROOM10, TX_FREDDY_SCARE_ROOM11,
+	TX_FREDDY_SCARE_ROOM12, TX_FREDDY_SCARE_ROOM13,
 };
 
 static int room_get_state(void)
