@@ -56,7 +56,7 @@ make -j4
 ```
 
 Now you can run it, or put it on an N64 Flashcart via
-SD card or with the [UNFLoader](https://github.com/buu342) developed by Buu342.
+SD card or with the [UNFLoader developed by Buu342](https://github.com/buu342/N64-UNFLoader).
 
 Have fun!
 
