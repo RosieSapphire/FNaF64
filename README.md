@@ -33,6 +33,7 @@ are finished, you can hit 0 to exit the program.
 * [ImageMagick](https://imagemagick.org) (for image compression)
 * [Libdragon](https://github.com/DragonMinded/libdragon) (N64 API)
 * [FFMPEG](https://ffmpeg.org/download.html) (for audio compression)
+* Rename (Install using your package manager of choice on WSL)
 
 ## Converting Assets and Compiling
 In order for the assets of Five Nights at Freddy's to fit on a Nintendo 64, they
