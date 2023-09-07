@@ -23,10 +23,7 @@
 
 /* Title UI */
 #define TX_TITLE_TEXT          TX_ROM_CUSTOM("title_text.ia4.sprite")
-#define TX_NEWGAME             TX_ROM_CUSTOM("new_game.ia4.sprite")
-#define TX_CONTINUE            TX_ROM_CUSTOM("continue.ia4.sprite")
-#define TX_6THNIGHT            TX_ROM_CUSTOM("night6.ia4.sprite")
-#define TX_CUSTOMNIGHT         TX_ROM_CUSTOM("custom_night.ia4.sprite")
+#define TX_TITLE_OPTIONS       TX_ROM_CUSTOM("options.ia4.sprite")
 #define TX_SELECTOR            TX_ROM_CUSTOM("selector.ia4.sprite")
 #define TX_STAR                TX_ROM_CUSTOM("star.ia4.sprite")
 

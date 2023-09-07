@@ -31,11 +31,7 @@ const char *freddy_face_paths[4] = {
 object_t star;
 object_t selector;
 object_t title_text;
-object_t option_text[4];
-const char *option_text_paths[4] = {
-	TX_NEWGAME, TX_CONTINUE, TX_6THNIGHT, TX_CUSTOMNIGHT,
-};
-
+object_t option_text;
 object_t settings_text;
 object_t settings_option_text;
 
@@ -53,7 +49,7 @@ static void _title_load(void)
 	object_load(&star, TX_STAR);
 	object_load(&selector, TX_SELECTOR);
 	object_load(&title_text, TX_TITLE_TEXT);
-	objects_load(option_text, 4, option_text_paths);
+	object_load(&option_text, TX_TITLE_OPTIONS);
 	object_load(&night_text, TX_NIGHT_TEXT);
 	object_load(&night_atlas, TX_NIGHT_NUM_ATLAS);
 	object_load(&settings_text, TX_SETTINGS_TEXT);
@@ -78,7 +74,7 @@ static void _title_unload(void)
 	object_unload(&settings_text);
 	object_unload(&night_atlas);
 	object_unload(&night_text);
-	objects_unload(option_text, 4);
+	object_unload(&option_text);
 	object_unload(&title_text);
 	object_unload(&selector);
 	object_unload(&star);
@@ -131,11 +127,8 @@ void title_draw(void)
 		return;
 	}
 
-	object_draw(title_text, 70, 68, 0, 0);
-	for(int i = 0; i < available; i++)
-		object_draw(option_text[i], 118, 420 + 58 * i, 0, 0);
-
-	object_draw(bind_buttons_text, 558, 45, 0, 0);
+	rdpq_set_mode_standard();
+	rdpq_mode_alphacompare(true);
 
 	int star_count = 0;
 	star_count += (night_beat_flags & NIGHT_5_BEATEN_BIT) > 0;
@@ -145,10 +138,10 @@ void title_draw(void)
 	for(int i = 0; i < star_count; i++)
 		object_draw(star, 93 + 77 * i, 350, 28, 27);
 
-	int selector_pos[4] = {
-		426, 485, 546, 604
-	};
-	object_draw(selector, 40, selector_pos[selected], 0, 0);
+	object_draw_index_y(option_text, 118, 420, 22 * available, 0);
+	object_draw(title_text, 70, 68, 0, 0);
+	object_draw(bind_buttons_text, 558, 45, 0, 0);
+	object_draw(selector, 40, 429 + selected * 66, 0, 0);
 
 	if(selected == 1) {
 		int clamped = clampf(night_num, 1, 5);
@@ -201,6 +194,7 @@ enum scene title_update(update_parms_t uparms)
 		night_beat_flags = 0;
 		delete_timer = 0.0f;
 		already_deleted = true;
+		selected = 0;
 	}
 
 
