@@ -42,6 +42,10 @@ do
 		-crop 320x240+0+0 +repage assets/ci8/$i
 done
 
+# Golden Freddy
+convert assets/ci8/548.png -gravity center \
+	-crop 320x240+0+0 +repage assets/ci8/548.png
+
 # Camera Flip Animation
 for i in $(cat refs/camflip.txt)
 do
