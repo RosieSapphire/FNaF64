@@ -60,7 +60,7 @@ int main(void)
 	blip_load();
 	static_load();
 
-	enum scene scene = SCENE_MAIN_GAME;
+	enum scene scene = SCENE_TITLE_SCREEN;
 	long ticks_last = get_ticks();
 
 	while(1) {

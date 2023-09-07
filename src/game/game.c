@@ -24,7 +24,7 @@
 #include "game/game.h"
 
 float night_timer;
-int night_beat_flags = NIGHT_5_BEATEN_BIT | NIGHT_6_BEATEN_BIT;
+int night_beat_flags = 0; // NIGHT_5_BEATEN_BIT | NIGHT_6_BEATEN_BIT;
 uint8_t night_num = 1;
 static bool is_loaded = false;
 static float jumpscare_exit_timer = 40;
@@ -34,7 +34,7 @@ float time_since_load;
 
 static float circus_timer;
 
-int settings_flags = SET_ROBOT_CHEAT_BIT;
+int settings_flags = 0; // SET_ROBOT_CHEAT_BIT;
 
 static void _game_load(void)
 {

@@ -33,11 +33,19 @@ do
 	convert assets/i4/$f -resize 320x240\! assets/i4/$f
 done
 
+# Special exceptions
+
 # Freddy Faces
 for i in 431.png 440.png 441.png 442.png
 do
 	convert assets/ci8/$i -gravity east \
 		-crop 320x240+0+0 +repage assets/ci8/$i
+done
+
+# Camera Flip Animation
+for i in $(cat refs/camflip.txt)
+do
+	convert assets/ci8/$i -resize 320x240\! assets/ci8/$i
 done
 
 # Sound
