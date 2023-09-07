@@ -30,8 +30,9 @@ are finished, you can hit 0 to exit the program.
 
 # Compilation
 ## Dependencies
-* [ImageMagick](https://imagemagick.org)
-* [Libdragon](https://github.com/DragonMinded/libdragon) (and all of it's dependencies)
+* [ImageMagick](https://imagemagick.org) (for image compression)
+* [Libdragon](https://github.com/DragonMinded/libdragon) (N64 API)
+* [FFMPEG](https://ffmpeg.org/download.html) (for audio compression)
 
 ## Converting Assets and Compiling
 In order for the assets of Five Nights at Freddy's to fit on a Nintendo 64, they
