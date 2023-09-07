@@ -68,4 +68,5 @@ Have fun!
 | New Game Newspaper | When pressing new game, a newspaper clipping should fade in and out |
 | Save Data EEPROM4K | Currently, there is no way to actually save the game |
 | Finishing Subtitles | So far, there are only subtitles for night 1 |
+| Background Ambience | I haven't added ambience to the nights yet |
 | Goofy Mode | I actually don't know what I wanna do with this. lol |
