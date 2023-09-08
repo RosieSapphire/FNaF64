@@ -35,6 +35,8 @@
 #define TX_NIGHT_NUM_ATLAS     TX_ROM_CUSTOM("night_atlas.ia4.sprite")
 #define TX_BIND_BUTTONS_TEXT   TX_ROM_CUSTOM("bind_buttons_text.ia4.sprite")
 
+#define TX_NEWSPAPER           TX_ROM("ci8/574.sprite")
+
 /* Custom Night */
 #define TX_FACE_ATLAS          TX_ROM_CUSTOM("face_icons.ci8.sprite")
 #define TX_AI_BUTTONS          TX_ROM_CUSTOM("ai_buttons.ci4.sprite")
