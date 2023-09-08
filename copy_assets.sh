@@ -9,6 +9,8 @@ then
 	exit 1
 fi
 
+rm -rf assets/ci8 assets/ci4 assets/i4 assets/*.wav filesystem/
+
 for f in $(cat refs/ci8.txt)
 do
 	mkdir -p assets/ci8
@@ -45,6 +47,10 @@ done
 # Golden Freddy
 convert assets/ci8/548.png -gravity center \
 	-crop 320x240+0+0 +repage assets/ci8/548.png
+
+# Newspaper
+convert assets/ci8/574.png -gravity center \
+	-crop 320x240+0+0 +repage assets/ci8/574.png
 
 # Camera Flip Animation
 for i in $(cat refs/camflip.txt)
