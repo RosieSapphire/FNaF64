@@ -22,6 +22,10 @@ static bool settings_triggered = false;
 
 static object_t night_text;
 static object_t night_atlas;
+static object_t newspaper;
+
+static bool new_game_init;
+static float new_game_timer;
 
 object_t freddy_face[4];
 const char *freddy_face_paths[4] = {
@@ -47,11 +51,12 @@ static void _title_load(void)
 	settings_triggered = false;
 	objects_load(freddy_face, 4, freddy_face_paths);
 	object_load(&star, TX_STAR);
-	object_load(&selector, TX_SELECTOR);
 	object_load(&title_text, TX_TITLE_TEXT);
+	object_load(&selector, TX_SELECTOR);
 	object_load(&option_text, TX_TITLE_OPTIONS);
 	object_load(&night_text, TX_NIGHT_TEXT);
 	object_load(&night_atlas, TX_NIGHT_NUM_ATLAS);
+	object_load(&newspaper, TX_NEWSPAPER);
 	object_load(&settings_text, TX_SETTINGS_TEXT);
 	object_load(&settings_option_text, TX_SETTINGS_OPTS);
 	object_load(&bind_buttons_text, TX_BIND_BUTTONS_TEXT);
@@ -61,6 +66,8 @@ static void _title_load(void)
 	wav64_play(&static_sfx, SFXC_STATIC);
 	mixer_ch_set_vol(SFXC_AMBIENCE, 0.8f, 0.8f);
 	wav64_play(&title_music, SFXC_AMBIENCE);
+	new_game_init = false;
+	new_game_timer = 0.0f;
 	is_loaded = true;
 }
 
@@ -72,6 +79,7 @@ static void _title_unload(void)
 	object_unload(&bind_buttons_text);
 	object_unload(&settings_option_text);
 	object_unload(&settings_text);
+	object_unload(&newspaper);
 	object_unload(&night_atlas);
 	object_unload(&night_text);
 	object_unload(&option_text);
@@ -117,6 +125,9 @@ void title_draw(void)
 {
 	_title_load();
 
+	if(new_game_timer >= 2.0f)
+		goto draw_newspaper;
+
 	rdpq_set_mode_copy(false);
 	int face = (face_state < 4) * face_state;
 	object_draw(freddy_face[face], 0, 0, 0, 0);
@@ -150,6 +161,25 @@ void title_draw(void)
 	}
 
 	blip_draw();
+
+	if(new_game_init) {
+draw_newspaper:
+		float alpha = 1.0f;
+		if(new_game_timer <= 2.0f)
+			alpha = new_game_timer * 0.5f;
+
+		if(new_game_timer >= 7.0f) {
+			alpha = 1.0f - ((new_game_timer - 7.0f) * 0.5f);
+			rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
+			rdpq_fill_rectangle(0, 0, 320, 240);
+		}
+
+		rdpq_set_mode_standard();
+		rdpq_mode_alphacompare(true);
+		rdpq_set_fog_color(RGBA32(0xFF, 0xFF, 0xFF, alpha * 255));
+     		rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
+		object_draw(newspaper, 0, 0, 0, 0);
+	}
 }
 
 static void _title_update_settings(struct controller_data down)
@@ -176,7 +206,7 @@ static void _title_update_settings(struct controller_data down)
 	settings_flags ^= (down.c->A << selected_setting);
 }
 
-enum scene title_update(update_parms_t uparms)
+static void _title_update_deleting(update_parms_t uparms)
 {
 	static float delete_timer = 0.0f;
 	static bool already_deleted = false;
@@ -188,21 +218,49 @@ enum scene title_update(update_parms_t uparms)
 		already_deleted = false;
 	}
 
-	if(delete_timer >= 1.0f) {
-		blip_trigger(false);
-		night_num = 1;
-		night_beat_flags = 0;
-		delete_timer = 0.0f;
-		already_deleted = true;
-		selected = 0;
-	}
+	if(delete_timer < 1.0f)
+		return;
 
+	blip_trigger(false);
+	night_num = 1;
+	night_beat_flags = 0;
+	delete_timer = 0.0f;
+	already_deleted = true;
+	selected = 0;
+}
 
+enum scene title_update(update_parms_t uparms)
+{
 	face_timer += uparms.dt * 60 * 0.08f;
 	bool tick;
 	face_timer = wrapf(face_timer, 1, &tick);
 	if(tick)
 		face_state = rand() % 100;
+
+	if(new_game_init) {
+		new_game_timer += uparms.dt;
+
+		/* Check for skipping */
+		const bool a_b_or_start_down =
+			(uparms.down.c->A +
+			uparms.down.c->B +
+			uparms.down.c->start) > 0;
+		const bool can_skip =
+			new_game_timer < 7.0f && new_game_timer > 2.0f;
+		if(a_b_or_start_down && can_skip)
+			new_game_timer = 7.0f;
+
+		if(new_game_timer >= 9.0f) {
+			rdpq_call_deferred((void (*)(void *))_title_unload,
+					NULL);
+			sfx_stop_all();
+			return SCENE_WHICH_NIGHT;
+		}
+			
+		return SCENE_TITLE_SCREEN;
+	}
+
+	_title_update_deleting(uparms);
 
 	settings_triggered ^= uparms.down.c->R;
 	if(settings_triggered) {
@@ -226,26 +284,30 @@ enum scene title_update(update_parms_t uparms)
 	}
 
 	if(uparms.down.c->start || uparms.down.c->A) {
-		rdpq_call_deferred((void (*)(void *))_title_unload, NULL);
-
 		switch(selected) {
 		case 0:
 			night_num = 1;
 			// eepfs_write("fnaf.sav", &night_num, 1);
-			sfx_stop_all();
-			return SCENE_WHICH_NIGHT;
+			new_game_init = true;
+			return SCENE_TITLE_SCREEN;
 
 		case 1:
+			rdpq_call_deferred((void (*)(void *))_title_unload,
+					NULL);
 			night_num = night_num > 5 ? 5 : night_num;
 			sfx_stop_all();
 			return SCENE_WHICH_NIGHT;
 
 		case 2:
+			rdpq_call_deferred((void (*)(void *))_title_unload,
+					NULL);
 			night_num = 6;
 			sfx_stop_all();
 			return SCENE_WHICH_NIGHT;
 
 		case 3:
+			rdpq_call_deferred((void (*)(void *))_title_unload,
+					NULL);
 			night_num = 7;
 			return SCENE_CUSTOM_NIGHT;
 		}
