@@ -18,6 +18,7 @@
 #include "game/game_over.h"
 #include "game/powerdown.h"
 #include "game/custom_night.h"
+#include "game/paycheck.h"
 
 static void n64_init(void)
 {
@@ -77,13 +78,13 @@ int main(void)
 
 		void (*draw_funcs[SCENE_COUNT])(void) = {
 			title_draw, which_night_draw, game_draw,
-			night_end_draw, game_over_draw,
+			night_end_draw, paycheck_draw, game_over_draw,
 			power_down_draw, custom_night_draw,
 		};
 
 		enum scene (*update_funcs[SCENE_COUNT])(update_parms_t) = {
 			title_update, which_night_update, game_update,
-			night_end_update, game_over_update,
+			night_end_update, paycheck_update, game_over_update,
 			power_down_update, custom_night_update,
 		};
 

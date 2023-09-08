@@ -34,6 +34,7 @@ static void _night_end_load(void)
 	object_load(&six, TX_END_SIX);
 	object_load(&five, TX_END_FIVE);
 	object_load(&am, TX_END_AM);
+	mixer_ch_set_vol(SFXC_AMBIENCE, 0.8f, 0.8f);
 	wav64_play(&chimes_sfx, SFXC_AMBIENCE);
 	played_cheer = false;
 
@@ -106,7 +107,7 @@ enum scene night_end_update(update_parms_t uparms)
 		if(night_num < 6)
 			return SCENE_WHICH_NIGHT;
 
-		return SCENE_TITLE_SCREEN;
+		return SCENE_PAYCHECK;
 	}
 
 	return SCENE_NIGHT_END;

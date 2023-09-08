@@ -23,10 +23,11 @@
 #include "game/settings.h"
 #include "game/game.h"
 
-float night_timer;
-int night_beat_flags = NIGHT_5_BEATEN_BIT | NIGHT_6_BEATEN_BIT;
-uint8_t night_num = 1;
 static bool is_loaded = false;
+
+float night_timer;
+int night_beat_flags = 0;// NIGHT_5_BEATEN_BIT | NIGHT_6_BEATEN_BIT;
+uint8_t night_num = 1;
 static float jumpscare_exit_timer = 40;
 int night_skip_correct;
 float ticks_since_load;
