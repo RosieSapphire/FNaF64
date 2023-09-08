@@ -72,3 +72,4 @@ Have fun!
 | Finishing Subtitles | So far, there are only subtitles for night 1 |
 | Background Ambience | I haven't added ambience to the nights yet |
 | Goofy Mode | I actually don't know what I wanna do with this. lol |
+| End Screens | Right now, it just kicks you to the title. Gotta fix that. |
