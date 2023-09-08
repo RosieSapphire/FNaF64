@@ -68,7 +68,6 @@ Have fun!
 |--|--|
 | Random for Pic | There is a random value that dictates what you'll see in certain cameras |
 | Death Moaning | When a robot gets into your room and your camera is up, you should head moaning |
-| New Game Newspaper | When pressing new game, a newspaper clipping should fade in and out |
 | Save Data EEPROM4K | Currently, there is no way to actually save the game |
 | Finishing Subtitles | So far, there are only subtitles for night 1 |
 | Background Ambience | I haven't added ambience to the nights yet |
