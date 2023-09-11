@@ -64,13 +64,13 @@ SD card or with the [UNFLoader developed by Buu342](https://github.com/buu342/N6
 Have fun!
 
 # To-Do List
-| Task | Description |
-|--|--|
-| Random for Pic | There is a random value that dictates what you'll see in certain cameras |
-| Death Moaning | When a robot gets into your room and your camera is up, you should head moaning |
-| Save Data EEPROM4K | Currently, there is no way to actually save the game |
-| Background Ambience | I haven't added ambience to the nights yet |
-| Goofy Mode | I actually don't know what I wanna do with this. lol |
+| Task | Description | Priority |
+|--|--|--|
+| Save Data EEPROM4K | Currently, there is no way to actually save the game | High |
+| Death Moaning | When a robot gets into your room and your camera is up, you should head moaning | Medium |
+| Random for Pic | There is a random value that dictates what you'll see in certain cameras | Low |
+| Background Ambience | I haven't added ambience to the nights yet | Low |
+| Goofy Mode | I actually don't know what I wanna do with this. lol | Really Low |
 
 # Controls
 | Button | Menu Action | Game Action |
