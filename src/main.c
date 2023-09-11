@@ -30,9 +30,11 @@ static void n64_init(void)
 
 	dfs_init(DFS_DEFAULT_LOCATION);
 
-	// rdpq_debug_start();
+	/*
+	rdpq_debug_start();
 	debug_init_isviewer();
 	debug_init_usblog();
+	*/
 
 	audio_init(32000, 4);
 	mixer_init(SFXC_COUNT);

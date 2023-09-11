@@ -45,6 +45,11 @@
 /* Which Night */
 #define TX_WHICH_NIGHT_ATLAS   TX_ROM_CUSTOM("which_night.i4.sprite")
 
+/* Paycheck */
+#define TX_PAYCHECK1           TX_ROM("ci8/210.sprite")
+#define TX_PAYCHECK2           TX_ROM("ci8/522.sprite")
+#define TX_PINK_SLIP           TX_ROM("ci8/523.sprite")
+
 /* Gameover UI */
 #define TX_GAME_OVER_SCREEN    TX_ROM("ci8/358.sprite")
 #define TX_GAME_OVER_TEXT      TX_ROM_CUSTOM("game_over_text.ia4.sprite")

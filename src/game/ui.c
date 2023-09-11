@@ -8,38 +8,37 @@
 #include "game/texture_index.h"
 #include "game/ui.h"
 
+static object_t night_text;
+static object_t am;
+static object_t hour_atlas;
+static object_t night_atlas;
+static object_t power_left_text;
+static object_t usage_text;
+static object_t usage_atlas;
+
 int power_usage;
 int power_left;
 float power_timer;
 
-object_t am;
-object_t hour_atlas;
-object_t power_left_text;
-object_t usage_text;
-object_t usage_atlas;
-
-static object_t night_text;
-static object_t night_atlas;
-
 void ui_load(void)
 {
-	power_usage = 1;
-	power_left = 999;
-	power_timer = 0.0f;
-
-	object_load(&am, TX_AM_SMALL);
 	object_load(&night_text, TX_NIGHT_TEXT);
+	object_load(&am, TX_AM_SMALL);
 	object_load(&hour_atlas, TX_HOUR_ATLAS);
 	object_load(&night_atlas, TX_NIGHT_NUM_ATLAS);
 	object_load(&power_left_text, TX_POWER_LEFT_TEXT);
 	object_load(&usage_text, TX_USAGE_TEXT);
 	object_load(&usage_atlas, TX_USAGE_ATLAS);
+
+	power_usage = 1;
+	power_left = 999;
+	power_timer = 0.0f;
 }
 
 void ui_unload(void)
 {
-	object_unload(&am);
 	object_unload(&night_text);
+	object_unload(&am);
 	object_unload(&hour_atlas);
 	object_unload(&night_atlas);
 	object_unload(&power_left_text);

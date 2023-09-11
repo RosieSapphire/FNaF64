@@ -162,24 +162,25 @@ void title_draw(void)
 
 	blip_draw();
 
-	if(new_game_init) {
+	if(!new_game_init)
+		return;
+
 draw_newspaper:
-		float alpha = 1.0f;
-		if(new_game_timer <= 2.0f)
-			alpha = new_game_timer * 0.5f;
+	float alpha = 1.0f;
+	if(new_game_timer <= 2.0f)
+		alpha = new_game_timer * 0.5f;
 
-		if(new_game_timer >= 7.0f) {
-			alpha = 1.0f - ((new_game_timer - 7.0f) * 0.5f);
-			rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
-			rdpq_fill_rectangle(0, 0, 320, 240);
-		}
-
-		rdpq_set_mode_standard();
-		rdpq_mode_alphacompare(true);
-		rdpq_set_fog_color(RGBA32(0xFF, 0xFF, 0xFF, alpha * 255));
-     		rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
-		object_draw(newspaper, 0, 0, 0, 0);
+	if(new_game_timer >= 7.0f) {
+		alpha = 1.0f - ((new_game_timer - 7.0f) * 0.5f);
+		rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
+		rdpq_fill_rectangle(0, 0, 320, 240);
 	}
+
+	rdpq_set_mode_standard();
+	rdpq_mode_alphacompare(true);
+	rdpq_set_fog_color(RGBA32(0xFF, 0xFF, 0xFF, alpha * 255));
+     	rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
+	object_draw(newspaper, 0, 0, 0, 0);
 }
 
 static void _title_update_settings(struct controller_data down)
