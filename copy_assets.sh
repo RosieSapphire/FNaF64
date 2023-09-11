@@ -48,9 +48,12 @@ done
 convert assets/ci8/548.png -gravity center \
 	-crop 320x240+0+0 +repage assets/ci8/548.png
 
-# Newspaper
-convert assets/ci8/574.png -gravity center \
-	-crop 320x240+0+0 +repage assets/ci8/574.png
+# Paycheck, Newspaper and Pink Slip Screens
+for i in 574 210 522 523
+do
+	convert assets/ci8/$i.png -gravity center \
+		-crop 320x240+0+0 +repage assets/ci8/$i.png
+done
 
 # Camera Flip Animation
 for i in $(cat refs/camflip.txt)
