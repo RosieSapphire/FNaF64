@@ -20,7 +20,7 @@ assets_conv = $(addprefix filesystem/,$(notdir $(assets_wav:%.wav=%.wav64))) \
               $(addprefix filesystem/ia4/,$(notdir $(assets_ia4:%.png=%.sprite))) \
               $(addprefix filesystem/custom/,$(notdir $(assets_ttf:%.ttf=%.font64)))
 
-AUDIOCONV_FLAGS=--wav-compress 1
+AUDIOCONV_FLAGS=#--wav-compress 1
 MKSPRITE_FLAGS=-c 1
 MKFONT_FLAGS=--size 8
 
