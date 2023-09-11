@@ -175,8 +175,6 @@ int cam_selected = CAM_1A;
 
 rspq_block_t *border_block;
 
-const char *button_paths[2] = {TX_CAM_BUTTON0, TX_CAM_BUTTON1};
-object_t buttons[2];
 object_t map;
 object_t name_atlas;
 object_t missing_footage;
@@ -188,6 +186,8 @@ const char *flip_anim_paths[FLIP_FRAMES] = {
 	TX_CAM_FLIP08, TX_CAM_FLIP09, TX_CAM_FLIP10,
 };
 
+const char *button_paths[2] = {TX_CAM_BUTTON0, TX_CAM_BUTTON1};
+object_t buttons[2];
 object_t views[CAM_COUNT];
 
 /* Shitty fix for lagging in cam 2A */
@@ -244,11 +244,11 @@ void camera_load(void)
 	rdpq_fill_rectangle(10, 230, 311, 231); // bottom
 	border_block = rspq_block_end();
 
-	objects_load(buttons, 2, button_paths);
 	object_load(&map, TX_CAM_MAP);
 	object_load(&name_atlas, TX_CAM_NAME_ATLAS);
 	object_load(&missing_footage, TX_CAM_CORRUPTED);
 	objects_load(flip_anim, FLIP_FRAMES, flip_anim_paths);
+	objects_load(buttons, 2, button_paths);
 
 	wav64_play(&robotvoice_sfx, SFXC_ROBOTVOICE);
 }
