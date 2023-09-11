@@ -72,3 +72,15 @@ Have fun!
 | Finishing Subtitles | So far, there are only subtitles for night 1 |
 | Background Ambience | I haven't added ambience to the nights yet |
 | Goofy Mode | I actually don't know what I wanna do with this. lol |
+
+# Controls
+| Button | Menu Action | Game Action |
+|--|--|--|
+| A | Select | Toggle Lights |
+| B | N/A | Toggle Doors |
+| C | Change Selection | Switch Cameras |
+| R | Toggle Settings | Toggle Camera |
+| L | N/A | Toggle Camera |
+| Z | Delete Save | Toggle Camera |
+| DPad | Change Selection | Switch Cameras |
+| Start | Select | Exit Game |
