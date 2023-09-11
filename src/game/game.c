@@ -27,7 +27,7 @@ static bool is_loaded = false;
 
 float night_timer;
 int night_beat_flags = 0;// NIGHT_5_BEATEN_BIT | NIGHT_6_BEATEN_BIT;
-uint8_t night_num = 3;
+uint8_t night_num = 1;
 static float jumpscare_exit_timer = 40;
 int night_skip_correct;
 float ticks_since_load;
@@ -35,7 +35,7 @@ float time_since_load;
 
 static float circus_timer;
 
-int settings_flags = SET_SUBTITLES_BIT; // SET_ROBOT_CHEAT_BIT;
+int settings_flags = 0;// SET_SUBTITLES_BIT;
 
 static void _game_load(void)
 {
