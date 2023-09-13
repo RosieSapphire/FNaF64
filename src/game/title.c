@@ -68,6 +68,7 @@ static void _title_load(void)
 	wav64_play(&title_music, SFXC_AMBIENCE);
 	new_game_init = false;
 	new_game_timer = 0.0f;
+
 	is_loaded = true;
 }
 
@@ -228,6 +229,7 @@ static void _title_update_deleting(update_parms_t uparms)
 	delete_timer = 0.0f;
 	already_deleted = true;
 	selected = 0;
+	// eepfs_write("fnaf.dat", &night_num, sizeof(night_num));
 }
 
 enum scene title_update(update_parms_t uparms)
@@ -288,7 +290,7 @@ enum scene title_update(update_parms_t uparms)
 		switch(selected) {
 		case 0:
 			night_num = 1;
-			// eepfs_write("fnaf.sav", &night_num, 1);
+			// eepfs_write("fnaf.dat", &night_num, 1);
 			new_game_init = true;
 			return SCENE_TITLE_SCREEN;
 

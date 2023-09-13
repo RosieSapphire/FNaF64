@@ -100,7 +100,8 @@ enum scene night_end_update(update_parms_t uparms)
 	}
 
 	if(timer >= 11.5f) {
-		//eepfs_write("fnaf.sav", &night_num, 1);
+		// eepfs_write("fnaf.dat", &night_num, 1);
+		// debugf("Saved night %d to save file.\n", night_num);
 		rdpq_call_deferred((void(*)(void *))_night_end_unload, NULL);
 		sfx_stop_all();
 
