@@ -26,6 +26,7 @@
 static bool is_loaded = false;
 
 float night_timer;
+bool eeprom_failed = false;
 uint8_t save_data = 1;
 static float jumpscare_exit_timer = 40;
 int night_skip_correct;

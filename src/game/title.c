@@ -41,6 +41,9 @@ object_t settings_option_text;
 
 object_t bind_buttons_text;
 object_t setting_descs;
+object_t eeprom_error;
+
+static bool eeprom_fail_notice = false;
 
 static void _title_load(void)
 {
@@ -61,6 +64,7 @@ static void _title_load(void)
 	object_load(&settings_option_text, TX_SETTINGS_OPTS);
 	object_load(&bind_buttons_text, TX_BIND_BUTTONS_TEXT);
 	object_load(&setting_descs, TX_SETTINGS_DESCS);
+	object_load(&eeprom_error, TX_EEPROM_ERROR);
 
 	blip_trigger(true);
 	wav64_play(&static_sfx, SFXC_STATIC);
@@ -76,6 +80,7 @@ static void _title_unload(void)
 {
 	if(!is_loaded)
 		return;
+	object_unload(&eeprom_error);
 	object_unload(&setting_descs);
 	object_unload(&bind_buttons_text);
 	object_unload(&settings_option_text);
@@ -163,6 +168,18 @@ void title_draw(void)
 
 	blip_draw();
 
+	if(eeprom_failed && !eeprom_fail_notice) {
+		rdpq_set_mode_standard();
+		rdpq_set_prim_color(RGBA32(0x0, 0x0, 0x0, 0xD8));
+		rdpq_mode_combiner(RDPQ_COMBINER_FLAT);
+		rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
+		rdpq_fill_rectangle(0, 0, 320, 240);
+
+		rdpq_set_mode_standard();
+		rdpq_mode_alphacompare(true);
+		object_draw(eeprom_error, 96, 168, 0, 0);
+	}
+
 	if(!new_game_init)
 		return;
 
@@ -228,7 +245,9 @@ static void _title_update_deleting(update_parms_t uparms)
 	delete_timer = 0.0f;
 	already_deleted = true;
 	selected = 0;
-	eepfs_write("fnaf.dat", &save_data, sizeof(save_data));
+	if(!eeprom_failed)
+		eepfs_write("fnaf.dat", &save_data, sizeof(save_data));
+
 	debugf("Wiped save file to night %d\n", save_data);
 }
 
@@ -239,6 +258,11 @@ enum scene title_update(update_parms_t uparms)
 	face_timer = wrapf(face_timer, 1, &tick);
 	if(tick)
 		face_state = rand() % 100;
+
+	if(eeprom_failed && !eeprom_fail_notice) {
+		eeprom_fail_notice = uparms.down.c->start;
+		return SCENE_TITLE_SCREEN;
+	}
 
 	if(new_game_init) {
 		new_game_timer += uparms.dt;
@@ -297,7 +321,8 @@ enum scene title_update(update_parms_t uparms)
 				MODE_20_BEATEN_BIT;
 			save_data |= 1;
 
-			eepfs_write("fnaf.dat", &save_data, 1);
+			if(!eeprom_failed)
+				eepfs_write("fnaf.dat", &save_data, 1);
 			debugf("Reset night to %d with %d%d%d\n",
 					NIGHT_NUM,
 					save_data & NIGHT_5_BEATEN_BIT,

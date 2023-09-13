@@ -30,6 +30,7 @@
 #define TX_SETTINGS_TEXT       TX_ROM_CUSTOM("settings_text.ia4.sprite")
 #define TX_SETTINGS_OPTS       TX_ROM_CUSTOM("settings_opts.ia4.sprite")
 #define TX_SETTINGS_DESCS      TX_ROM_CUSTOM("settings_descs.ia4.sprite")
+#define TX_EEPROM_ERROR        TX_ROM_CUSTOM("eeprom_error.ia4.sprite")
 
 #define TX_NIGHT_TEXT          TX_ROM_CUSTOM("night.ia4.sprite")
 #define TX_NIGHT_NUM_ATLAS     TX_ROM_CUSTOM("night_atlas.ia4.sprite")

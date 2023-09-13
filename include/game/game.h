@@ -7,6 +7,7 @@
 #include "engine/update.h"
 
 extern float night_timer;
+extern bool eeprom_failed;
 
 #define NIGHT_NUM_BITMASK  0b00001111
 #define NIGHT_5_BEATEN_BIT 0b00100000

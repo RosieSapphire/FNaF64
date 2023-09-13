@@ -102,7 +102,8 @@ enum scene night_end_update(update_parms_t uparms)
 	}
 
 	if(timer >= 11.5f) {
-		eepfs_write("fnaf.dat", &save_data, 1);
+		if(!eeprom_failed)
+			eepfs_write("fnaf.dat", &save_data, 1);
 		debugf("Saved night %d and %d%d%d to save file.\n", NIGHT_NUM,
 				(save_data & NIGHT_5_BEATEN_BIT) > 0,
 				(save_data & NIGHT_6_BEATEN_BIT) > 0,
