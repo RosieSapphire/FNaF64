@@ -656,7 +656,7 @@ static void camera_update_robot_voice(double dt)
 	bool chica_in_cam_and_looking =
 		(cam_selected == chica_cam && chica_cam == CAM_4B);
 
-	if(!camera_is_visible || night_num < 4) {
+	if(!camera_is_visible || NIGHT_NUM < 4) {
 		mixer_ch_set_vol(SFXC_ROBOTVOICE, 0, 0);
 		return;
 	}
@@ -681,7 +681,7 @@ static void camera_update_face_glitch(double dt)
 
 	camera_states[cam_selected] &= ~(FACE_GLITCH_MASK);
 
-	if(night_num < 4)
+	if(NIGHT_NUM < 4)
 		return;
 
 	camera_states[cam_selected] |= ((rand() % 30) + 1) << FACE_GLITCH_SHIFT;

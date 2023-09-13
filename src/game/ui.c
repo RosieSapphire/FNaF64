@@ -61,7 +61,7 @@ void ui_draw(void)
 		object_draw_index_y(hour_atlas, 843, 30, 9, 2);
 	}
 
-	object_draw_index_y(night_atlas, 903, 71, 6, night_num);
+	object_draw_index_y(night_atlas, 903, 71, 6, NIGHT_NUM);
 	object_draw(power_left_text, 106, 638, 68, 7);
 	object_draw(usage_text, 74, 674, 36, 7);
 

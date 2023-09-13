@@ -11,7 +11,7 @@
 #include "game/texture_index.h"
 #include "game/night_end.h"
 
-static object_t six, five, am;
+static object_t am, six, five;
 static float timer;
 static bool is_loaded = false;
 static bool played_cheer;
@@ -20,24 +20,26 @@ static void _night_end_load(void)
 {
 	if(is_loaded)
 		return;
+
 	timer = 0.0f;
-	night_beat_flags |= (night_num == 5) * NIGHT_5_BEATEN_BIT;
-	night_beat_flags |= (night_num == 6) * NIGHT_6_BEATEN_BIT;
+	save_data |= (NIGHT_NUM == 5) * NIGHT_5_BEATEN_BIT;
+	save_data |= (NIGHT_NUM == 6) * NIGHT_6_BEATEN_BIT;
 
 	if(freddy_ai_level == 20 && bonnie_ai_level == 20 &&
 			chica_ai_level == 20 && foxy_ai_level == 20 &&
 			!(settings_flags & SET_ROBOT_CHEAT_BIT) &&
 			!(settings_flags & SET_FAST_NIGHT_BIT))
-		night_beat_flags |= (night_num == 7) * MODE_20_BEATEN_BIT;
+		save_data |= (NIGHT_NUM == 7) * MODE_20_BEATEN_BIT;
 
-	night_num++;
-	object_load(&six, TX_END_SIX);
-	object_load(&five, TX_END_FIVE);
-	object_load(&am, TX_END_AM);
+	save_data++;
 	mixer_ch_set_vol(SFXC_AMBIENCE, 0.8f, 0.8f);
 	wav64_play(&chimes_sfx, SFXC_AMBIENCE);
-	played_cheer = false;
 
+	object_load(&am, TX_END_AM);
+	object_load(&six, TX_END_SIX);
+	object_load(&five, TX_END_FIVE);
+
+	played_cheer = false;
 	is_loaded = true;
 }
 
@@ -100,12 +102,15 @@ enum scene night_end_update(update_parms_t uparms)
 	}
 
 	if(timer >= 11.5f) {
-		// eepfs_write("fnaf.dat", &night_num, 1);
-		// debugf("Saved night %d to save file.\n", night_num);
+		eepfs_write("fnaf.dat", &save_data, 1);
+		debugf("Saved night %d and %d%d%d to save file.\n", NIGHT_NUM,
+				(save_data & NIGHT_5_BEATEN_BIT) > 0,
+				(save_data & NIGHT_6_BEATEN_BIT) > 0,
+				(save_data & MODE_20_BEATEN_BIT) > 0);
 		rdpq_call_deferred((void(*)(void *))_night_end_unload, NULL);
 		sfx_stop_all();
 
-		if(night_num < 6)
+		if(NIGHT_NUM < 6)
 			return SCENE_WHICH_NIGHT;
 
 		return SCENE_PAYCHECK;

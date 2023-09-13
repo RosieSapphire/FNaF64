@@ -66,7 +66,6 @@ Have fun!
 # To-Do List
 | Task | Description | Priority |
 |--|--|--|
-| Save Data EEPROM4K | Currently, there is no way to actually save the game | High |
 | Death Moaning | When a robot gets into your room and your camera is up, you should head moaning | Medium |
 | Random for Pic | There is a random value that dictates what you'll see in certain cameras | Low |
 | Background Ambience | I haven't added ambience to the nights yet | Low |

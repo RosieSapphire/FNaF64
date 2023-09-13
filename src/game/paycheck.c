@@ -55,7 +55,7 @@ void paycheck_draw(void)
 	rdpq_mode_alphacompare(true);
 	rdpq_set_fog_color(RGBA32(0xFF, 0xFF, 0xFF, alpha * 255));
      	rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
-	object_draw(screens[night_num - 6], 0, 0, 0, 0);
+	object_draw(screens[NIGHT_NUM - 6], 0, 0, 0, 0);
 }
 
 enum scene paycheck_update(update_parms_t uparms)

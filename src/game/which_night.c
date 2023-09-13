@@ -32,13 +32,13 @@ static void _which_night_load(void)
 	is_loaded = true;
 	blip_trigger(true);
 
-	if(night_num == 7)
+	if(NIGHT_NUM == 7)
 		return;
 
-	bonnie_ai_level = night_ai_lut[night_num - 1][0];
-	chica_ai_level = night_ai_lut[night_num - 1][1];
-	foxy_ai_level = night_ai_lut[night_num - 1][2];
-	freddy_ai_level = night_ai_lut[night_num - 1][3];
+	bonnie_ai_level = night_ai_lut[NIGHT_NUM - 1][0];
+	chica_ai_level = night_ai_lut[NIGHT_NUM - 1][1];
+	foxy_ai_level = night_ai_lut[NIGHT_NUM - 1][2];
+	freddy_ai_level = night_ai_lut[NIGHT_NUM - 1][3];
 }
 
 static void _which_night_unload(void)
@@ -57,7 +57,7 @@ void which_night_draw(void)
 	rdpq_fill_rectangle(0, 0, 320, 240);
 	rdpq_set_mode_standard();
 	object_draw_index_y(which_night_atlas, 372, 270, 11, 0);
-	object_draw_index_y(which_night_atlas, 373, 336, 11, night_num);
+	object_draw_index_y(which_night_atlas, 373, 336, 11, NIGHT_NUM);
 
 	float fade = clampf((timer - 70) / 60.0f, 0, 1);
 	rdpq_set_prim_color(RGBA32(0x0, 0x0, 0x0, fade * 255));

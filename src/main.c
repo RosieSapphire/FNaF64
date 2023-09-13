@@ -43,7 +43,6 @@ static void n64_init(void)
 	controller_init();
 	subtitles_load();
 
-	/*
 	eepfs_entry_t save_entry = {"fnaf.dat", 1};
 	int eepfs_result = eepfs_init(&save_entry, 1);
 	assertf(eepfs_result == EEPFS_ESUCCESS, "Failed to init EEPFS.\n");
@@ -51,16 +50,15 @@ static void n64_init(void)
 	if(!eepfs_verify_signature()) {
 		debugf("EEPFS verification failed. Wiping save filesystem.\n");
 		eepfs_wipe();
-		night_num = 1;
-		eepfs_write("fnaf.dat", &night_num, sizeof(night_num));
+		save_data = 1;
+		eepfs_write("fnaf.dat", &save_data, sizeof(save_data));
 	}
 
-	int read_result = eepfs_read("fnaf.dat", &night_num, sizeof(night_num));
+	int read_result = eepfs_read("fnaf.dat", &save_data, sizeof(save_data));
 	if(read_result != EEPFS_ESUCCESS)
 		debugf("Failed to read from EEPFS.\n");
 	else
-		debugf("Sucessfully loaded save: %u\n", night_num);
-		*/
+		debugf("Sucessfully loaded save: %u\n", save_data);
 }
 
 int main(void)

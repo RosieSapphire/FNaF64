@@ -26,8 +26,7 @@
 static bool is_loaded = false;
 
 float night_timer;
-int night_beat_flags = 0;// NIGHT_5_BEATEN_BIT | NIGHT_6_BEATEN_BIT;
-uint8_t night_num = 1;
+uint8_t save_data = 1;
 static float jumpscare_exit_timer = 40;
 int night_skip_correct;
 float ticks_since_load;
@@ -58,7 +57,7 @@ static void _game_load(void)
 	golden_freddy_load();
 	hallucinations_load();
 	
-	switch(night_num) {
+	switch(NIGHT_NUM) {
 	case 1:
 		wav64_play(&phonecall1, SFXC_PHONECALL);
 		break;
@@ -149,7 +148,7 @@ void game_draw(void)
 
 	if(settings_flags & SET_SUBTITLES_BIT &&
 			mixer_ch_playing(SFXC_PHONECALL)) {
-		subtitles_draw(night_timer, night_num, time_since_load);
+		subtitles_draw(night_timer, NIGHT_NUM, time_since_load);
 	}
 
 	ui_draw();
@@ -208,7 +207,7 @@ enum scene game_update(update_parms_t uparms)
 		*sorry = 69;
 	}
 
-	if(!camera_is_visible && uparms.down.c->up && night_num <= 5)
+	if(!camera_is_visible && uparms.down.c->C_up && NIGHT_NUM <= 5)
 		mixer_ch_stop(SFXC_PHONECALL);
 
 	_game_handle_cheat_code(uparms.down);

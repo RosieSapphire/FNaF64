@@ -143,9 +143,9 @@ void title_draw(void)
 	rdpq_mode_alphacompare(true);
 
 	int star_count = 0;
-	star_count += (night_beat_flags & NIGHT_5_BEATEN_BIT) > 0;
-	star_count += (night_beat_flags & NIGHT_6_BEATEN_BIT) > 0;
-	star_count += (night_beat_flags & MODE_20_BEATEN_BIT) > 0;
+	star_count += (save_data & NIGHT_5_BEATEN_BIT) > 0;
+	star_count += (save_data & NIGHT_6_BEATEN_BIT) > 0;
+	star_count += (save_data & MODE_20_BEATEN_BIT) > 0;
 	available = clampf(star_count, 0, 2) + 2;
 	for(int i = 0; i < star_count; i++)
 		object_draw(star, 93 + 77 * i, 350, 28, 27);
@@ -156,7 +156,7 @@ void title_draw(void)
 	object_draw(selector, 40, 429 + selected * 66, 0, 0);
 
 	if(selected == 1) {
-		int clamped = clampf(night_num, 1, 5);
+		int clamped = clampf(NIGHT_NUM, 1, 5);
 		object_draw(night_text, 444, 509, 0, 0);
 		object_draw_index_y(night_atlas, 512, 509, 6, clamped);
 	}
@@ -224,12 +224,12 @@ static void _title_update_deleting(update_parms_t uparms)
 		return;
 
 	blip_trigger(false);
-	night_num = 1;
-	night_beat_flags = 0;
+	save_data = 1;
 	delete_timer = 0.0f;
 	already_deleted = true;
 	selected = 0;
-	// eepfs_write("fnaf.dat", &night_num, sizeof(night_num));
+	eepfs_write("fnaf.dat", &save_data, sizeof(save_data));
+	debugf("Wiped save file to night %d\n", save_data);
 }
 
 enum scene title_update(update_parms_t uparms)
@@ -287,31 +287,46 @@ enum scene title_update(update_parms_t uparms)
 	}
 
 	if(uparms.down.c->start || uparms.down.c->A) {
+		uint8_t tmp = save_data & (NIGHT_5_BEATEN_BIT |
+				NIGHT_6_BEATEN_BIT | MODE_20_BEATEN_BIT);
 		switch(selected) {
 		case 0:
-			night_num = 1;
-			// eepfs_write("fnaf.dat", &night_num, 1);
+			/* Just reset the nights, not the stars */
+			save_data &= NIGHT_5_BEATEN_BIT |
+				NIGHT_6_BEATEN_BIT |
+				MODE_20_BEATEN_BIT;
+			save_data |= 1;
+
+			eepfs_write("fnaf.dat", &save_data, 1);
+			debugf("Reset night to %d with %d%d%d\n",
+					NIGHT_NUM,
+					save_data & NIGHT_5_BEATEN_BIT,
+					save_data & NIGHT_6_BEATEN_BIT,
+					save_data & MODE_20_BEATEN_BIT);
 			new_game_init = true;
 			return SCENE_TITLE_SCREEN;
 
 		case 1:
 			rdpq_call_deferred((void (*)(void *))_title_unload,
 					NULL);
-			night_num = night_num > 5 ? 5 : night_num;
+			save_data = NIGHT_NUM > 5 ? 5 : NIGHT_NUM;
+			save_data |= tmp;
 			sfx_stop_all();
 			return SCENE_WHICH_NIGHT;
 
 		case 2:
 			rdpq_call_deferred((void (*)(void *))_title_unload,
 					NULL);
-			night_num = 6;
+			save_data = 6;
+			save_data |= tmp;
 			sfx_stop_all();
 			return SCENE_WHICH_NIGHT;
 
 		case 3:
 			rdpq_call_deferred((void (*)(void *))_title_unload,
 					NULL);
-			night_num = 7;
+			save_data = 7;
+			save_data |= tmp;
 			return SCENE_CUSTOM_NIGHT;
 		}
 	}
