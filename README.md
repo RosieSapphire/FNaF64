@@ -10,6 +10,10 @@ I would like to give a special thanks to [Rasky](https://github.com/rasky) and
 [Buu342](https://github.com/buu342) for helping me along my Nintendo 64 development
 journey, and I'm really happy with this so far.
 
+# YouTube Tutorial
+For those of you who are more visual learners, [https://youtu.be/cSOmlyvK9gQ](here is a tutorial)
+I made for how to do everything necessary to compile the ROM.
+
 # Prerequisites
 ## Software
 * [CTFAK 2.0](https://github.com/CTFAK/CTFAK2.0)
