@@ -199,11 +199,11 @@ enum scene power_down_update(update_parms_t uparms)
 		break;
 	}
 
-	room_turn -= uparms.dt * uparms.held.c->x * ROOM_TURN_SPEED;
+	room_turn -= uparms.dt * uparms.held.x * ROOM_TURN_SPEED;
 	room_turn = clampf(room_turn, ROOM_TURN_MIN, 0);
 
 	if(fabsf(room_turn + 193) < 32 &&
-			(uparms.down.c->A || uparms.down.c->B))
+			(uparms.pressed.a || uparms.pressed.b))
 		wav64_play(&boop_sfx, SFXC_BLIP);
 
 	return SCENE_POWER_DOWN;

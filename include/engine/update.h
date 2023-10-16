@@ -5,7 +5,7 @@
 
 typedef struct {
 	float dt;
-	struct controller_data held, down;
+	joypad_buttons_t held, pressed;
 } update_parms_t;
 
 #endif /* ENGINE_UPDATE_H_ */

@@ -40,7 +40,7 @@ static void n64_init(void)
 	mixer_init(SFXC_COUNT);
 
 	timer_init();
-	controller_init();
+	joypad_init();
 	subtitles_load();
 
 	eepfs_entry_t save_entry = {"fnaf.dat", sizeof(save_data)};
@@ -79,11 +79,11 @@ int main(void)
 		long tick_delta = TICKS_DISTANCE(ticks_last, ticks_now);
 		ticks_last = ticks_now;
 
-		controller_scan();
+		joypad_poll();
 		const update_parms_t uparms = {
 			.dt = (float)tick_delta / (float)TICKS_PER_SECOND,
-			.held = get_keys_held(),
-			.down = get_keys_down(),
+			.held = joypad_get_buttons_held(JOYPAD_PORT_1),
+			.pressed = joypad_get_buttons_pressed(JOYPAD_PORT_1),
 		};
 
 		void (*draw_funcs[SCENE_COUNT])(void) = {

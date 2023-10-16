@@ -201,12 +201,12 @@ draw_newspaper:
 	object_draw(newspaper, 0, 0, 0, 0);
 }
 
-static void _title_update_settings(struct controller_data down)
+static void _title_update_settings(joypad_buttons_t down)
 {
-	if(down.c->L)
+	if(down.l)
 		wav64_play(&boop_sfx, SFXC_BLIP);
 
-	if(down.c->down || down.c->C_down) {
+	if(down.d_down || down.c_down) {
 		blip_trigger(false);
 		selected_setting++;
 	}
@@ -214,7 +214,7 @@ static void _title_update_settings(struct controller_data down)
 	if(selected_setting >= SETTING_COUNT)
 		selected_setting = 0;
 
-	if(down.c->up || down.c->C_up) {
+	if(down.d_up || down.c_up) {
 		blip_trigger(false);
 		selected_setting--;
 	}
@@ -222,14 +222,14 @@ static void _title_update_settings(struct controller_data down)
 	if(selected_setting < 0)
 		selected_setting = SETTING_COUNT - 1;
 
-	settings_flags ^= (down.c->A << selected_setting);
+	settings_flags ^= (down.a << selected_setting);
 }
 
 static void _title_update_deleting(update_parms_t uparms)
 {
 	static float delete_timer = 0.0f;
 	static bool already_deleted = false;
-	if(uparms.held.c->Z) {
+	if(uparms.held.z) {
 		if(!already_deleted)
 			delete_timer += uparms.dt;
 	} else {
@@ -260,7 +260,7 @@ enum scene title_update(update_parms_t uparms)
 		face_state = rand() % 100;
 
 	if(eeprom_failed && !eeprom_fail_notice) {
-		eeprom_fail_notice = uparms.down.c->start;
+		eeprom_fail_notice = uparms.pressed.start;
 		return SCENE_TITLE_SCREEN;
 	}
 
@@ -269,9 +269,9 @@ enum scene title_update(update_parms_t uparms)
 
 		/* Check for skipping */
 		const bool a_b_or_start_down =
-			(uparms.down.c->A +
-			uparms.down.c->B +
-			uparms.down.c->start) > 0;
+			(uparms.pressed.a +
+			uparms.pressed.a +
+			uparms.pressed.start) > 0;
 		const bool can_skip =
 			new_game_timer < 7.0f && new_game_timer > 2.0f;
 		if(a_b_or_start_down && can_skip)
@@ -289,28 +289,28 @@ enum scene title_update(update_parms_t uparms)
 
 	_title_update_deleting(uparms);
 
-	settings_triggered ^= uparms.down.c->R;
+	settings_triggered ^= uparms.pressed.r;
 	if(settings_triggered) {
-		_title_update_settings(uparms.down);
+		_title_update_settings(uparms.pressed);
 		return SCENE_TITLE_SCREEN;
 	}
 
 	/* inputs */
-	if(uparms.down.c->up || uparms.down.c->C_up) {
+	if(uparms.pressed.d_up || uparms.pressed.c_up) {
 		selected--;
 		blip_trigger(false);
 		if(selected < 0)
 			selected = available - 1;
 	}
 
-	if(uparms.down.c->down || uparms.down.c->C_down) {
+	if(uparms.pressed.d_down || uparms.pressed.c_down) {
 		selected++;
 		blip_trigger(false);
 		if(selected >= available)
 			selected = 0;
 	}
 
-	if(uparms.down.c->start || uparms.down.c->A) {
+	if(uparms.pressed.start || uparms.pressed.a) {
 		uint8_t tmp = save_data & (NIGHT_5_BEATEN_BIT |
 				NIGHT_6_BEATEN_BIT | MODE_20_BEATEN_BIT);
 		switch(selected) {

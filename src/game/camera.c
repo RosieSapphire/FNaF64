@@ -434,15 +434,16 @@ void camera_ui_draw(void)
 
 }
 
-static void camera_flip_update(double dt, struct controller_data down)
+static void camera_flip_update(const update_parms_t uparms)
 {
 	int frame = (int)flip_timer;
 	camera_was_using = camera_is_using;
-	const bool button_down = (down.c->R || down.c->L || down.c->Z);
+	const bool button_down =
+		(uparms.pressed.r || uparms.pressed.l || uparms.pressed.z);
 	const bool flip_anim_stopped = (frame == 0 || frame == FLIP_FRAMES);
 	camera_is_using ^= button_down && flip_anim_stopped;
 
-	flip_timer += (camera_is_using * 2 - 1) * dt * speed_fps(50);
+	flip_timer += (camera_is_using * 2 - 1) * uparms.dt * speed_fps(50);
 	flip_timer = clampf(flip_timer, 0, FLIP_FRAMES);
 	frame = (int)flip_timer;
 }
@@ -474,19 +475,19 @@ static void camera_handle_sfx(void)
 	return;
 }
 
-static void camera_update_turn_manual(double dt, struct controller_data held)
+static void camera_update_turn_manual(const update_parms_t uparms)
 {
 	if(!camera_is_visible)
 		return;
 
-	view_turn -= held.c->x * dt * 6;
+	view_turn -= uparms.held.x * uparms.dt * 6;
 	view_turn = clampf(view_turn, -640, 0);
 }
 
-static void camera_update_turn(double dt, struct controller_data held)
+static void camera_update_turn(const update_parms_t uparms)
 {
 	if(settings_flags & SET_MANUAL_CAM_TURN_BIT) {
-		camera_update_turn_manual(dt, held);
+		camera_update_turn_manual(uparms);
 		return;
 	}
 
@@ -497,7 +498,7 @@ static void camera_update_turn(double dt, struct controller_data held)
 	switch(view_turn_state) {
 	case 0:
 		if(view_turn_timer < 1.0f)
-			view_turn_timer += dt / 5.0f;
+			view_turn_timer += uparms.dt / 5.0f;
 		else {
 			view_turn_timer = 1.0f;
 			view_turn_state = 1;
@@ -507,7 +508,7 @@ static void camera_update_turn(double dt, struct controller_data held)
 
 	case 1:
 		if(view_stop_timer > 0)
-			view_stop_timer -= dt;
+			view_stop_timer -= uparms.dt;
 		else {
 			view_stop_timer = 0;
 			view_turn_state = 2;
@@ -516,7 +517,7 @@ static void camera_update_turn(double dt, struct controller_data held)
 
 	case 2:
 		if(view_turn_timer > 0.0f)
-			view_turn_timer -= dt / 5.0f;
+			view_turn_timer -= uparms.dt / 5.0f;
 		else {
 			view_turn_timer = 0.0f;
 			view_turn_state = 3;
@@ -526,7 +527,7 @@ static void camera_update_turn(double dt, struct controller_data held)
 
 	case 3:
 		if(view_stop_timer > 0)
-			view_stop_timer -= dt;
+			view_stop_timer -= uparms.dt;
 		else {
 			view_stop_timer = 0;
 			view_turn_state = 0;
@@ -607,7 +608,7 @@ static void camera_update_button_blink(double dt)
 	button_blink ^= blink;
 }
 
-static void camera_check_switching(struct controller_data down)
+static void camera_check_switching(const update_parms_t uparms)
 {
 	if(cam_selected == CAM_2B &&
 			(golden_freddy_progress == 1 ||
@@ -615,10 +616,10 @@ static void camera_check_switching(struct controller_data down)
 		return;
 
 	int dirs[4] = {
-		down.c->C_left || down.c->left,
-		down.c->C_right || down.c->right,
-		down.c->C_up || down.c->up,
-		down.c->C_down || down.c->down,
+		uparms.pressed.c_left  || uparms.pressed.d_left,
+		uparms.pressed.c_right || uparms.pressed.d_right,
+		uparms.pressed.c_up    || uparms.pressed.d_up,
+		uparms.pressed.c_down  || uparms.pressed.d_down,
 	};
 
 	for(int i = 0; i < 4; i++) {
@@ -689,7 +690,7 @@ static void camera_update_face_glitch(double dt)
 
 void camera_update(update_parms_t uparms)
 {
-	camera_flip_update(uparms.dt, uparms.down);
+	camera_flip_update(uparms);
 	camera_was_visible = camera_is_visible;
 	camera_is_visible = ((int)flip_timer == FLIP_FRAMES);
 
@@ -698,14 +699,14 @@ void camera_update(update_parms_t uparms)
 
 	camera_handle_sfx();
 	camera_update_glitch_timer(uparms.dt);
-	camera_update_turn(uparms.dt, uparms.held);
+	camera_update_turn(uparms);
 
 	if(!camera_is_visible)
 		return;
 
 	camera_update_flicker(uparms.dt);
 	camera_update_button_blink(uparms.dt);
-	camera_check_switching(uparms.down);
+	camera_check_switching(uparms);
 
 	/* if night is greater than 4 */
 	camera_update_face_glitch(uparms.dt);

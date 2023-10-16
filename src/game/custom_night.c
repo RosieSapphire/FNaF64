@@ -92,8 +92,8 @@ void custom_night_draw(void)
 
 enum scene custom_night_update(update_parms_t uparms)
 {
-	ai_selected += uparms.down.c->right - uparms.down.c->left;
-	ai_selected += uparms.down.c->down* 2 - uparms.down.c->up * 2;
+	ai_selected += uparms.pressed.d_right - uparms.pressed.d_left;
+	ai_selected += uparms.pressed.d_down * 2 - uparms.pressed.d_up * 2;
 	ai_selected &= 3;
 
 	int *ais[4] = {
@@ -106,7 +106,7 @@ enum scene custom_night_update(update_parms_t uparms)
 	static float held_timer = 0.0f;
 	static float held_tick = 0.0f;
 
-	if(uparms.held.c->A || uparms.held.c->B)
+	if(uparms.held.a || uparms.held.b)
 		held_timer += uparms.dt;
 	else
 		held_timer = 0;
@@ -114,15 +114,15 @@ enum scene custom_night_update(update_parms_t uparms)
 	if(held_timer >= 0.35f) {
 		bool held_do;
 		held_tick = wrapf(held_tick + uparms.dt, 0.06f, &held_do);
-		**(ais + ai_selected) += held_do * uparms.held.c->A;
-		**(ais + ai_selected) -= held_do * uparms.held.c->B;
+		**(ais + ai_selected) += held_do * uparms.held.a;
+		**(ais + ai_selected) -= held_do * uparms.held.b;
 	}
 
-	**(ais + ai_selected) += uparms.down.c->A;
-	**(ais + ai_selected) -= uparms.down.c->B;
+	**(ais + ai_selected) += uparms.pressed.a;
+	**(ais + ai_selected) -= uparms.pressed.b;
 	**(ais + ai_selected) = clampf(**(ais + ai_selected), 0, 20);
 	
-	if(uparms.down.c->start) {
+	if(uparms.pressed.start) {
 		if(freddy_ai_level == 1 && bonnie_ai_level == 9 &&
 				chica_ai_level == 8 && foxy_ai_level == 7)
 			assertf(0, "Insert Golden Freddy jumpscare here.\n");

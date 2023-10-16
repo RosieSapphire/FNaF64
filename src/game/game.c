@@ -157,11 +157,11 @@ void game_draw(void)
 	hallucinations_draw();
 }
 
-static void _game_handle_cheat_code(struct controller_data down)
+static void _game_handle_cheat_code(joypad_buttons_t down)
 {
 	int cheat_inputs[6] = {
-		down.c->C_up, down.c->C_down, down.c->C_left,
-		down.c->C_right, down.c->B, down.c->A,
+		down.c_up,    down.c_down, down.c_left,
+		down.c_right, down.b,      down.a,
 	};
 
 	int cheat_indis[10] = {0, 0, 1, 1, 2, 3, 2, 3, 4, 5};
@@ -208,10 +208,10 @@ enum scene game_update(update_parms_t uparms)
 		*sorry = 69;
 	}
 
-	if(!camera_is_visible && uparms.down.c->C_up && NIGHT_NUM <= 5)
+	if(!camera_is_visible && uparms.pressed.c_up && NIGHT_NUM <= 5)
 		mixer_ch_stop(SFXC_PHONECALL);
 
-	_game_handle_cheat_code(uparms.down);
+	_game_handle_cheat_code(uparms.pressed);
 	_game_update_random_events(uparms.dt);
 
 	night_timer += uparms.dt;
@@ -268,7 +268,7 @@ enum scene game_update(update_parms_t uparms)
 		}
 	}
 	
-	if(uparms.down.c->start) {
+	if(uparms.pressed.start) {
 		sfx_stop_all();
 		rdpq_call_deferred((void (*)(void *))_game_unload, NULL);
 		return SCENE_TITLE_SCREEN;

@@ -61,8 +61,8 @@ enum scene game_over_update(update_parms_t uparms)
 	if(show_over_screen)
 		sfx_stop_all();
 
-	bool attempt_skip = uparms.down.c->A ||
-		uparms.down.c->B || uparms.down.c->start;
+	bool attempt_skip = uparms.pressed.a ||
+		uparms.pressed.b || uparms.pressed.start;
 	if(attempt_skip && show_over_screen) {
 		rdpq_call_deferred((void(*)(void *))_game_over_unload, NULL);
 		over_timer = 0.0f;

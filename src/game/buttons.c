@@ -86,23 +86,23 @@ static void button_left_update(update_parms_t uparms)
 	}
 
 	if(bonnie_cam == YOURE_FUCKED) {
-		if(uparms.down.c->B || uparms.down.c->A)
+		if(uparms.pressed.b || uparms.pressed.a)
 			wav64_play(&error_sfx, SFXC_BLIP);
 		return;
 	}
 
-	if(uparms.down.c->B && left_door_can_interact) {
+	if(uparms.pressed.b && left_door_can_interact) {
 		button_state ^= BUTTON_LEFT_DOOR;
 		wav64_play(&door_sfx, SFXC_DOOR);
 	}
 
 	if(settings_flags & SET_LIGHT_HOLD_BIT) {
 		button_state &= ~(BUTTON_LEFT_LIGHT);
-		button_state |= BUTTON_LEFT_LIGHT * uparms.held.c->A;
+		button_state |= BUTTON_LEFT_LIGHT * uparms.held.a;
 		return;
 	}
 
-	if(uparms.down.c->A) {
+	if(uparms.pressed.a) {
 		button_state ^= BUTTON_LEFT_LIGHT;
 		button_state &= ~BUTTON_RIGHT_LIGHT;
 	}
@@ -119,23 +119,23 @@ static void button_right_update(update_parms_t uparms)
 	}
 
 	if(chica_cam == YOURE_FUCKED) {
-		if(uparms.down.c->B || uparms.down.c->A)
+		if(uparms.pressed.b || uparms.pressed.a)
 			wav64_play(&error_sfx, SFXC_BLIP);
 		return;
 	}
 
-	if(uparms.down.c->B && right_door_can_interact) {
+	if(uparms.pressed.b && right_door_can_interact) {
 		button_state ^= BUTTON_RIGHT_DOOR;
 		wav64_play(&door_sfx, SFXC_DOOR);
 	}
 
 	if(settings_flags & SET_LIGHT_HOLD_BIT) {
 		button_state &= ~(BUTTON_RIGHT_LIGHT);
-		button_state |= BUTTON_RIGHT_LIGHT * uparms.held.c->A;
+		button_state |= BUTTON_RIGHT_LIGHT * uparms.held.a;
 		return;
 	}
 
-	if(uparms.down.c->A) {
+	if(uparms.pressed.a) {
 		button_state ^= BUTTON_RIGHT_LIGHT;
 		button_state &= ~BUTTON_LEFT_LIGHT;
 	}

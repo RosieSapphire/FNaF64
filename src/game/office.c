@@ -114,13 +114,13 @@ void office_draw(void)
 
 static void _office_update_turn_normal(update_parms_t uparms)
 {
-	office_turn -= uparms.dt * uparms.held.c->x * ROOM_TURN_SPEED;
+	office_turn -= uparms.dt * uparms.held.x * ROOM_TURN_SPEED;
 	office_turn = clampf(office_turn, ROOM_TURN_MIN, 0);
 }
 
 static void _office_update_turn_smooth(update_parms_t uparms)
 {
-	office_turn_lerp -= uparms.dt * uparms.held.c->x * ROOM_TURN_SPEED;
+	office_turn_lerp -= uparms.dt * uparms.held.x * ROOM_TURN_SPEED;
 	office_turn_lerp = clampf(office_turn_lerp, ROOM_TURN_MIN, 0);
 
 	if(fabsf(office_turn_lerp - office_turn) < 0.001f) {
@@ -176,6 +176,6 @@ void office_update(update_parms_t uparms)
 		return;
 
 	if(fabsf(office_turn + 193) < 32 &&
-			(uparms.down.c->A || uparms.down.c->B))
+			(uparms.pressed.a || uparms.pressed.b))
 		wav64_play(&boop_sfx, SFXC_BLIP);
 }

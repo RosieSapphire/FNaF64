@@ -62,8 +62,8 @@ enum scene paycheck_update(update_parms_t uparms)
 {
 	timer += uparms.dt;
 
-	const bool a_b_or_start_down = (uparms.down.c->A + uparms.down.c->B +
-		uparms.down.c->start) > 0;
+	const bool a_b_or_start_down =
+		(uparms.pressed.a + uparms.pressed.b + uparms.pressed.start);
 	const bool can_skip = timer < 7.0f && timer > 2.0f;
 	if(a_b_or_start_down && can_skip)
 		timer = 17.0f;
