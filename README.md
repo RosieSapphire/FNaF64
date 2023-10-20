@@ -70,7 +70,8 @@ Have fun!
 # To-Do List
 | Task | Description | Priority |
 |--|--|--|
-| Death Moaning | When a robot gets into your room and your camera is up, you should head moaning | Medium |
+| Death Moaning | When a robot gets into your room and your camera is up, you should hear moaning | Medium |
+| Static Deltatime | Currently, the game uses a dynamic deltatime, which is fine, but there are better ways. | Medium |
 | Random for Pic | There is a random value that dictates what you'll see in certain cameras | Low |
 | Background Ambience | I haven't added ambience to the nights yet | Low |
 | Goofy Mode | I actually don't know what I wanna do with this. lol | Really Low |
