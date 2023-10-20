@@ -114,13 +114,17 @@ void office_draw(void)
 
 static void _office_update_turn_normal(update_parms_t uparms)
 {
-	office_turn -= uparms.dt * uparms.sticks.stick_x * ROOM_TURN_SPEED;
+	const int stick_clamped = icutoff(uparms.sticks.stick_x, 10);
+	const float turn_amount = stick_clamped * ROOM_TURN_SPEED;
+	office_turn -= turn_amount * uparms.dt;
 	office_turn = clampf(office_turn, ROOM_TURN_MIN, 0);
 }
 
 static void _office_update_turn_smooth(update_parms_t uparms)
 {
-	office_turn_lerp -= uparms.dt * uparms.sticks.stick_x * ROOM_TURN_SPEED;
+	const int stick_clamped = icutoff(uparms.sticks.stick_x, 10);
+	const float turn_amount = stick_clamped * ROOM_TURN_SPEED;
+	office_turn_lerp -= turn_amount * uparms.dt;
 	office_turn_lerp = clampf(office_turn_lerp, ROOM_TURN_MIN, 0);
 
 	if(fabsf(office_turn_lerp - office_turn) < 0.001f) {

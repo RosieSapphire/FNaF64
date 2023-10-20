@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include <math.h>
 
 #include "engine/util.h"
@@ -24,6 +25,22 @@ float wrapf(float x, float max, bool *has_wrapped)
 
 	if(has_wrapped)
 		*has_wrapped = wrapped;
+
+	return x;
+}
+
+float fcutoff(float x, float threshold)
+{
+	if(fabsf(x) < threshold)
+		return 0.0f;
+
+	return x;
+}
+
+int icutoff(int x, int threshold)
+{
+	if(abs(x) < threshold)
+		return 0.0f;
 
 	return x;
 }
