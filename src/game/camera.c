@@ -34,6 +34,12 @@ const int cam_button_pos[CAM_COUNT][2] = {
 	{1195, 437}, // 7
 };
 
+static const char *flip_anim_paths[FLIP_FRAMES] = {
+	TX_CAM_FLIP00, TX_CAM_FLIP01, TX_CAM_FLIP02, TX_CAM_FLIP03,
+	TX_CAM_FLIP04, TX_CAM_FLIP05, TX_CAM_FLIP06, TX_CAM_FLIP07,
+	TX_CAM_FLIP08, TX_CAM_FLIP09, TX_CAM_FLIP10,
+};
+
 static const char *fox_paths[4] = {
 	TX_CAM_1C0, TX_CAM_1C1, TX_CAM_1C2, TX_CAM_1C3,
 };
@@ -100,7 +106,7 @@ camera_state_t cam_3_states[] = {
 	{TX_CAM_3_BON,   BONNIE_BIT | ROOM_SPOT_BIT},
 };
 
-camera_state_t cam_4a_states[] = {
+static camera_state_t cam_4a_states[] = {
 	{TX_CAM_4A_EMPTY, 0},
 	{TX_CAM_4A_CHIC0, CHICA_BIT},
 	{TX_CAM_4A_CHIC1, CHICA_BIT | ROOM_SPOT_BIT},
@@ -109,7 +115,7 @@ camera_state_t cam_4a_states[] = {
 	{TX_CAM_4A_FRED,  FREDDY_BIT},
 };
 
-camera_state_t cam_4b_states[] = {
+static camera_state_t cam_4b_states[] = {
 	{TX_CAM_4B_EMPTY, 0},
 	{TX_CAM_4B_CHIC0, CHICA_BIT},
 	{TX_CAM_4B_CHIC0, CHICA_BIT | ROOM_SPOT_BIT},
@@ -118,13 +124,13 @@ camera_state_t cam_4b_states[] = {
 	{TX_CAM_4B_FRED,  FREDDY_BIT},
 };
 
-camera_state_t cam_5_states[] = {
+static camera_state_t cam_5_states[] = {
 	{TX_CAM_5_EMPTY, 0},
 	{TX_CAM_5_BON0,  BONNIE_BIT},
 	{TX_CAM_5_BON1,  BONNIE_BIT | ROOM_SPOT_BIT},
 };
 
-camera_state_t cam_7_states[] = {
+static camera_state_t cam_7_states[] = {
 	{TX_CAM_7_EMPTY, 0},
 	{TX_CAM_7_CHIC0, CHICA_BIT},
 	{TX_CAM_7_CHIC1, CHICA_BIT | ROOM_SPOT_BIT},
@@ -133,7 +139,7 @@ camera_state_t cam_7_states[] = {
 	{TX_CAM_7_FRED,  FREDDY_BIT | CHICA_BIT | ROOM_SPOT_BIT},
 };
 
-int cam_state_counts[CAM_COUNT] = {
+static int cam_state_counts[CAM_COUNT] = {
 	 5, // 1A
 	14, // 1B
 	 0, // 1C
@@ -147,75 +153,47 @@ int cam_state_counts[CAM_COUNT] = {
 	 6, // 7
 };
 
-camera_state_t *cam_states[CAM_COUNT] = {
+static camera_state_t *cam_states[CAM_COUNT] = {
 	cam_1a_states, cam_1b_states, NULL,
 	cam_2a_states, cam_2b_states, cam_3_states,
 	cam_4a_states, cam_4b_states, cam_5_states,
 	NULL, cam_7_states,
 };
 
-int camera_states_last[CAM_COUNT] = {0};
+static int camera_states_last[CAM_COUNT] = {0};
 int camera_states[CAM_COUNT] = {
 	FREDDY_BIT | BONNIE_BIT | CHICA_BIT,
 	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-float flip_timer = 0.0f;
+static float flip_timer = 0.0f;
+static float button_blink_timer = 0.0f;
+static bool button_blink = 1;
+static float view_turn = 0.0f;
+static float flicker_timer = 0.0f;
+static int flicker_val = 0;
+
+int cam_selected = CAM_1A;
+float camera_glitch_timer = 0.0f;
 bool camera_was_using = false;
 bool camera_is_using = false;
 bool camera_was_visible = false;
 bool camera_is_visible = false;
-float camera_glitch_timer = 0.0f;
-float button_blink_timer = 0.0f;
-bool button_blink = 1;
-float view_turn = 0.0f;
-float flicker_timer = 0.0f;
-int flicker_val = 0;
-int cam_selected = CAM_1A;
 
-rspq_block_t *border_block;
+static rspq_block_t *border_block;
 
-object_t map;
-object_t name_atlas;
-object_t missing_footage;
-
-object_t flip_anim[FLIP_FRAMES];
-const char *flip_anim_paths[FLIP_FRAMES] = {
-	TX_CAM_FLIP00, TX_CAM_FLIP01, TX_CAM_FLIP02, TX_CAM_FLIP03,
-	TX_CAM_FLIP04, TX_CAM_FLIP05, TX_CAM_FLIP06, TX_CAM_FLIP07,
-	TX_CAM_FLIP08, TX_CAM_FLIP09, TX_CAM_FLIP10,
-};
-
-const char *button_paths[2] = {TX_CAM_BUTTON0, TX_CAM_BUTTON1};
-object_t buttons[2];
-object_t views[CAM_COUNT];
+static object_t flip_anim[FLIP_FRAMES];
+static const char *button_paths[2] = {TX_CAM_BUTTON0, TX_CAM_BUTTON1};
+static object_t buttons[2];
+static object_t map;
+static object_t name_atlas;
+static object_t missing_footage;
 
 /* Shitty fix for lagging in cam 2A */
 #define VIEWS_EXTRA 6
-object_t views_extra[VIEWS_EXTRA];
+static object_t views[CAM_COUNT];
+static object_t views_extra[VIEWS_EXTRA];
 
-static const char *camera_get_view_path(void)
-{
-	int bitmask = FREDDY_BIT | CHICA_BIT | BONNIE_BIT | ROOM_SPOT_BIT;
-	for(int i = 0; i < cam_state_counts[cam_selected]; i++) {
-		if((cam_states[cam_selected][i].state & bitmask) ==
-				(camera_states[cam_selected] & bitmask)) {
-
-			// debugf("%s\n", cam_states[cam_selected][i].path);
-			return cam_states[cam_selected][i].path;
-		}
-	}
-
-	char buf[64] = {0};
-	buf[0] = '0';
-	buf[1] = 'b';
-	for(int i = 2; i < 2 + 16; i++) {
-		int j = i - 2;
-		buf[i] = ((camera_states[cam_selected] & (1 << j)) >> j) + 48;
-	}
-
-	assertf(0, "Invalid state: %s on cam %d\n", buf, cam_selected);
-}
 
 void camera_load(void)
 {
@@ -244,13 +222,36 @@ void camera_load(void)
 	rdpq_fill_rectangle(10, 230, 311, 231); // bottom
 	border_block = rspq_block_end();
 
+	objects_load(flip_anim, FLIP_FRAMES, flip_anim_paths);
+	objects_load(buttons, 2, button_paths);
 	object_load(&map, TX_CAM_MAP);
 	object_load(&name_atlas, TX_CAM_NAME_ATLAS);
 	object_load(&missing_footage, TX_CAM_CORRUPTED);
-	objects_load(flip_anim, FLIP_FRAMES, flip_anim_paths);
-	objects_load(buttons, 2, button_paths);
 
 	wav64_play(&robotvoice_sfx, SFXC_ROBOTVOICE);
+}
+
+static const char *camera_get_view_path(void)
+{
+	int bitmask = FREDDY_BIT | CHICA_BIT | BONNIE_BIT | ROOM_SPOT_BIT;
+	for(int i = 0; i < cam_state_counts[cam_selected]; i++) {
+		if((cam_states[cam_selected][i].state & bitmask) ==
+				(camera_states[cam_selected] & bitmask)) {
+
+			// debugf("%s\n", cam_states[cam_selected][i].path);
+			return cam_states[cam_selected][i].path;
+		}
+	}
+
+	char buf[64] = {0};
+	buf[0] = '0';
+	buf[1] = 'b';
+	for(int i = 2; i < 2 + 16; i++) {
+		int j = i - 2;
+		buf[i] = ((camera_states[cam_selected] & (1 << j)) >> j) + 48;
+	}
+
+	assertf(0, "Invalid state: %s on cam %d\n", buf, cam_selected);
 }
 
 static void _camera_views_unload(bool exclude_current)

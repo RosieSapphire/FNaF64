@@ -20,28 +20,28 @@ static int available = 2;
 static bool is_loaded = false;
 static bool settings_triggered = false;
 
-static object_t night_text;
-static object_t night_atlas;
-static object_t newspaper;
-
 static bool new_game_init;
 static float new_game_timer;
 
-object_t freddy_face[4];
-const char *freddy_face_paths[4] = {
+static const char *freddy_face_paths[4] = {
 	TX_FRED_FACE0, TX_FRED_FACE1, TX_FRED_FACE2, TX_FRED_FACE3,
 };
 
-object_t star;
-object_t selector;
-object_t title_text;
-object_t option_text;
-object_t settings_text;
-object_t settings_option_text;
+static object_t freddy_face[4];
+static object_t night_text;
+static object_t night_atlas;
 
-object_t bind_buttons_text;
-object_t setting_descs;
-object_t eeprom_error;
+static object_t star;
+static object_t selector;
+static object_t title_text;
+static object_t option_text;
+static object_t settings_text;
+static object_t settings_option_text;
+
+static object_t bind_buttons_text;
+static object_t setting_descs;
+static object_t eeprom_error;
+static object_t newspaper;
 
 static bool eeprom_fail_notice = false;
 
@@ -53,18 +53,19 @@ static void _title_load(void)
 
 	settings_triggered = false;
 	objects_load(freddy_face, 4, freddy_face_paths);
-	object_load(&star, TX_STAR);
-	object_load(&title_text, TX_TITLE_TEXT);
-	object_load(&selector, TX_SELECTOR);
-	object_load(&option_text, TX_TITLE_OPTIONS);
 	object_load(&night_text, TX_NIGHT_TEXT);
 	object_load(&night_atlas, TX_NIGHT_NUM_ATLAS);
-	object_load(&newspaper, TX_NEWSPAPER);
+	object_load(&star, TX_STAR);
+	object_load(&selector, TX_SELECTOR);
+	object_load(&title_text, TX_TITLE_TEXT);
+	object_load(&option_text, TX_TITLE_OPTIONS);
 	object_load(&settings_text, TX_SETTINGS_TEXT);
 	object_load(&settings_option_text, TX_SETTINGS_OPTS);
+
 	object_load(&bind_buttons_text, TX_BIND_BUTTONS_TEXT);
 	object_load(&setting_descs, TX_SETTINGS_DESCS);
 	object_load(&eeprom_error, TX_EEPROM_ERROR);
+	object_load(&newspaper, TX_NEWSPAPER);
 
 	blip_trigger(true);
 	wav64_play(&static_sfx, SFXC_STATIC);

@@ -30,10 +30,10 @@ static void n64_init(void)
 
 	dfs_init(DFS_DEFAULT_LOCATION);
 
-	/*
-	rdpq_debug_start();
 	debug_init_isviewer();
 	debug_init_usblog();
+	/*
+	rdpq_debug_start();
 	*/
 
 	audio_init(32000, 4);
@@ -84,6 +84,7 @@ int main(void)
 			.dt = (float)tick_delta / (float)TICKS_PER_SECOND,
 			.held = joypad_get_buttons_held(JOYPAD_PORT_1),
 			.pressed = joypad_get_buttons_pressed(JOYPAD_PORT_1),
+			.sticks = joypad_get_inputs(JOYPAD_PORT_1),
 		};
 
 		void (*draw_funcs[SCENE_COUNT])(void) = {
