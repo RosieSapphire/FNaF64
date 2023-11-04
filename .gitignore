@@ -2,6 +2,7 @@ build/
 *.eeprom
 *.pak
 *.z64
+*.json
 assets/ci8/
 assets/ci4/
 assets/i4/
