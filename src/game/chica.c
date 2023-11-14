@@ -201,7 +201,7 @@ void chica_update(double dt)
         }
 
 	if(cam_next < AT_DOOR) {
-		float foot_vol = footstep_vol_lut[chica_cam_last];
+		float foot_vol = footstep_vol_lut[cam_next];
 		mixer_ch_set_vol(SFXC_FOOTSTEPS, foot_vol, foot_vol);
 	}
 

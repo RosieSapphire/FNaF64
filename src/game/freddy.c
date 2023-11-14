@@ -188,8 +188,8 @@ void freddy_update(double dt)
 	move_state = 0;
 
 	if(cam_next < AT_DOOR) {
-		float laugh_vol = vol_lut[freddy_cam_last][0];
-		float foot_vol = vol_lut[freddy_cam_last][1];
+		float laugh_vol = vol_lut[cam_next][0];
+		float foot_vol = vol_lut[cam_next][1];
 		mixer_ch_set_vol(SFXC_FREDDYLAUGH, laugh_vol, laugh_vol);
 		mixer_ch_set_vol(SFXC_FREDDYRUN, foot_vol, foot_vol);
 	}
