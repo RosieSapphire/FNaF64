@@ -159,7 +159,11 @@ void office_update(update_parms_t uparms)
 	if((button_state & BUTTON_LEFT_LIGHT) && bonnie_cam == AT_DOOR)
 		bonnie_scared = true;
 	if(bonnie_scared && !bonnie_scared_last)
+	{
+		mixer_ch_set_vol(SFXC_AMBIENCE. 0.8f, 0.8f);
 		wav64_play(&window_scare, SFXC_AMBIENCE);
+
+	}
 	bonnie_scared_last = bonnie_scared;
 
 	static bool chica_scared_last = false;
