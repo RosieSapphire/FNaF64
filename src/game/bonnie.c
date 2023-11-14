@@ -148,7 +148,9 @@ void bonnie_update(double dt)
         }
 
 	if(cam_next < AT_DOOR) {
-		float foot_vol = footstep_vol_lut[bonnie_cam_last];
+		float foot_vol = footstep_vol_lut[cam_next];
+
+		debugf("%f\n", foot_vol);
 		mixer_ch_set_vol(SFXC_FOOTSTEPS, foot_vol, foot_vol);
 	}
 
