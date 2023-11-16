@@ -481,7 +481,7 @@ static void camera_update_turn_manual(const update_parms_t uparms)
 	if(!camera_is_visible)
 		return;
 
-	view_turn -= uparms.held.x * uparms.dt * 6;
+	view_turn -= uparms.sticks.stick_x * uparms.dt * 6;
 	view_turn = clampf(view_turn, -640, 0);
 }
 
