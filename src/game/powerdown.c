@@ -12,20 +12,19 @@
 #include "game/powerdown.h"
 
 #define FREDDY_SCARE_FRAMES 18
+static object_t room_views[2];
+static const char *room_view_paths[2] = {
+	TX_ROOM_POWERDOWN0, TX_ROOM_POWERDOWN1,
+};
+
 static object_t freddy_scare[FREDDY_SCARE_FRAMES];
 static const char *freddy_scare_paths[FREDDY_SCARE_FRAMES] = {
 	TX_FREDDY_SCARE_DARK00, TX_FREDDY_SCARE_DARK01, TX_FREDDY_SCARE_DARK02,
-	TX_FREDDY_SCARE_DARK04, TX_FREDDY_SCARE_DARK05, TX_FREDDY_SCARE_DARK06,
-	TX_FREDDY_SCARE_DARK07, TX_FREDDY_SCARE_DARK08, TX_FREDDY_SCARE_DARK09,
-	TX_FREDDY_SCARE_DARK10, TX_FREDDY_SCARE_DARK11, TX_FREDDY_SCARE_DARK12,
-	TX_FREDDY_SCARE_DARK13, TX_FREDDY_SCARE_DARK14, TX_FREDDY_SCARE_DARK15,
-	TX_FREDDY_SCARE_DARK16, TX_FREDDY_SCARE_DARK17,
-};
-
-static object_t room_views[2];
-static const char *room_view_paths[2] = {
-	"rom:/room_powerdown0.ci8.sprite",
-	"rom:/room_powerdown1.ci8.sprite",
+	TX_FREDDY_SCARE_DARK03, TX_FREDDY_SCARE_DARK04, TX_FREDDY_SCARE_DARK05,
+	TX_FREDDY_SCARE_DARK06, TX_FREDDY_SCARE_DARK07, TX_FREDDY_SCARE_DARK08,
+	TX_FREDDY_SCARE_DARK09, TX_FREDDY_SCARE_DARK10, TX_FREDDY_SCARE_DARK11,
+	TX_FREDDY_SCARE_DARK12, TX_FREDDY_SCARE_DARK13, TX_FREDDY_SCARE_DARK14,
+	TX_FREDDY_SCARE_DARK15, TX_FREDDY_SCARE_DARK16, TX_FREDDY_SCARE_DARK17,
 };
 
 static float room_turn;
@@ -168,6 +167,7 @@ enum scene power_down_update(update_parms_t uparms)
 			sfx_stop_all();
 			freddy_state = 3;
 			shut_down_flicker = 0;
+			debugf("Load freddy frames\n");
 			objects_load(freddy_scare, FREDDY_SCARE_FRAMES,
 					freddy_scare_paths);
 		}
@@ -199,7 +199,7 @@ enum scene power_down_update(update_parms_t uparms)
 		break;
 	}
 
-	room_turn -= uparms.dt * uparms.held.x * ROOM_TURN_SPEED;
+	room_turn -= uparms.dt * uparms.sticks.stick_x * ROOM_TURN_SPEED;
 	room_turn = clampf(room_turn, ROOM_TURN_MIN, 0);
 
 	if(fabsf(room_turn + 193) < 32 &&
