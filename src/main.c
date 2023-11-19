@@ -30,9 +30,9 @@ static void n64_init(void)
 
 	dfs_init(DFS_DEFAULT_LOCATION);
 
+	/*
 	debug_init_isviewer();
 	debug_init_usblog();
-	/*
 	rdpq_debug_start();
 	*/
 
