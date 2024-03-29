@@ -11,7 +11,7 @@ I would like to give a special thanks to [Rasky](https://github.com/rasky) and
 journey, and I'm really happy with this so far.
 
 # YouTube Tutorial
-For those of you who are more visual learners, [https://youtu.be/cSOmlyvK9gQ](here is a tutorial)
+For those of you who are more visual learners, [here is a tutorial](https://youtu.be/cSOmlyvK9gQ)
 I made for how to do everything necessary to compile the ROM.
 
 # Prerequisites
