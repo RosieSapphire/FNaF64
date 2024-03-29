@@ -47,20 +47,30 @@ the textures after copying them to a temporary directory.
 
 This will be done inside of WSL, so if you don't have that set up, you should do so now.
 
-```
-git clone https://github.com/RosieSapphire/FNaF64.git fnaf
-cd fnaf/
-mkdir tmp
-cp -rvf /mnt/c/<CTFAK Directory>/Dumps/Five\ Nights\ at\ Freddys/* tmp/
-./copy_assets.sh tmp/Images/ tmp/Sounds/
-rm -rf tmp/
-```
+Install all the dependencies
+```apt install imagemagick ffmpeg rename build-essential libpng-dev git```
+
+Download the .deb file from the [Libdragon Releases](https://github.com/DragonMinded/libdragon/releases) and install it.
+```dpkg -i gcc-toolchain-mips64-x86_64.deb```
+
+Clone the repository.
+```git clone --recursive https://github.com/RosieSapphire/FNaF64.git fnaf```
+
+Move into the Libdragon directory and build it.
+```cd fnaf/libdragon/ && ./build.sh```
+
+Move back into the main directory and copy the assets.
+```cd .. && mkdir tmp/```
+```cp -rvf /mnt/c/<CTFAK Directory>/Dumps/Five\ Nights\ at\ Freddys/* tmp/```
+
+Run the script to convert the assets.
+```./copy_assets.sh tmp/Images/ tmp/Sounds/```
+
+Remove the temporary directory.
+```rm -r tmp/```
 
 After this, you should be good to build the ROM.
-
-```
-make -j4
-```
+```make -j```
 
 Now you can run it, or put it on an N64 Flashcart via
 SD card or with the [UNFLoader developed by Buu342](https://github.com/buu342/N64-UNFLoader).
