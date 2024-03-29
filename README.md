@@ -45,7 +45,7 @@ have to be compressed, both in color depth and image size. With the help of
 a handy-dandy tool I wrote in bash, which utilizes ImageMagick, we can convert
 the textures after copying them to a temporary directory.
 
-This will be done inside of WSL, so if you don't have that set up, you should do so now.
+This will be done inside of [WSL](https://aka.ms/wsl), so if you don't have that set up, you should do so now.
 
 Install all the dependencies.
 
@@ -93,7 +93,7 @@ rm -r tmp/
 
 After this, you should be good to build the ROM.
 ```bash
-make -j
+make -j4
 ```
 
 Now you can run it, or put it on an N64 Flashcart via
