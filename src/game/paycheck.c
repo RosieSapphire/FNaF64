@@ -14,7 +14,7 @@ static object_t screens[3];
 
 static void _paycheck_load(void)
 {
-	if(is_loaded)
+	if (is_loaded)
 		return;
 
 	timer = 0.0f;
@@ -29,9 +29,9 @@ static void _paycheck_load(void)
 
 static void _paycheck_unload(void)
 {
-	if(!is_loaded)
+	if (!is_loaded)
 		return;
-	
+
 	objects_unload(screens, 3);
 
 	is_loaded = false;
@@ -42,10 +42,10 @@ void paycheck_draw(void)
 	_paycheck_load();
 
 	float alpha = 1.0f;
-	if(timer <= 2.0f)
+	if (timer <= 2.0f)
 		alpha = timer * 0.5f;
 
-	if(timer >= 17.0f)
+	if (timer >= 17.0f)
 		alpha = 1.0f - ((timer - 17.0f) * 0.5f);
 
 	rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
@@ -54,7 +54,7 @@ void paycheck_draw(void)
 	rdpq_set_mode_standard();
 	rdpq_mode_alphacompare(true);
 	rdpq_set_fog_color(RGBA32(0xFF, 0xFF, 0xFF, alpha * 255));
-     	rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
+	rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
 	object_draw(screens[NIGHT_NUM - 6], 0, 0, 0, 0);
 }
 
@@ -65,11 +65,11 @@ enum scene paycheck_update(update_parms_t uparms)
 	const bool a_b_or_start_down =
 		(uparms.pressed.a + uparms.pressed.b + uparms.pressed.start);
 	const bool can_skip = timer < 7.0f && timer > 2.0f;
-	if(a_b_or_start_down && can_skip)
+	if (a_b_or_start_down && can_skip)
 		timer = 17.0f;
 
-	if(timer >= 19.0f) {
-		rdpq_call_deferred((void(*)(void *))_paycheck_unload, NULL);
+	if (timer >= 19.0f) {
+		rdpq_call_deferred((void (*)(void *))_paycheck_unload, NULL);
 		sfx_stop_all();
 		return SCENE_TITLE_SCREEN;
 	}

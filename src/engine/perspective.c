@@ -13,7 +13,7 @@ void perspective_init(void)
 	rdpq_set_mode_standard();
 	int num_divs = 40;
 	int div_width = 320 / num_divs;
-	for(int i = 0; i < num_divs; i++) {
+	for (int i = 0; i < num_divs; i++) {
 		float i_dist = fabs((float)(i - (num_divs >> 1)));
 		float scale_y = (i_dist * 0.032f);
 		scale_y *= scale_y;

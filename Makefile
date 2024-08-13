@@ -75,5 +75,8 @@ filesystem/custom/%.font64: assets/custom/%.ttf
 $(DFS): $(ASSETS_CONV)
 $(ELF): $(O_FILES)
 
+format: $(H_FILES) $(C_FILES)
+	clang-format -i --style=file $^
+
 clean:
 	rm -rf $(BUILD_DIR) $(ROM)

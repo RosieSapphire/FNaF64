@@ -26,41 +26,41 @@ static float scare_timer;
 static const float footstep_vol_lut[CAM_COUNT] = {
 	0.1f, // 1A
 	0.2f, // 1B
-	0,    // 1C
+	0, // 1C
 	0.3f, // 2A
 	0.4f, // 2B
 	0.3f, // 3
-	0,    // 4A
-	0,    // 4B
-	0,    // 5
+	0, // 4A
+	0, // 4B
+	0, // 5
 	0.1f, // 6
-	0,    // 7
+	0, // 7
 };
 
 static const int new_cam_lut[CAM_COUNT + 2][2] = {
-	{       CAM_5,       CAM_1B}, // 1A
-	{       CAM_5,       CAM_2A}, // 1B
-	{          -1,           -1}, // 1C
-	{       CAM_3,       CAM_2B}, // 2A
-	{       CAM_3,      AT_DOOR}, // 2B
-	{     AT_DOOR,       CAM_2A}, // 3
-	{          -1,           -1}, // 4A
-	{          -1,           -1}, // 4B
-	{      CAM_1B,       CAM_2A}, // 5
-	{          -1,           -1}, // 6
-	{          -1,           -1}, // 7
-	{YOURE_FUCKED, YOURE_FUCKED}, // At Door
-	{YOURE_FUCKED, YOURE_FUCKED}, // You're Fucked
+	{ CAM_5, CAM_1B }, // 1A
+	{ CAM_5, CAM_2A }, // 1B
+	{ -1, -1 }, // 1C
+	{ CAM_3, CAM_2B }, // 2A
+	{ CAM_3, AT_DOOR }, // 2B
+	{ AT_DOOR, CAM_2A }, // 3
+	{ -1, -1 }, // 4A
+	{ -1, -1 }, // 4B
+	{ CAM_1B, CAM_2A }, // 5
+	{ -1, -1 }, // 6
+	{ -1, -1 }, // 7
+	{ YOURE_FUCKED, YOURE_FUCKED }, // At Door
+	{ YOURE_FUCKED, YOURE_FUCKED }, // You're Fucked
 };
 
 #define BONNIE_SCARE_FRAMES 11
 
 object_t bonnie_scare[BONNIE_SCARE_FRAMES];
 const char *bonnie_scare_paths[BONNIE_SCARE_FRAMES] = {
-        TX_BONNIE_SCARE00, TX_BONNIE_SCARE01, TX_BONNIE_SCARE02,
-        TX_BONNIE_SCARE03, TX_BONNIE_SCARE04, TX_BONNIE_SCARE05,
-        TX_BONNIE_SCARE06, TX_BONNIE_SCARE07, TX_BONNIE_SCARE08,
-        TX_BONNIE_SCARE09, TX_BONNIE_SCARE10,
+	TX_BONNIE_SCARE00, TX_BONNIE_SCARE01, TX_BONNIE_SCARE02,
+	TX_BONNIE_SCARE03, TX_BONNIE_SCARE04, TX_BONNIE_SCARE05,
+	TX_BONNIE_SCARE06, TX_BONNIE_SCARE07, TX_BONNIE_SCARE08,
+	TX_BONNIE_SCARE09, TX_BONNIE_SCARE10,
 };
 
 void bonnie_load(void)
@@ -106,14 +106,14 @@ void bonnie_draw_debug(void)
 
 void bonnie_update(double dt)
 {
-	if(bonnie_is_jumpscaring) {
+	if (bonnie_is_jumpscaring) {
 		scare_timer += dt * speed_fps(75);
 		scare_timer = wrapf(scare_timer, BONNIE_SCARE_FRAMES, NULL);
 		return;
 	}
 
 	bool cam_flip_down = (!camera_is_visible && camera_was_visible);
-	if(bonnie_cam == YOURE_FUCKED && cam_flip_down) {
+	if (bonnie_cam == YOURE_FUCKED && cam_flip_down) {
 		bonnie_is_jumpscaring = true;
 		wav64_play(&jumpscare_sfx, SFXC_JUMPSCARE);
 		return;
@@ -122,7 +122,7 @@ void bonnie_update(double dt)
 	which_room_timer += dt;
 	bool switch_which;
 	which_room_timer = wrapf(which_room_timer, 1, &switch_which);
-	if(switch_which)
+	if (switch_which)
 		which_room = rand() & 1;
 
 	bonnie_blackout_timer -= dt * 60;
@@ -131,23 +131,23 @@ void bonnie_update(double dt)
 	move_timer += dt;
 	bool try_move;
 	move_timer = wrapf(move_timer, MOVE_TIMER, &try_move);
-	if(!try_move)
+	if (!try_move)
 		return;
 
-	if((1 + (rand() % 20)) > bonnie_ai_level)
+	if ((1 + (rand() % 20)) > bonnie_ai_level)
 		return;
 
 	bonnie_cam_last = bonnie_cam;
 	int cam_next = new_cam_lut[bonnie_cam][which_room];
-	if(cam_next == YOURE_FUCKED && (button_state & BUTTON_LEFT_DOOR)) {
+	if (cam_next == YOURE_FUCKED && (button_state & BUTTON_LEFT_DOOR)) {
 		cam_next = CAM_1B;
 		/* BULLSHIT FIX THIS SHOULDN'T HAVE TO BE HERE! */
-                camera_states[CAM_1B] |= (BONNIE_BIT | ROOM_SPOT_BIT);
-		if(cam_selected == CAM_1B)
+		camera_states[CAM_1B] |= (BONNIE_BIT | ROOM_SPOT_BIT);
+		if (cam_selected == CAM_1B)
 			bonnie_blackout_timer = 10;
-        }
+	}
 
-	if(cam_next < AT_DOOR) {
+	if (cam_next < AT_DOOR) {
 		float foot_vol = footstep_vol_lut[cam_next];
 
 		debugf("%f\n", foot_vol);
@@ -160,18 +160,18 @@ void bonnie_update(double dt)
 	which_spot = rand() & 1;
 
 	/* I have no fucking clue why I have to do this */
-	if(bonnie_cam_last < AT_DOOR) {
-        	camera_states[bonnie_cam_last] &= ~(BONNIE_BIT | ROOM_SPOT_BIT);
-		if(bonnie_cam < AT_DOOR)
-        		camera_states[bonnie_cam] |=
+	if (bonnie_cam_last < AT_DOOR) {
+		camera_states[bonnie_cam_last] &= ~(BONNIE_BIT | ROOM_SPOT_BIT);
+		if (bonnie_cam < AT_DOOR)
+			camera_states[bonnie_cam] |=
 				BONNIE_BIT | (ROOM_SPOT_BIT * which_spot);
-        	bonnie_blackout_timer = 10;
+		bonnie_blackout_timer = 10;
 	}
 
-	if(bonnie_cam != AT_DOOR)
+	if (bonnie_cam != AT_DOOR)
 		bonnie_scared = false;
 
-	if(             (bonnie_cam == AT_DOOR && bonnie_cam_last != AT_DOOR) ||
-			(bonnie_cam != AT_DOOR && bonnie_cam_last == AT_DOOR))
+	if ((bonnie_cam == AT_DOOR && bonnie_cam_last != AT_DOOR) ||
+	    (bonnie_cam != AT_DOOR && bonnie_cam_last == AT_DOOR))
 		button_state &= ~BUTTON_LEFT_LIGHT;
 }

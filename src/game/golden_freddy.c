@@ -29,7 +29,7 @@ void golden_freddy_load(void)
 
 void golden_freddy_draw_in_room(void)
 {
-	if(golden_freddy_progress != 3)
+	if (golden_freddy_progress != 3)
 		return;
 
 	rdpq_set_mode_copy(true);
@@ -44,27 +44,27 @@ void golden_freddy_draw_scare(void)
 
 void golden_freddy_update(double dt)
 {
-	switch(golden_freddy_progress) {
+	switch (golden_freddy_progress) {
 	case 0:
 		bool attempt;
 		attempt_timer = wrapf(attempt_timer + dt, 1.0f, &attempt);
-		if(attempt && (rand() % 100000) == 1) {
+		if (attempt && (rand() % 100000) == 1) {
 			golden_freddy_progress = 1;
 		}
 		return;
 
 	case 1:
-		if(cam_selected == CAM_2B && camera_is_visible &&
-				bonnie_cam != CAM_2B) {
+		if (cam_selected == CAM_2B && camera_is_visible &&
+		    bonnie_cam != CAM_2B) {
 			golden_freddy_progress = 2;
 			mixer_ch_set_vol(SFXC_FREDDYLAUGH, 1.0f, 1.0f);
-       			wav64_play(&girl_giggle, SFXC_FREDDYLAUGH);
+			wav64_play(&girl_giggle, SFXC_FREDDYLAUGH);
 		}
 
 		return;
 
 	case 2:
-		if(!camera_is_visible) {
+		if (!camera_is_visible) {
 			hallucinations_trigger();
 			golden_freddy_progress = 3;
 			return;
@@ -73,11 +73,11 @@ void golden_freddy_update(double dt)
 		return;
 
 	case 3:
-		if(camera_is_visible)
+		if (camera_is_visible)
 			golden_freddy_progress = 5;
 
 		jumpscare_timer += dt * 60;
-		if(jumpscare_timer >= 300) {
+		if (jumpscare_timer >= 300) {
 			sfx_stop_all();
 			wav64_play(&jumpscare_low, SFXC_JUMPSCARE);
 			golden_freddy_progress++;
@@ -87,10 +87,10 @@ void golden_freddy_update(double dt)
 
 	case 4:
 		jumpscare_timer += dt;
-		if(jumpscare_timer >= 1.5f)
+		if (jumpscare_timer >= 1.5f)
 			golden_freddy_progress = 6;
 		return;
-	
+
 	default:
 		return;
 	}

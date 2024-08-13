@@ -57,7 +57,7 @@ void blip_load(void)
 void blip_draw(void)
 {
 	int frame = (int)timer;
-	if(frame >= FRAMES)
+	if (frame >= FRAMES)
 		return;
 	rdpq_set_mode_fill(RGBA16(0xFF, 0xFF, 0xFF, 0xFF));
 	rspq_block_run(blocks[frame]);
@@ -73,6 +73,6 @@ void blip_trigger(bool is_visual)
 {
 	wav64_play(&blip_sfx, SFXC_BLIP);
 
-	if(is_visual)
+	if (is_visual)
 		timer = 0;
 }

@@ -24,10 +24,9 @@ object_t foxy_run[FOXY_RUN_FRAMES];
 static float fox_song_timer = 0.0f;
 
 static const char *foxy_run_paths[FOXY_RUN_FRAMES] = {
-	TX_CAM_2B_FOX00, TX_CAM_2B_FOX01, TX_CAM_2B_FOX02,
-	TX_CAM_2B_FOX03, TX_CAM_2B_FOX04, TX_CAM_2B_FOX05,
-	TX_CAM_2B_FOX06, TX_CAM_2B_FOX07, TX_CAM_2B_FOX08,
-	TX_CAM_2B_FOX09, TX_CAM_2B_FOX10, TX_CAM_2B_FOX11,
+	TX_CAM_2B_FOX00, TX_CAM_2B_FOX01, TX_CAM_2B_FOX02, TX_CAM_2B_FOX03,
+	TX_CAM_2B_FOX04, TX_CAM_2B_FOX05, TX_CAM_2B_FOX06, TX_CAM_2B_FOX07,
+	TX_CAM_2B_FOX08, TX_CAM_2B_FOX09, TX_CAM_2B_FOX10, TX_CAM_2B_FOX11,
 	TX_CAM_2B_FOX12,
 };
 
@@ -54,11 +53,11 @@ void foxy_unload(void)
 
 static void _foxy_update_stun_timer(double dt)
 {
-	if(camera_is_visible) {
+	if (camera_is_visible) {
 		stun_timer = 50 + (rand() % 1000);
 		return;
 	}
- 
+
 	stun_timer -= dt * 60;
 	stun_timer = clampf(stun_timer, 0, 1005);
 }
@@ -89,7 +88,7 @@ static void _foxy_trigger_reset(void)
 	num_door_pounds++;
 
 	int power_deduct = 10 + (50 * num_door_pounds);
-	if(power_deduct >= power_left) {
+	if (power_deduct >= power_left) {
 		power_left = 0;
 		return;
 	}
@@ -107,49 +106,50 @@ void foxy_update(double dt)
 	fox_song_timer += dt;
 	bool fox_song_play;
 	fox_song_timer = wrapf(fox_song_timer, 4.0f, &fox_song_play);
-	if(fox_song_play && (rand() % 30) == 1)
+	if (fox_song_play && (rand() % 30) == 1)
 		wav64_play(&foxy_hum, SFXC_FOXSONG);
 
 	/* Handle jumpscaring */
-	if(foxy_is_scaring) {
+	if (foxy_is_scaring) {
 		foxy_scare_timer += speed_fps(25) * dt;
-		foxy_scare_timer = clampf(foxy_scare_timer,
-				0, FOXY_SCARE_FRAMES - 1);
+		foxy_scare_timer =
+			clampf(foxy_scare_timer, 0, FOXY_SCARE_FRAMES - 1);
 		return;
 	}
 
-	if(cam_selected == CAM_2A && camera_is_visible
-			&& foxy_progress == 3 && !use_run_timer) {
+	if (cam_selected == CAM_2A && camera_is_visible && foxy_progress == 3 &&
+	    !use_run_timer) {
 		use_run_timer = true;
 		wav64_play(&foxy_running, SFXC_JUMPSCARE);
 	}
 
-	if(use_run_timer) {
+	if (use_run_timer) {
 		foxy_run_timer += dt * 60;
 		foxy_run_timer = clampf(foxy_run_timer, 0, 100);
-		if(foxy_run_timer == 100) {
-			if(button_state & BUTTON_LEFT_DOOR)
+		if (foxy_run_timer == 100) {
+			if (button_state & BUTTON_LEFT_DOOR)
 				_foxy_trigger_reset();
 			else
 				_foxy_trigger_jumpscare();
 		}
 	}
 
-	if(foxy_progress == 3 && !foxy_is_scaring)
+	if (foxy_progress == 3 && !foxy_is_scaring)
 		no_check_timer += dt * 60;
 
-	if(no_check_timer >= 1500 && !foxy_is_scaring) {
-		if(button_state & BUTTON_LEFT_DOOR)
+	if (no_check_timer >= 1500 && !foxy_is_scaring) {
+		if (button_state & BUTTON_LEFT_DOOR)
 			_foxy_trigger_reset();
 		else
 			_foxy_trigger_jumpscare();
 	}
 
 	_foxy_update_stun_timer(dt);
-	if(!_foxy_update_move_timer(dt) || stun_timer > 0 || foxy_progress >= 3)
+	if (!_foxy_update_move_timer(dt) || stun_timer > 0 ||
+	    foxy_progress >= 3)
 		return;
 
-	if((1 + (rand() % 20)) > foxy_ai_level)
+	if ((1 + (rand() % 20)) > foxy_ai_level)
 		return;
 
 	foxy_progress++;

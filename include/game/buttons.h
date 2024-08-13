@@ -5,9 +5,9 @@
 
 #include "engine/update.h"
 
-#define BUTTON_LEFT_DOOR   1
-#define BUTTON_LEFT_LIGHT  2
-#define BUTTON_RIGHT_DOOR  4
+#define BUTTON_LEFT_DOOR 1
+#define BUTTON_LEFT_LIGHT 2
+#define BUTTON_RIGHT_DOOR 4
 #define BUTTON_RIGHT_LIGHT 8
 
 extern int button_state;

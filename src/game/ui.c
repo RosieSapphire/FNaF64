@@ -54,7 +54,7 @@ void ui_draw(void)
 	object_draw(night_text, 828, 71, 0, 0);
 	int hour = (int)clampf(night_timer / HOUR_LEN_SECONDS, 0, 6);
 
-	if(hour > 0)
+	if (hour > 0)
 		object_draw_index_y(hour_atlas, 843, 30, 9, hour);
 	else {
 		object_draw_index_y(hour_atlas, 843 - 26, 30, 9, 1);
@@ -65,14 +65,14 @@ void ui_draw(void)
 	object_draw(power_left_text, 106, 638, 68, 7);
 	object_draw(usage_text, 74, 674, 36, 7);
 
-	for(int i = 0; i < power_usage; i++) {
+	for (int i = 0; i < power_usage; i++) {
 		int ind = clampf(i - 1, 0, 69);
 		object_draw_index_x(usage_atlas, 120 + i * 21, 657, 6, ind);
 	}
 
 	object_draw_index_y(night_atlas, 200, 632, 6, (power_left % 100) / 10);
-	
-	if(power_left > 100)
+
+	if (power_left > 100)
 		object_draw_index_y(night_atlas, 185, 632, 6, power_left / 100);
 }
 
@@ -81,7 +81,7 @@ void ui_update(double dt)
 	power_timer += dt;
 	bool power_tick;
 	power_timer = wrapf(power_timer, 1, &power_tick);
-	if(power_tick)
+	if (power_tick)
 		power_left -= power_usage;
 	power_left = clampf(power_left, 0, 999);
 

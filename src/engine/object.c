@@ -6,7 +6,7 @@ static int local_loaded = 0;
 
 void object_load(object_t *o, const char *path)
 {
-	if(o->is_loaded)
+	if (o->is_loaded)
 		return;
 	o->spr = sprite_load(path);
 	o->is_loaded = true;
@@ -17,13 +17,13 @@ void object_load(object_t *o, const char *path)
 
 void objects_load(object_t *o, int num, const char **paths)
 {
-	for(int i = 0; i < num; i++)
+	for (int i = 0; i < num; i++)
 		object_load(o + i, paths[i]);
 }
 
 void object_unload(object_t *o)
 {
-	if(!o->is_loaded)
+	if (!o->is_loaded)
 		return;
 	sprite_free(o->spr);
 	o->is_loaded = false;
@@ -33,7 +33,7 @@ void object_unload(object_t *o)
 
 void objects_unload(object_t *o, int num)
 {
-	for(int i = 0; i < num; i++)
+	for (int i = 0; i < num; i++)
 		object_unload(o + i);
 }
 
@@ -45,7 +45,8 @@ void object_draw(object_t o, int px, int py, int ox, int oy)
 	oy = vcon(oy);
 
 	const rdpq_blitparms_t parms = {
-		.cx = ox, .cy = oy,
+		.cx = ox,
+		.cy = oy,
 	};
 
 	rdpq_sprite_blit(o.spr, px, py, &parms);
@@ -60,7 +61,8 @@ void object_draw_flipped(object_t o, int px, int py, int ox, int oy)
 
 	const rdpq_blitparms_t parms = {
 		.flip_x = true,
-		.cx = ox, .cy = oy,
+		.cx = ox,
+		.cy = oy,
 	};
 
 	rdpq_sprite_blit(o.spr, px, py, &parms);

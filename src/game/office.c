@@ -24,15 +24,14 @@ int flicker_rand;
 
 static object_t room_views[ROOM_VIEWS];
 static const char *room_view_paths[ROOM_VIEWS] = {
-	TX_ROOM_NORMAL, TX_ROOM_LEFT_EMPTY, TX_ROOM_RIGHT_EMPTY,
+	TX_ROOM_NORMAL,	     TX_ROOM_LEFT_EMPTY,  TX_ROOM_RIGHT_EMPTY,
 	TX_ROOM_LEFT_BONNIE, TX_ROOM_RIGHT_CHICA,
 };
 
 object_t foxy_scare[FOXY_SCARE_FRAMES];
 const char *foxy_scare_paths[FOXY_SCARE_FRAMES] = {
-	TX_FOXY_SCARE0, TX_FOXY_SCARE1, TX_FOXY_SCARE2,
-	TX_FOXY_SCARE3, TX_FOXY_SCARE4, TX_FOXY_SCARE5,
-	TX_FOXY_SCARE6, TX_FOXY_SCARE7,
+	TX_FOXY_SCARE0, TX_FOXY_SCARE1, TX_FOXY_SCARE2, TX_FOXY_SCARE3,
+	TX_FOXY_SCARE4, TX_FOXY_SCARE5, TX_FOXY_SCARE6, TX_FOXY_SCARE7,
 };
 
 object_t freddy_scare[FREDDY_SCARE_FRAMES];
@@ -46,18 +45,18 @@ const char *freddy_scare_paths[FREDDY_SCARE_FRAMES] = {
 
 static int room_get_state(void)
 {
-	if(flicker_rand <= 1)
+	if (flicker_rand <= 1)
 		return 0;
 
-	if(button_state & BUTTON_LEFT_LIGHT) {
-		if(bonnie_cam == AT_DOOR)
+	if (button_state & BUTTON_LEFT_LIGHT) {
+		if (bonnie_cam == AT_DOOR)
 			return 3;
 
 		return 1;
 	}
 
-	if(button_state & BUTTON_RIGHT_LIGHT) {
-		if(chica_cam == AT_DOOR)
+	if (button_state & BUTTON_RIGHT_LIGHT) {
+		if (chica_cam == AT_DOOR)
 			return 4;
 
 		return 2;
@@ -88,24 +87,24 @@ void office_draw(void)
 {
 	rdpq_set_mode_copy(false);
 
-	if(foxy_is_scaring) {
-		object_draw(foxy_scare[(int)foxy_scare_timer],
-				office_turn, 0, 0, 0);
+	if (foxy_is_scaring) {
+		object_draw(foxy_scare[(int)foxy_scare_timer], office_turn, 0,
+			    0, 0);
 		return;
 	}
 
-	for(int i = 0; i < FREDDY_SCARE_FRAMES; i++) {
-		if((int)freddy_scare_timer == i)
+	for (int i = 0; i < FREDDY_SCARE_FRAMES; i++) {
+		if ((int)freddy_scare_timer == i)
 			continue;
 
 		object_unload(freddy_scare + i);
 	}
 
-	if(freddy_is_jumpscaring) {
+	if (freddy_is_jumpscaring) {
 		int frame = (int)freddy_scare_timer;
 		object_load(freddy_scare + frame, freddy_scare_paths[frame]);
-		object_draw(freddy_scare[(int)freddy_scare_timer],
-				office_turn, 0, 0, 0);
+		object_draw(freddy_scare[(int)freddy_scare_timer], office_turn,
+			    0, 0, 0);
 		return;
 	}
 
@@ -127,7 +126,7 @@ static void _office_update_turn_smooth(update_parms_t uparms)
 	office_turn_lerp -= turn_amount * uparms.dt;
 	office_turn_lerp = clampf(office_turn_lerp, ROOM_TURN_MIN, 0);
 
-	if(fabsf(office_turn_lerp - office_turn) < 0.001f) {
+	if (fabsf(office_turn_lerp - office_turn) < 0.001f) {
 		office_turn = office_turn_lerp;
 		return;
 	}
@@ -137,53 +136,50 @@ static void _office_update_turn_smooth(update_parms_t uparms)
 
 void office_update(update_parms_t uparms)
 {
-	if(freddy_is_jumpscaring || foxy_is_scaring ||
-			bonnie_is_jumpscaring || chica_is_jumpscaring)
+	if (freddy_is_jumpscaring || foxy_is_scaring || bonnie_is_jumpscaring ||
+	    chica_is_jumpscaring)
 		camera_is_using = false;
 
-
-	if(!camera_is_visible) {
-		if(settings_flags & SET_SMOOTH_TURN_BIT)
+	if (!camera_is_visible) {
+		if (settings_flags & SET_SMOOTH_TURN_BIT)
 			_office_update_turn_smooth(uparms);
 		else
 			_office_update_turn_normal(uparms);
 	}
 
-	if(button_state & (BUTTON_LEFT_LIGHT | BUTTON_RIGHT_LIGHT) &&
-			flicker_rand > 1)
+	if (button_state & (BUTTON_LEFT_LIGHT | BUTTON_RIGHT_LIGHT) &&
+	    flicker_rand > 1)
 		mixer_ch_set_vol(SFXC_LIGHT, 1, 1);
 	else
 		mixer_ch_set_vol(SFXC_LIGHT, 0, 0);
 
 	static bool bonnie_scared_last = false;
-	if((button_state & BUTTON_LEFT_LIGHT) && bonnie_cam == AT_DOOR)
+	if ((button_state & BUTTON_LEFT_LIGHT) && bonnie_cam == AT_DOOR)
 		bonnie_scared = true;
-	if(bonnie_scared && !bonnie_scared_last)
-	{
+	if (bonnie_scared && !bonnie_scared_last) {
 		mixer_ch_set_vol(SFXC_AMBIENCE, 0.8f, 0.8f);
 		wav64_play(&window_scare, SFXC_AMBIENCE);
-
 	}
 	bonnie_scared_last = bonnie_scared;
 
 	static bool chica_scared_last = false;
-	if((button_state & BUTTON_RIGHT_LIGHT) && chica_cam == AT_DOOR)
+	if ((button_state & BUTTON_RIGHT_LIGHT) && chica_cam == AT_DOOR)
 		chica_scared = true;
-	if(chica_scared && !chica_scared_last)
+	if (chica_scared && !chica_scared_last)
 		wav64_play(&window_scare, SFXC_AMBIENCE);
 	chica_scared_last = chica_scared;
 
 	bool do_rand;
 	flicker_rand_timer =
 		wrapf(flicker_rand_timer + uparms.dt * 60, 1.0 / 60, &do_rand);
-	if(do_rand) {
+	if (do_rand) {
 		flicker_rand = rand() % 10;
 	}
 
-	if(camera_is_visible)
+	if (camera_is_visible)
 		return;
 
-	if(fabsf(office_turn + 193) < 32 &&
-			(uparms.pressed.a || uparms.pressed.b))
+	if (fabsf(office_turn + 193) < 32 &&
+	    (uparms.pressed.a || uparms.pressed.b))
 		wav64_play(&boop_sfx, SFXC_BLIP);
 }

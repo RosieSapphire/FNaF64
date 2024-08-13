@@ -23,19 +23,13 @@
 static void n64_init(void)
 {
 	srand(TICKS_READ());
-	display_init(RESOLUTION_320x240, DEPTH_16_BPP, 3,
-			GAMMA_NONE, ANTIALIAS_RESAMPLE);
+	display_init(RESOLUTION_320x240, DEPTH_16_BPP, 3, GAMMA_NONE,
+		     ANTIALIAS_RESAMPLE);
 
 	rdpq_init();
 
 	dfs_init(DFS_DEFAULT_LOCATION);
 	asset_init_compression(2);
-
-	/*
-	debug_init_isviewer();
-	debug_init_usblog();
-	rdpq_debug_start();
-	*/
 
 	audio_init(32000, 4);
 	mixer_init(SFXC_COUNT);
@@ -44,13 +38,13 @@ static void n64_init(void)
 	joypad_init();
 	subtitles_load();
 
-	eepfs_entry_t save_entry = {"fnaf.dat", sizeof(save_data)};
+	eepfs_entry_t save_entry = { "fnaf.dat", sizeof(save_data) };
 	int eepfs_result = eepfs_init(&save_entry, sizeof(save_data));
 	eeprom_failed = eepfs_result != EEPFS_ESUCCESS;
-	if(eeprom_failed)
+	if (eeprom_failed)
 		return;
 
-	if(!eepfs_verify_signature()) {
+	if (!eepfs_verify_signature()) {
 		debugf("EEPFS verification failed. Wiping save filesystem.\n");
 		eepfs_wipe();
 		save_data = 1;
@@ -58,7 +52,7 @@ static void n64_init(void)
 	}
 
 	int read_result = eepfs_read("fnaf.dat", &save_data, sizeof(save_data));
-	if(read_result != EEPFS_ESUCCESS)
+	if (read_result != EEPFS_ESUCCESS)
 		debugf("Failed to read from EEPFS.\n");
 	else
 		debugf("Sucessfully loaded save: %u\n", save_data);
@@ -74,8 +68,7 @@ int main(void)
 
 	enum scene scene = SCENE_TITLE_SCREEN;
 
-	while(1) {
-
+	while (1) {
 		joypad_poll();
 		const update_parms_t uparms = {
 			.dt = display_get_delta_time(),
@@ -85,14 +78,15 @@ int main(void)
 		};
 
 		void (*draw_funcs[SCENE_COUNT])(void) = {
-			title_draw, which_night_draw, game_draw,
-			night_end_draw, paycheck_draw, game_over_draw,
+			title_draw,	 which_night_draw,  game_draw,
+			night_end_draw,	 paycheck_draw,	    game_over_draw,
 			power_down_draw, custom_night_draw,
 		};
 
 		enum scene (*update_funcs[SCENE_COUNT])(update_parms_t) = {
-			title_update, which_night_update, game_update,
-			night_end_update, paycheck_update, game_over_update,
+			title_update,	   which_night_update,
+			game_update,	   night_end_update,
+			paycheck_update,   game_over_update,
 			power_down_update, custom_night_update,
 		};
 
@@ -107,10 +101,10 @@ int main(void)
 		blip_update(uparms.dt);
 		static_update(uparms.dt);
 
-		if(scene_last != scene)
+		if (scene_last != scene)
 			rspq_wait();
 
-		if(!audio_can_write())
+		if (!audio_can_write())
 			continue;
 
 		short *audio_buf = audio_write_begin();

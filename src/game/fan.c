@@ -15,7 +15,9 @@
 static float timer;
 static object_t anim[ANIM_FRAMES];
 static const char *anim_paths[ANIM_FRAMES] = {
-	TX_FAN0, TX_FAN1, TX_FAN2,
+	TX_FAN0,
+	TX_FAN1,
+	TX_FAN2,
 };
 
 void fan_load(void)
@@ -33,8 +35,8 @@ void fan_unload(void)
 
 void fan_draw(void)
 {
-	if(foxy_is_scaring || bonnie_is_jumpscaring ||
-			chica_is_jumpscaring || freddy_is_jumpscaring)
+	if (foxy_is_scaring || bonnie_is_jumpscaring || chica_is_jumpscaring ||
+	    freddy_is_jumpscaring)
 		return;
 
 	rdpq_set_mode_copy(false);

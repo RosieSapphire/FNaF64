@@ -18,17 +18,17 @@ static bool played_cheer;
 
 static void _night_end_load(void)
 {
-	if(is_loaded)
+	if (is_loaded)
 		return;
 
 	timer = 0.0f;
 	save_data |= (NIGHT_NUM == 5) * NIGHT_5_BEATEN_BIT;
 	save_data |= (NIGHT_NUM == 6) * NIGHT_6_BEATEN_BIT;
 
-	if(freddy_ai_level == 20 && bonnie_ai_level == 20 &&
-			chica_ai_level == 20 && foxy_ai_level == 20 &&
-			!(settings_flags & SET_ROBOT_CHEAT_BIT) &&
-			!(settings_flags & SET_FAST_NIGHT_BIT))
+	if (freddy_ai_level == 20 && bonnie_ai_level == 20 &&
+	    chica_ai_level == 20 && foxy_ai_level == 20 &&
+	    !(settings_flags & SET_ROBOT_CHEAT_BIT) &&
+	    !(settings_flags & SET_FAST_NIGHT_BIT))
 		save_data |= (NIGHT_NUM == 7) * MODE_20_BEATEN_BIT;
 
 	save_data++;
@@ -45,7 +45,7 @@ static void _night_end_load(void)
 
 static void _night_end_unload(void)
 {
-	if(!is_loaded)
+	if (!is_loaded)
 		return;
 	object_unload(&six);
 	object_unload(&five);
@@ -73,16 +73,16 @@ void night_end_draw(void)
 	object_draw(am, 486, 296, -5, 0);
 
 	rdpq_set_mode_fill(RGBA32(0x0, 0x0, 0x0, 0xFF));
-	rdpq_fill_rectangle(vcon(339), vcon(168),
-			vcon(339) + vcon(159), vcon(168) + vcon(120));
-	rdpq_fill_rectangle(vcon(339), vcon(384),
-			vcon(339) + vcon(159), vcon(384) + vcon(120));
+	rdpq_fill_rectangle(vcon(339), vcon(168), vcon(339) + vcon(159),
+			    vcon(168) + vcon(120));
+	rdpq_fill_rectangle(vcon(339), vcon(384), vcon(339) + vcon(159),
+			    vcon(384) + vcon(120));
 
 	float fade;
-	if(timer < 9)
- 		fade = clampf(1.0f - timer, 0, 1);
+	if (timer < 9)
+		fade = clampf(1.0f - timer, 0, 1);
 	else
- 		fade = clampf(timer - 10.5f, 0, 1);
+		fade = clampf(timer - 10.5f, 0, 1);
 
 	rdpq_set_mode_standard();
 	rdpq_set_prim_color(RGBA32(0x0, 0x0, 0x0, fade * 255));
@@ -95,23 +95,23 @@ enum scene night_end_update(update_parms_t uparms)
 {
 	timer += uparms.dt;
 
-	if(timer >= 6.2f && !played_cheer) {
+	if (timer >= 6.2f && !played_cheer) {
 		played_cheer = true;
 		mixer_ch_set_vol(SFXC_FAN, 0.8f, 0.8f);
 		wav64_play(&cheering_sfx, SFXC_FAN);
 	}
 
-	if(timer >= 11.5f) {
-		if(!eeprom_failed)
+	if (timer >= 11.5f) {
+		if (!eeprom_failed)
 			eepfs_write("fnaf.dat", &save_data, 1);
 		debugf("Saved night %d and %d%d%d to save file.\n", NIGHT_NUM,
-				(save_data & NIGHT_5_BEATEN_BIT) > 0,
-				(save_data & NIGHT_6_BEATEN_BIT) > 0,
-				(save_data & MODE_20_BEATEN_BIT) > 0);
-		rdpq_call_deferred((void(*)(void *))_night_end_unload, NULL);
+		       (save_data & NIGHT_5_BEATEN_BIT) > 0,
+		       (save_data & NIGHT_6_BEATEN_BIT) > 0,
+		       (save_data & MODE_20_BEATEN_BIT) > 0);
+		rdpq_call_deferred((void (*)(void *))_night_end_unload, NULL);
 		sfx_stop_all();
 
-		if(NIGHT_NUM < 6)
+		if (NIGHT_NUM < 6)
 			return SCENE_WHICH_NIGHT;
 
 		return SCENE_PAYCHECK;

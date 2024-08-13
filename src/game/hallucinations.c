@@ -11,8 +11,10 @@
 
 static object_t visuals[NUM_HALLUC];
 static const char *visual_paths[NUM_HALLUC] = {
-	TX_HALLUCINATION0, TX_HALLUCINATION1,
-	TX_HALLUCINATION2, TX_HALLUCINATION3,
+	TX_HALLUCINATION0,
+	TX_HALLUCINATION1,
+	TX_HALLUCINATION2,
+	TX_HALLUCINATION3,
 };
 
 static bool is_running;
@@ -44,7 +46,7 @@ void hallucinations_load(void)
 
 void hallucinations_draw(void)
 {
-	if(!is_running || visible_val != 1)
+	if (!is_running || visible_val != 1)
 		return;
 
 	object_draw(visuals[which_visual], 0, 0, 0, 0);
@@ -52,17 +54,17 @@ void hallucinations_draw(void)
 
 void hallucinations_update(double dt)
 {
-	if(is_running) {
+	if (is_running) {
 		bool change_visible;
-		visible_timer = wrapf(visible_timer + dt,
-				1.0f / 60.0f, &change_visible);
-		if(change_visible) {
+		visible_timer = wrapf(visible_timer + dt, 1.0f / 60.0f,
+				      &change_visible);
+		if (change_visible) {
 			visible_val = rand() % 10;
 			which_visual = rand() % 3;
 		}
 
 		timeout += dt * 60;
-		if(timeout >= 150) {
+		if (timeout >= 150) {
 			is_running = false;
 			timeout = 0;
 			mixer_ch_set_vol(SFXC_ROBOTVOICE, 0, 0);
@@ -76,7 +78,7 @@ void hallucinations_update(double dt)
 
 	bool try_hal;
 	random_occur_timer = wrapf(random_occur_timer + dt, 1.0f, &try_hal);
-	if(try_hal && (rand() % 1000) == 1)
+	if (try_hal && (rand() % 1000) == 1)
 		hallucinations_trigger();
 }
 
