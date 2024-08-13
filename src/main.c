@@ -29,6 +29,7 @@ static void n64_init(void)
 	rdpq_init();
 
 	dfs_init(DFS_DEFAULT_LOCATION);
+	asset_init_compression(2);
 
 	/*
 	debug_init_isviewer();
@@ -72,16 +73,12 @@ int main(void)
 	static_load();
 
 	enum scene scene = SCENE_TITLE_SCREEN;
-	long ticks_last = get_ticks();
 
 	while(1) {
-		long ticks_now = get_ticks();
-		long tick_delta = TICKS_DISTANCE(ticks_last, ticks_now);
-		ticks_last = ticks_now;
 
 		joypad_poll();
 		const update_parms_t uparms = {
-			.dt = (float)tick_delta / (float)TICKS_PER_SECOND,
+			.dt = display_get_delta_time(),
 			.held = joypad_get_buttons_held(JOYPAD_PORT_1),
 			.pressed = joypad_get_buttons_pressed(JOYPAD_PORT_1),
 			.sticks = joypad_get_inputs(JOYPAD_PORT_1),
