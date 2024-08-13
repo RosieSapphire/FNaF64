@@ -21,7 +21,7 @@ void perspective_init(void)
 		const rdpq_blitparms_t parms = {
 			.width = div_width,
 			.s0 = div_width * i,
-			.scale_y = -scale_y,
+			.scale_y = scale_y,
 			.cy = 120,
 		};
 		rdpq_tex_blit(&persp_buffer, div_width * i, 120, &parms);
