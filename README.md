@@ -10,6 +10,8 @@ I would like to give a special thanks to [Rasky](https://github.com/rasky) and
 [Buu342](https://github.com/buu342) for helping me along my Nintendo 64 development
 journey, and I'm really happy with this so far.
 
+And to [Kelly](https://bsky.app/profile/pfkelly.bsky.social) for coming up with the ram error message and providing the art for it.
+
 # YouTube Tutorial
 For those of you who are more visual learners, [here is a tutorial](https://youtu.be/cSOmlyvK9gQ)
 I made for how to do everything necessary to compile the ROM.
