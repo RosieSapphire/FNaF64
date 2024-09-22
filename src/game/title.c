@@ -48,9 +48,11 @@ static object_t settings_option_text;
 static object_t bind_buttons_text;
 static object_t setting_descs;
 static object_t eeprom_error;
+static object_t ram_message;
 static object_t newspaper;
 
 static bool eeprom_fail_notice = false;
+static bool memory_error = false;
 
 static void _title_load(void)
 {
@@ -68,7 +70,7 @@ static void _title_load(void)
 	object_load(&option_text, TX_TITLE_OPTIONS);
 	object_load(&settings_text, TX_SETTINGS_TEXT);
 	object_load(&settings_option_text, TX_SETTINGS_OPTS);
-
+	object_load(&ram_message, TX_RAM_MESSAGE);
 	object_load(&bind_buttons_text, TX_BIND_BUTTONS_TEXT);
 	object_load(&setting_descs, TX_SETTINGS_DESCS);
 	object_load(&eeprom_error, TX_EEPROM_ERROR);
@@ -88,6 +90,11 @@ static void _title_unload(void)
 {
 	if (!is_loaded)
 		return;
+
+	if(is_memory_expanded()) {
+		object_unload(&ram_message); 
+	}
+
 	object_unload(&eeprom_error);
 	object_unload(&setting_descs);
 	object_unload(&bind_buttons_text);
@@ -174,7 +181,25 @@ void title_draw(void)
 
 	blip_draw();
 
-	if (eeprom_failed && !eeprom_fail_notice) {
+	if(!is_memory_expanded()){
+		memory_error = true;
+		sfx_stop_all();
+		_title_unload();
+		rdpq_set_mode_standard();
+		rdpq_set_prim_color(RGBA32(0x0, 0x0, 0x0, 0xD8));
+		rdpq_mode_combiner(RDPQ_COMBINER_FLAT);
+		rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
+		rdpq_fill_rectangle(0, 0, 320, 240);
+
+		rdpq_set_mode_standard();
+		rdpq_mode_alphacompare(true);
+		rdpq_set_mode_standard();
+        rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
+		object_draw(ram_message, 0, -5, 0, 0);
+		rdpq_text_print(NULL, 1, 70, 150, "To start your shift at the World\nFamous Freddy Fazbears Pizzaria,\nmake sure your Fazbear Entertainment\nprovided Expansion Pak\nis installed in your console.");
+	}
+
+	if(eeprom_failed && !eeprom_fail_notice && !memory_error) {
 		rdpq_set_mode_standard();
 		rdpq_mode_combiner(RDPQ_COMBINER_FLAT);
 		rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
@@ -323,69 +348,73 @@ enum scene title_update(update_parms_t uparms)
 
 	_title_update_deleting(uparms);
 
-	settings_triggered ^= uparms.pressed.r;
-	if (settings_triggered) {
-		_title_update_settings(uparms.pressed);
-		return SCENE_TITLE_SCREEN;
-	}
-
-	/* inputs */
-	if (uparms.pressed.d_up || uparms.pressed.c_up) {
-		selected--;
-		blip_trigger(false);
-		if (selected < 0)
-			selected = available - 1;
-	}
-
-	if (uparms.pressed.d_down || uparms.pressed.c_down) {
-		selected++;
-		blip_trigger(false);
-		if (selected >= available)
-			selected = 0;
-	}
-
-	if (uparms.pressed.start || uparms.pressed.a) {
-		uint8_t tmp = save_data &
-			      (NIGHT_5_BEATEN_BIT | NIGHT_6_BEATEN_BIT |
-			       MODE_20_BEATEN_BIT);
-		switch (selected) {
-		case 0:
-			/* Just reset the nights, not the stars */
-			save_data &= NIGHT_5_BEATEN_BIT | NIGHT_6_BEATEN_BIT |
-				     MODE_20_BEATEN_BIT;
-			save_data |= 1;
-
-			if (!eeprom_failed)
-				eepfs_write("fnaf.dat", &save_data, 1);
-			debugf("Reset night to %d with %d%d%d\n", NIGHT_NUM,
-			       save_data & NIGHT_5_BEATEN_BIT,
-			       save_data & NIGHT_6_BEATEN_BIT,
-			       save_data & MODE_20_BEATEN_BIT);
-			new_game_init = true;
+	if(is_memory_expanded()) {
+		settings_triggered ^= uparms.pressed.r;
+		if(settings_triggered) {
+			_title_update_settings(uparms.pressed);
 			return SCENE_TITLE_SCREEN;
+		}
 
-		case 1:
-			rdpq_call_deferred((void (*)(void *))_title_unload,
-					   NULL);
-			save_data = NIGHT_NUM > 5 ? 5 : NIGHT_NUM;
-			save_data |= tmp;
-			sfx_stop_all();
-			return SCENE_WHICH_NIGHT;
+		/* inputs */
+	
+		if(uparms.pressed.d_up || uparms.pressed.c_up) {
+			selected--;
+			blip_trigger(false);
+			if(selected < 0)
+				selected = available - 1;
+		}
 
-		case 2:
-			rdpq_call_deferred((void (*)(void *))_title_unload,
-					   NULL);
-			save_data = 6;
-			save_data |= tmp;
-			sfx_stop_all();
-			return SCENE_WHICH_NIGHT;
+		if(uparms.pressed.d_down || uparms.pressed.c_down) {
+			selected++;
+			blip_trigger(false);
+			if(selected >= available)
+				selected = 0;
+		}
 
-		case 3:
-			rdpq_call_deferred((void (*)(void *))_title_unload,
-					   NULL);
-			save_data = 7;
-			save_data |= tmp;
-			return SCENE_CUSTOM_NIGHT;
+		if(uparms.pressed.start || uparms.pressed.a) {
+			uint8_t tmp = save_data & (NIGHT_5_BEATEN_BIT |
+					NIGHT_6_BEATEN_BIT | MODE_20_BEATEN_BIT);
+			switch(selected) {
+			case 0:
+				/* Just reset the nights, not the stars */
+				save_data &= NIGHT_5_BEATEN_BIT |
+					NIGHT_6_BEATEN_BIT |
+					MODE_20_BEATEN_BIT;
+				save_data |= 1;
+
+				if(!eeprom_failed)
+					eepfs_write("fnaf.dat", &save_data, 1);
+				debugf("Reset night to %d with %d%d%d\n",
+						NIGHT_NUM,
+						save_data & NIGHT_5_BEATEN_BIT,
+						save_data & NIGHT_6_BEATEN_BIT,
+						save_data & MODE_20_BEATEN_BIT);
+				new_game_init = true;
+				return SCENE_TITLE_SCREEN;
+
+			case 1:
+				rdpq_call_deferred((void (*)(void *))_title_unload,
+						NULL);
+				save_data = NIGHT_NUM > 5 ? 5 : NIGHT_NUM;
+				save_data |= tmp;
+				sfx_stop_all();
+				return SCENE_WHICH_NIGHT;
+
+			case 2:
+				rdpq_call_deferred((void (*)(void *))_title_unload,
+						NULL);
+				save_data = 6;
+				save_data |= tmp;
+				sfx_stop_all();
+				return SCENE_WHICH_NIGHT;
+
+			case 3:
+				rdpq_call_deferred((void (*)(void *))_title_unload,
+						NULL);
+				save_data = 7;
+				save_data |= tmp;
+				return SCENE_CUSTOM_NIGHT;
+			}
 		}
 	}
 
