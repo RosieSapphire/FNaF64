@@ -20,7 +20,8 @@ I made for how to do everything necessary to compile the ROM.
 * [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
 * [Ares](https://ares-emu.net)
 
-Note: Currently CTFAK really only works on Windows from my understanding.
+Note 1: Currently CTFAK really only works on Windows from my understanding.
+Note 2: To enable or disable debugging, please go to `src/debug_view.c` and change the `DEBUG_MODE` define to either 0 or 1 (0 being disabled, and 1 being enabled).
 
 ## Extracting Assets
 Once you have CTFAK installed, open it up and enter the path to your
