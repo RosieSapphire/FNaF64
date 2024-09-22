@@ -436,8 +436,7 @@ static void camera_flip_update(const update_parms_t uparms)
 {
 	int frame = (int)flip_timer;
 	camera_was_using = camera_is_using;
-	const bool button_down =
-		(uparms.pressed.r || uparms.pressed.l || uparms.pressed.z);
+	const bool button_down = (uparms.pressed.r || uparms.pressed.z);
 	const bool flip_anim_stopped = (frame == 0 || frame == FLIP_FRAMES);
 	camera_is_using ^= button_down && flip_anim_stopped;
 
