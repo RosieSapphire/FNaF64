@@ -292,6 +292,7 @@ enum scene title_update(update_parms_t uparms)
 		face_state = rand() % 100;
 	debug_view_push("Freddy Face Timer", &face_timer, DEBUG_VALUE_FLOAT);
 	debug_view_push("Freddy Face State", &face_state, DEBUG_VALUE_INT);
+	debug_view_push("Option Selected", &selected, DEBUG_VALUE_INT);
 
 	if (eeprom_failed && !eeprom_fail_notice) {
 		eeprom_fail_notice = uparms.pressed.start;

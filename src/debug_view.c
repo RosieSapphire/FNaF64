@@ -3,7 +3,7 @@
 #include "config.h"
 #include "debug_view.h"
 
-#define DEBUG_MODE 1
+#define DEBUG_MODE 0
 
 #if DEBUG_MODE
 #define DEBUG_VIEW_FONT_ID 3
@@ -68,8 +68,6 @@ void debug_view_update(const int toggle_is_pressed, const float dt)
 	debug_view_is_visible ^= toggle_is_pressed;
 	debug_blink_timer += dt * 0.75f;
 	debug_blink_timer -= (int)debug_blink_timer;
-	debug_view_push("Debug Blink Timer", &debug_blink_timer,
-			DEBUG_VALUE_FLOAT);
 }
 #else
 void debug_view_update(__attribute__((unused))const int toggle_is_pressed)

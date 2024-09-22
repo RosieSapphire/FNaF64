@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
+#include "debug_view.h"
+
 #include "engine/perspective.h"
 #include "engine/sfx.h"
 #include "engine/util.h"
@@ -266,6 +268,10 @@ enum scene game_update(update_parms_t uparms)
 			return SCENE_GAME_OVER;
 		}
 	}
+	debug_view_push("Freddy Cam", &freddy_cam, DEBUG_VALUE_INT);
+	debug_view_push("Bonnie Cam", &bonnie_cam, DEBUG_VALUE_INT);
+	debug_view_push("Chica Cam", &chica_cam, DEBUG_VALUE_INT);
+	debug_view_push("Foxy Progress", &foxy_progress, DEBUG_VALUE_INT);
 
 	if (uparms.pressed.start) {
 		sfx_stop_all();
