@@ -12,16 +12,19 @@
 
 #define MOVE_TIMER 3.02f
 
+/* public vars */
 int freddy_ai_level = 0;
-static int move_state;
-static float opportunity_timer;
-static float move_timer;
 int freddy_cam_last;
 int freddy_cam;
 bool freddy_is_jumpscaring;
+float freddy_scare_timer;
+
+/* private vars */
+static int move_state;
+static float opportunity_timer;
+static float move_timer;
 static bool ready_to_scare;
 static float ready_scare_timer;
-float freddy_scare_timer;
 
 static const float vol_lut[CAM_COUNT][2] = {
 	{ 0.15f, 0.30f }, // 1A
@@ -52,21 +55,18 @@ static const int new_cam_lut[CAM_COUNT + 1] = {
 	AT_DOOR, // At Door
 };
 
-void freddy_load(void)
+void freddy_init(void)
 {
-	move_state = 0;
-	opportunity_timer = 0.0f;
-	move_timer = 0.0f;
 	freddy_cam_last = 0;
 	freddy_cam = 0;
 	freddy_is_jumpscaring = false;
+	freddy_scare_timer = 0.0f;
+
+	move_state = 0;
+	opportunity_timer = 0.0f;
+	move_timer = 0.0f;
 	ready_to_scare = false;
 	ready_scare_timer = 0.0f;
-	freddy_scare_timer = 0.0f;
-}
-
-void freddy_unload(void)
-{
 }
 
 void freddy_draw_debug(void)

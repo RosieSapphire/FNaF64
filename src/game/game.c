@@ -54,7 +54,7 @@ static void _game_load(void)
 	bonnie_load();
 	chica_load();
 	foxy_load();
-	freddy_load();
+	freddy_init();
 	golden_freddy_load();
 	hallucinations_load();
 
@@ -96,7 +96,6 @@ static void _game_unload(void)
 		return;
 	hallucinations_unload();
 	golden_freddy_unload();
-	freddy_unload();
 	foxy_unload();
 	chica_unload();
 	bonnie_unload();
