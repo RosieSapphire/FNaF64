@@ -6,7 +6,7 @@ TARGET := fnaf
 ROM := $(TARGET).z64
 ELF := $(BUILD_DIR)/$(TARGET).elf
 DFS := $(BUILD_DIR)/$(TARGET).dfs
-CFLAGS := -Wextra -Iinclude
+N64_CFLAGS += -Wextra -Iinclude -Os
 
 INC_DIRS := include include/engine include/game
 SRC_DIRS := src src/engine src/game
@@ -20,27 +20,39 @@ ASSETS_I4     := $(wildcard assets/i4/*.png)
 ASSETS_IA4    := $(wildcard assets/ia4/*.png)
 ASSETS_CUSTOM := $(wildcard assets/custom/*.png)
 ASSETS_TTF    := $(wildcard assets/custom/*.ttf)
-ASSETS_CONV := $(addprefix filesystem/,$(notdir $(ASSETS_WAV:%.wav=%.wav64))) \
-              $(addprefix filesystem/custom/,$(notdir $(ASSETS_CUSTOM:%.png=%.sprite))) \
-              $(addprefix filesystem/ci4/,$(notdir $(ASSETS_CI4:%.png=%.sprite))) \
-              $(addprefix filesystem/ci8/,$(notdir $(ASSETS_CI8:%.png=%.sprite))) \
-              $(addprefix filesystem/i4/,$(notdir $(ASSETS_I4:%.png=%.sprite))) \
-              $(addprefix filesystem/ia4/,$(notdir $(ASSETS_IA4:%.png=%.sprite))) \
-              $(addprefix filesystem/custom/,$(notdir $(ASSETS_TTF:%.ttf=%.font64)))
+ASSETS_CONV := $(ASSETS_WAV:assets/%.wav=filesystem/%.wav64) \
+	       $(ASSETS_CI4:assets/ci4/%.png=filesystem/ci4/%.sprite) \
+	       $(ASSETS_CI8:assets/ci8/%.png=filesystem/ci8/%.sprite) \
+	       $(ASSETS_I4:assets/i4/%.png=filesystem/i4/%.sprite) \
+	       $(ASSETS_IA4:assets/ia4/%.png=filesystem/ia4/%.sprite) \
+	       $(ASSETS_CUSTOM:assets/custom/%.png=filesystem/custom/%.sprite) \
+	       $(ASSETS_TTF:assets/custom/%.ttf=filesystem/custom/%.font64)
 
-AUDIOCONV_FLAGS ?= --wav-compress 1
-MKSPRITE_FLAGS ?= --compress 2
-MKFONT_FLAGS ?= --compress 2 --monochrome --size 8
+AUDIOCONV_FLAGS := --wav-compress 1
+MKSPRITE_FLAGS := --compress 2
+MKFONT_FLAGS := --compress 2 --monochrome --size 8
 
 final: $(ROM)
-$(ROM): N64_ROM_TITLE="FiveNights-55"
+$(ROM): N64_ROM_TITLE="FiveNightsatFreddys"
 $(ROM): N64_ED64ROMCONFIGFLAGS=-w eeprom4k
 $(ROM): $(DFS) 
 
 filesystem/%.wav64: assets/%.wav
 	@mkdir -p $(dir $@)
 	@echo "    [AUDIO] $@"
+# ifeq ($(findstring "voiceover",$<),)
+# 	@$(N64_AUDIOCONV) --wav-compress 3 -o filesystem $<
+# else ifeq ($(findstring "darkness_music",$<),)
+# 	@$(N64_AUDIOCONV) --wav-compress 3 -o filesystem $<
+# else ifeq ($(findstring "static2",$<),)
+# 	@$(N64_AUDIOCONV) --wav-compress 3 -o filesystem $<
+# else ifeq ($(findstring "musicbox",$<),)
+# 	@$(N64_AUDIOCONV) --wav-compress 3 -o filesystem $<
+# else ifeq ($(findstring "circus",$<),)
+# 	@$(N64_AUDIOCONV) --wav-compress 3 -o filesystem $<
+# else
 	@$(N64_AUDIOCONV) $(AUDIOCONV_FLAGS) -o filesystem $<
+# endif
 
 filesystem/custom/%.sprite: assets/custom/%.png
 	@mkdir -p $(dir $@)
