@@ -1,5 +1,7 @@
 #include <stdlib.h>
 
+#include "config.h"
+
 #include "engine/object.h"
 #include "engine/util.h"
 #include "engine/sfx.h"

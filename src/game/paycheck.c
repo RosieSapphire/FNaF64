@@ -1,5 +1,7 @@
 #include <stdbool.h>
 
+#include "config.h"
+
 #include "engine/object.h"
 #include "engine/sfx.h"
 

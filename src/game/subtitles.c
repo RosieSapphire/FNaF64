@@ -1,5 +1,7 @@
 #include <libdragon.h>
 
+#include "config.h"
+
 #include "game/subtitles.h"
 
 #define MAX_LINES 64

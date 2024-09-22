@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "engine/object.h"
 #include "engine/util.h"
 

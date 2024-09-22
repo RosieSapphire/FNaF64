@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "engine/sfx.h"
 #include "engine/util.h"
 
