@@ -1,5 +1,5 @@
-#ifndef GAME_BONNIE_H
-#define GAME_BONNIE_H
+#ifndef _GAME_BONNIE_H_
+#define _GAME_BONNIE_H_
 
 #include <stdbool.h>
 
@@ -18,4 +18,4 @@ void bonnie_draw_scare(void);
 void bonnie_draw_debug(void);
 void bonnie_update(double dt);
 
-#endif /* GAME_BONNIE_H */
+#endif /* _GAME_BONNIE_H_ */

@@ -19,6 +19,7 @@ static int selected_setting = 0;
 static int available = 2;
 static bool is_loaded = false;
 static bool settings_triggered = false;
+static int unlock_all_correct = false;
 
 static bool new_game_init;
 static float new_game_timer;
@@ -253,8 +254,32 @@ static void _title_update_deleting(update_parms_t uparms)
 	debugf("Wiped save file to night %d\n", save_data);
 }
 
+static void _title_handle_cheat_code(joypad_buttons_t down)
+{
+	int cheat_inputs[1] = { down.l };
+
+	int cheat_indis[5] = { 0, 0, 0, 0, 0 };
+
+	for (int i = 0; i < 1; i++) {
+		if (!cheat_inputs[i])
+			continue;
+
+		if (i != cheat_indis[unlock_all_correct]) {
+			unlock_all_correct = 0;
+			break;
+		}
+
+		unlock_all_correct++;
+	}
+
+	if (unlock_all_correct == 5)
+		save_data = 7;
+}
+
 enum scene title_update(update_parms_t uparms)
 {
+	_title_handle_cheat_code(uparms.pressed);
+
 	face_timer += uparms.dt * 60 * 0.08f;
 	bool tick;
 	face_timer = wrapf(face_timer, 1, &tick);
