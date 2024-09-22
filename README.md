@@ -20,8 +20,7 @@ I made for how to do everything necessary to compile the ROM.
 * [WSL](https://learn.microsoft.com/en-us/windows/wsl/install)
 * [Ares](https://ares-emu.net)
 
-Note 1: Currently CTFAK really only works on Windows from my understanding.
-Note 2: To enable or disable debugging, please go to `src/debug_view.c` and change the `DEBUG_MODE` define to either 0 or 1 (0 being disabled, and 1 being enabled).
+Note: Currently CTFAK really only works on Windows from my understanding.
 
 ## Extracting Assets
 Once you have CTFAK installed, open it up and enter the path to your
@@ -102,11 +101,24 @@ SD card or with the [UNFLoader developed by Buu342](https://github.com/buu342/N6
 
 Have fun!
 
+# In-Game Debugger
+## Info
+Five Nights at Freddy's 64 now has a built-in on-screen debugger. It allows you to push a bunch of variables or constants to a debug buffer, and prints them out every frame. So far it only supports ints and floats, so it's very basic, but if you are working on a Libdragon project, the `debug_view.h/debug_view.c` files can just be copied into your Libdragon project and used according to the following instructions.
+## Usage
+To enable the game's debugger, make sure to go to `src/debug_view.c` and find `#define DEBUG_MODE` and change it to 0 to disable it, or 1 to enable it.
+
+To use the debugger for FNaF, all you have to do is
+### If you use this for a separate Libdragon project,
+make sure to call
+- `debug_view_init()` to initialize (this MUST be done after `dfs_init()`, since it loads a font from the filesystem [Which you will also have to change the path to in `debug_view.c` to load your custom font {or you can just copy the `debug_font.ttf` in `assets/custom/` to your project's asset directory, and update the path accordingly}]).
+- `debug_view_update()` every frame to update the debug viewer. Make sure to pass in the button that can be used to toggle the menu on and off (in FNaF64, it's the L button), and the delta/frame time for updating the blinking animation of the red debug symbol at the bottom right.
+- `debug_view_draw()` to actually draw all the values to the screen. Make sure this is done AFTER `rdpq_attach_xxx` has been drawn, and make sure it's the LAST function called BEFORE `rdpq_detach_show()`, since you don't want it to be covered up by everything else in the game.
+- `debug_view_terminate()` to unload the debug font and disable it. Usually this is done along with de-allocating everything else in the game at the very end upon closing (technically this is optional since it all gets flushed anyway when the console resets).
+
 # To-Do List
 | Task | Description | Priority |
 |--|--|--|
 | Death Moaning | When a robot gets into your room and your camera is up, you should hear moaning | Medium |
-| Static Deltatime | Currently, the game uses a dynamic deltatime, which is fine, but there are better ways. | Medium |
 | Random for Pic | There is a random value that dictates what you'll see in certain cameras | Low |
 | Background Ambience | I haven't added ambience to the nights yet | Low |
 | Goofy Mode | I actually don't know what I wanna do with this. lol | Really Low |
