@@ -1,6 +1,7 @@
 #include <stdlib.h>
 
 #include "config.h"
+#include "debug_view.h"
 
 #include "engine/object.h"
 #include "engine/util.h"
@@ -289,6 +290,7 @@ enum scene title_update(update_parms_t uparms)
 	face_timer = wrapf(face_timer, 1, &tick);
 	if (tick)
 		face_state = rand() % 100;
+	debug_push_int("Freddy Face State", face_state);
 
 	if (eeprom_failed && !eeprom_fail_notice) {
 		eeprom_fail_notice = uparms.pressed.start;
