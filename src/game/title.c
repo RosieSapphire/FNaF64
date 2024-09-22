@@ -175,9 +175,10 @@ void title_draw(void)
 
 	if (eeprom_failed && !eeprom_fail_notice) {
 		rdpq_set_mode_standard();
-		rdpq_set_prim_color(RGBA32(0x0, 0x0, 0x0, 0xD8));
 		rdpq_mode_combiner(RDPQ_COMBINER_FLAT);
-		rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
+		rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
+		rdpq_set_prim_color(RGBA32(0x0, 0x0, 0x0, 0x0));
+		rdpq_set_fog_color(RGBA32(0x0, 0x0, 0x0, 0xD8));
 		rdpq_fill_rectangle(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 
 		rdpq_set_mode_standard();
@@ -200,9 +201,10 @@ draw_newspaper:
 	}
 
 	rdpq_set_mode_standard();
-	rdpq_mode_alphacompare(true);
-	rdpq_set_fog_color(RGBA32(0xFF, 0xFF, 0xFF, alpha * 255));
+	rdpq_mode_combiner(RDPQ_COMBINER_TEX_FLAT);
 	rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
+	rdpq_set_prim_color(RGBA32(0xFF, 0xFF, 0xFF, 0x0));
+	rdpq_set_fog_color(RGBA32(0x0, 0x0, 0x0, alpha * 255));
 	object_draw(newspaper, 0, 0, 0, 0);
 }
 
