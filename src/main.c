@@ -99,7 +99,7 @@ int main(void)
 		surface_t *dsp = display_get();
 		rdpq_attach(dsp, NULL);
 		(*draw_funcs[scene])();
-		debug_view_values_draw();
+		debug_view_draw();
 		rdpq_detach_show();
 
 		static enum scene scene_last = SCENE_MAIN_GAME;
@@ -107,6 +107,7 @@ int main(void)
 		scene = (*update_funcs[scene])(uparms);
 		blip_update(uparms.dt);
 		static_update(uparms.dt);
+		debug_view_update(uparms.pressed.l, uparms.dt);
 
 		if (scene_last != scene)
 			rspq_wait();
