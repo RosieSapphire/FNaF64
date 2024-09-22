@@ -91,7 +91,7 @@ void power_down_draw(void)
 	int state = (freddy_state == 1) * (freddy_flicker_val < 2);
 	if ((!shut_down_flicker && freddy_state == 2) || freddy_state >= 3) {
 		rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
-		rdpq_fill_rectangle(0, 0, 320, 240);
+		rdpq_fill_rectangle(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 		perspective_end();
 
 		if (freddy_state == 4) {

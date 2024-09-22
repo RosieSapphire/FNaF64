@@ -396,7 +396,7 @@ void subtitles_draw(float timer, int night, float offset)
 	const rdpq_textparms_t parms = {
 		.align = 1,
 		.valign = 1,
-		.width = 320,
+		.width = DISPLAY_WIDTH,
 	};
 	rdpq_text_printf(&parms, 2, 0, 48,
 			 _subtitles_get_text(timer, night, offset));

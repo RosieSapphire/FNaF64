@@ -60,7 +60,7 @@ void custom_night_draw(void)
 	_custom_night_load();
 
 	rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
-	rdpq_fill_rectangle(0, 0, 320, 240);
+	rdpq_fill_rectangle(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 
 	rdpq_set_mode_standard();
 	for (int i = 0; i < 4; i++)

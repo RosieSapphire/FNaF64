@@ -176,7 +176,7 @@ void title_draw(void)
 		rdpq_set_prim_color(RGBA32(0x0, 0x0, 0x0, 0xD8));
 		rdpq_mode_combiner(RDPQ_COMBINER_FLAT);
 		rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
-		rdpq_fill_rectangle(0, 0, 320, 240);
+		rdpq_fill_rectangle(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 
 		rdpq_set_mode_standard();
 		rdpq_mode_alphacompare(true);
@@ -194,7 +194,7 @@ draw_newspaper:
 	if (new_game_timer >= 7.0f) {
 		alpha = 1.0f - ((new_game_timer - 7.0f) * 0.5f);
 		rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
-		rdpq_fill_rectangle(0, 0, 320, 240);
+		rdpq_fill_rectangle(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 	}
 
 	rdpq_set_mode_standard();

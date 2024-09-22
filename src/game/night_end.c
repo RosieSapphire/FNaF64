@@ -58,7 +58,7 @@ void night_end_draw(void)
 	_night_end_load();
 
 	rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
-	rdpq_fill_rectangle(0, 0, 320, 240);
+	rdpq_fill_rectangle(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 
 	rdpq_set_mode_standard();
 
@@ -88,7 +88,7 @@ void night_end_draw(void)
 	rdpq_set_prim_color(RGBA32(0x0, 0x0, 0x0, fade * 255));
 	rdpq_mode_combiner(RDPQ_COMBINER_FLAT);
 	rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
-	rdpq_fill_rectangle(0, 0, 320, 240);
+	rdpq_fill_rectangle(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 }
 
 enum scene night_end_update(update_parms_t uparms)

@@ -304,7 +304,7 @@ void camera_view_draw(void)
 {
 	if (camera_glitch_timer) {
 		rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
-		rdpq_fill_rectangle(0, 0, 320, 240);
+		rdpq_fill_rectangle(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 		return;
 	}
 
@@ -355,7 +355,7 @@ void camera_view_draw(void)
 
 	case CAM_6:
 		rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
-		rdpq_fill_rectangle(0, 0, 320, 240);
+		rdpq_fill_rectangle(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 		perspective_end();
 
 		rdpq_set_mode_standard();

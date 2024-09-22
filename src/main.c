@@ -2,6 +2,8 @@
 #include <time.h>
 #include <libdragon.h>
 
+#include "debug_view.h"
+
 #include "engine/object.h"
 #include "engine/scene.h"
 #include "engine/sfx.h"
@@ -22,6 +24,8 @@
 
 static void n64_init(void)
 {
+	debug_init_isviewer();
+	debug_init_usblog();
 	srand(TICKS_READ());
 	display_init(RESOLUTION_320x240, DEPTH_16_BPP, 3, GAMMA_NONE,
 		     ANTIALIAS_RESAMPLE);
@@ -31,6 +35,7 @@ static void n64_init(void)
 	dfs_init(DFS_DEFAULT_LOCATION);
 	asset_init_compression(1);
 	asset_init_compression(2);
+	debug_view_init();
 
 	audio_init(AUDIO_FREQUENCY, AUDIO_BUFFER_COUNT);
 	mixer_init(SFXC_COUNT);
@@ -94,6 +99,7 @@ int main(void)
 		surface_t *dsp = display_get();
 		rdpq_attach(dsp, NULL);
 		(*draw_funcs[scene])();
+		debug_view_values_draw();
 		rdpq_detach_show();
 
 		static enum scene scene_last = SCENE_MAIN_GAME;
@@ -114,6 +120,7 @@ int main(void)
 	}
 
 	subtitles_unload();
+	debug_view_terminate();
 
 	return 0;
 }

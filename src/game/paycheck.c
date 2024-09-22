@@ -49,7 +49,7 @@ void paycheck_draw(void)
 		alpha = 1.0f - ((timer - 17.0f) * 0.5f);
 
 	rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
-	rdpq_fill_rectangle(0, 0, 320, 240);
+	rdpq_fill_rectangle(0, 0, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 
 	rdpq_set_mode_standard();
 	rdpq_mode_alphacompare(true);
