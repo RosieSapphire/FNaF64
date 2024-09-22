@@ -57,8 +57,8 @@ static const int new_cam_lut[CAM_COUNT + 1] = {
 
 void freddy_init(void)
 {
-	freddy_cam_last = 0;
-	freddy_cam = 0;
+	freddy_cam_last = CAM_1A;
+	freddy_cam = CAM_1A;
 	freddy_is_jumpscaring = false;
 	freddy_scare_timer = 0.0f;
 
@@ -163,13 +163,6 @@ void freddy_update(double dt)
 			}
 		}
 	}
-
-	/*
-	if(freddy_cam == CAM_4B) {
-		if(!camera_is_visible)
-			return;
-	}
-	*/
 
 	/* Don't move Freddy while Bonnie and Chica are on stage */
 	if (((camera_states[CAM_1A] & BONNIE_BIT) ||

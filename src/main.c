@@ -24,8 +24,10 @@
 
 static void n64_init(void)
 {
+	/*
 	debug_init_isviewer();
 	debug_init_usblog();
+	*/
 	srand(TICKS_READ());
 	display_init(RESOLUTION_320x240, DEPTH_16_BPP, 3, GAMMA_NONE,
 		     ANTIALIAS_RESAMPLE);

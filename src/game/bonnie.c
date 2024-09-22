@@ -71,8 +71,8 @@ void bonnie_load(void)
 	bonnie_blackout_timer = 0.0f;
 	bonnie_scared = 0;
 	move_timer = 0.0f;
-	bonnie_cam_last = 0;
-	bonnie_cam = 0;
+	bonnie_cam_last = CAM_1A;
+	bonnie_cam = CAM_1A;
 	bonnie_is_jumpscaring = false;
 	scare_timer = 0.0f;
 

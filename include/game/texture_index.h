@@ -122,7 +122,7 @@
 #define TX_CAM_7_EMPTY TX_ROM("ci8/41.sprite")
 #define TX_CAM_7_CHIC0 TX_ROM("ci8/219.sprite")
 #define TX_CAM_7_CHIC1 TX_ROM("ci8/217.sprite")
-#define TX_CAM_7_FRED TX_ROM("ci8/249.sprite")
+#define TX_CAM_7_FRED TX_ROM("ci8/494.sprite")
 
 #define TX_CAM_BUTTON0 TX_ROM_CUSTOM("cam_button0.ci4.sprite")
 #define TX_CAM_BUTTON1 TX_ROM_CUSTOM("cam_button1.ci4.sprite")

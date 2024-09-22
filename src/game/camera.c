@@ -78,7 +78,7 @@ camera_state_t cam_1a_states[] = {
 
 camera_state_t cam_1b_states[] = {
 	{ TX_CAM_1B_EMPTY, 0 },
-	{ TX_CAM_1B_EMPTY, FREDDY_BIT },
+	{ TX_CAM_1B_FRED, FREDDY_BIT },
 	{ TX_CAM_1B_CHIC0, FREDDY_BIT | CHICA_BIT },
 	{ TX_CAM_1B_CHIC1, FREDDY_BIT | CHICA_BIT | ROOM_SPOT_BIT },
 	{ TX_CAM_1B_BON0, FREDDY_BIT | BONNIE_BIT },
@@ -200,6 +200,12 @@ static object_t views_extra[VIEWS_EXTRA];
 
 void camera_load(void)
 {
+	/*
+	 * FIXME: This is fucking retarded. The camera states should be
+	 * dictated by the animatronics' current cameras every frame. Not
+	 * fucking set manually like this god-awful bullshit. Not only is
+	 * it inconsistent and dangerous, it makes bug-testing a LOT HARDER!
+	 */
 	camera_states[0] = FREDDY_BIT | BONNIE_BIT | CHICA_BIT;
 	for (int i = 1; i < CAM_COUNT; i++)
 		camera_states[i] = 0;

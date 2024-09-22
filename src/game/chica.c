@@ -70,8 +70,8 @@ void chica_load(void)
 	chica_blackout_timer = 0.0f;
 	chica_scared = 0;
 	move_timer = 0.0f;
-	chica_cam_last = 0;
-	chica_cam = 0;
+	chica_cam_last = CAM_1A;
+	chica_cam = CAM_1A;
 	chica_is_jumpscaring = false;
 	scare_timer = 0.0f;
 
