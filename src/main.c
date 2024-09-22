@@ -29,9 +29,10 @@ static void n64_init(void)
 	rdpq_init();
 
 	dfs_init(DFS_DEFAULT_LOCATION);
+	asset_init_compression(1);
 	asset_init_compression(2);
 
-	audio_init(32000, 4);
+	audio_init(AUDIO_FREQUENCY, AUDIO_BUFFER_COUNT);
 	mixer_init(SFXC_COUNT);
 
 	timer_init();

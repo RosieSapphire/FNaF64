@@ -12,6 +12,9 @@ extern wav64_t fan_sfx, light_sfx, door_sfx, boop_sfx, cam_up_sfx, cam_down_sfx,
 	freddylaugh1, freddylaugh2, freddylaugh3, freddyrun_sfx, camglitch1,
 	camglitch2, camglitch3, camglitch4, foxy_hum, circus_music, girl_giggle;
 
+#define AUDIO_FREQUENCY 48000
+#define AUDIO_BUFFER_COUNT 3
+
 enum sfx_channels {
 	SFXC_AMBIENCE,
 	SFXC_PHONECALL,
