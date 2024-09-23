@@ -70,8 +70,8 @@ void debug_view_update(const int toggle_is_pressed, const float dt)
 	debug_blink_timer -= (int)debug_blink_timer;
 }
 #else
-void debug_view_update(__attribute__((unused))const int toggle_is_pressed)
-                       __attribute__((unused))const float dt)
+void debug_view_update(__attribute__((unused)) const int toggle_is_pressed,
+		       __attribute__((unused)) const float dt)
 {
 }
 #endif /* DEBUG_MODE */
