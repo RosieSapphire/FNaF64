@@ -111,20 +111,16 @@ void office_draw(void)
 	object_draw(room_views[room_get_state()], office_turn, 0, 0, 0);
 }
 
-static void _office_update_turn_normal(update_parms_t uparms)
+static void _office_update_turn(update_parms_t uparms, const int smooth)
 {
 	const int stick_clamped = icutoff(uparms.sticks.stick_x, 10);
 	const float turn_amount = stick_clamped * ROOM_TURN_SPEED;
-	office_turn -= turn_amount * uparms.dt;
-	office_turn = clampf(office_turn, ROOM_TURN_MIN, 0);
-}
+	float *l = (smooth) ? &office_turn_lerp : &office_turn;
+	*l -= turn_amount * uparms.dt;
+	*l = clampf(*l, ROOM_TURN_MIN, 0);
 
-static void _office_update_turn_smooth(update_parms_t uparms)
-{
-	const int stick_clamped = icutoff(uparms.sticks.stick_x, 10);
-	const float turn_amount = stick_clamped * ROOM_TURN_SPEED;
-	office_turn_lerp -= turn_amount * uparms.dt;
-	office_turn_lerp = clampf(office_turn_lerp, ROOM_TURN_MIN, 0);
+	if (!smooth)
+		return;
 
 	if (fabsf(office_turn_lerp - office_turn) < 0.001f) {
 		office_turn = office_turn_lerp;
@@ -140,12 +136,9 @@ void office_update(update_parms_t uparms)
 	    chica_is_jumpscaring)
 		camera_is_using = false;
 
-	if (!camera_is_visible) {
-		if (settings_flags & SET_SMOOTH_TURN_BIT)
-			_office_update_turn_smooth(uparms);
-		else
-			_office_update_turn_normal(uparms);
-	}
+	if (!camera_is_visible)
+		_office_update_turn(uparms,
+				    (settings_flags & SET_SMOOTH_TURN_BIT));
 
 	if (button_state & (BUTTON_LEFT_LIGHT | BUTTON_RIGHT_LIGHT) &&
 	    flicker_rand > 1)
