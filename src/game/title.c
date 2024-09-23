@@ -14,6 +14,7 @@
 #include "game/settings.h"
 #include "game/texture_index.h"
 #include "game/title.h"
+#include "game/save_data.h"
 
 static float face_timer = 0.0f;
 static int face_state = 0;
@@ -154,9 +155,9 @@ void title_draw(void)
 	rdpq_mode_alphacompare(true);
 
 	int star_count = 0;
-	star_count += (save_data & NIGHT_5_BEATEN_BIT) > 0;
-	star_count += (save_data & NIGHT_6_BEATEN_BIT) > 0;
-	star_count += (save_data & MODE_20_BEATEN_BIT) > 0;
+	star_count += (save_data & SAVE_NIGHT_5_BEATEN_BIT) > 0;
+	star_count += (save_data & SAVE_NIGHT_6_BEATEN_BIT) > 0;
+	star_count += (save_data & SAVE_MODE_20_BEATEN_BIT) > 0;
 	available = clampf(star_count, 0, 2) + 2;
 	for (int i = 0; i < star_count; i++)
 		object_draw(star, 93 + 77 * i, 350, 28, 27);
@@ -167,7 +168,7 @@ void title_draw(void)
 	object_draw(selector, 40, 429 + selected * 66, 0, 0);
 
 	if (selected == 1) {
-		int clamped = clampf(NIGHT_NUM, 1, 5);
+		int clamped = clampf(SAVE_NIGHT_NUM, 1, 5);
 		object_draw(night_text, 444, 509, 0, 0);
 		object_draw_index_y(night_atlas, 512, 509, 6, clamped);
 	}
@@ -261,24 +262,11 @@ static void _title_update_deleting(update_parms_t uparms)
 
 static void _title_handle_cheat_code(joypad_buttons_t down)
 {
-	int cheat_inputs[1] = { down.l };
-
-	int cheat_indis[5] = { 0, 0, 0, 0, 0 };
-
-	for (int i = 0; i < 1; i++) {
-		if (!cheat_inputs[i])
-			continue;
-
-		if (i != cheat_indis[unlock_all_correct]) {
-			unlock_all_correct = 0;
-			break;
-		}
-
-		unlock_all_correct++;
+	unlock_all_correct += down.l;
+	if (unlock_all_correct == 5) {
+		save_data = SAVE_BEAT_EVERYTHING;
+		unlock_all_correct = 0;
 	}
-
-	if (unlock_all_correct == 5)
-		save_data = 7;
 }
 
 enum scene title_update(update_parms_t uparms)
@@ -290,9 +278,14 @@ enum scene title_update(update_parms_t uparms)
 	face_timer = wrapf(face_timer, 1, &tick);
 	if (tick)
 		face_state = rand() % 100;
-	debug_view_push("Freddy Face Timer", &face_timer, DEBUG_VALUE_FLOAT);
-	debug_view_push("Freddy Face State", &face_state, DEBUG_VALUE_INT);
-	debug_view_push("Option Selected", &selected, DEBUG_VALUE_INT);
+	const int d_night_num = SAVE_NIGHT_NUM;
+	const int d_night_5_done = save_data & SAVE_NIGHT_5_BEATEN_BIT;
+	const int d_night_6_done = save_data & SAVE_NIGHT_6_BEATEN_BIT;
+	const int d_night_7_done = save_data & SAVE_MODE_20_BEATEN_BIT;
+	debug_view_push("Night Num", &d_night_num, DEBUG_VALUE_INT);
+	debug_view_push("Beat 5", &d_night_5_done, DEBUG_VALUE_BOOL);
+	debug_view_push("Beat 6", &d_night_6_done, DEBUG_VALUE_BOOL);
+	debug_view_push("Beat 20", &d_night_7_done, DEBUG_VALUE_BOOL);
 
 	if (eeprom_failed && !eeprom_fail_notice) {
 		eeprom_fail_notice = uparms.pressed.start;
@@ -345,29 +338,31 @@ enum scene title_update(update_parms_t uparms)
 	}
 
 	if (uparms.pressed.start || uparms.pressed.a) {
-		uint8_t tmp = save_data &
-			      (NIGHT_5_BEATEN_BIT | NIGHT_6_BEATEN_BIT |
-			       MODE_20_BEATEN_BIT);
+		uint8_t tmp = save_data & (SAVE_NIGHT_5_BEATEN_BIT |
+					   SAVE_NIGHT_6_BEATEN_BIT |
+					   SAVE_MODE_20_BEATEN_BIT);
 		switch (selected) {
 		case 0:
 			/* Just reset the nights, not the stars */
-			save_data &= NIGHT_5_BEATEN_BIT | NIGHT_6_BEATEN_BIT |
-				     MODE_20_BEATEN_BIT;
+			save_data &= SAVE_NIGHT_5_BEATEN_BIT |
+				     SAVE_NIGHT_6_BEATEN_BIT |
+				     SAVE_MODE_20_BEATEN_BIT;
 			save_data |= 1;
 
 			if (!eeprom_failed)
 				eepfs_write("fnaf.dat", &save_data, 1);
-			debugf("Reset night to %d with %d%d%d\n", NIGHT_NUM,
-			       save_data & NIGHT_5_BEATEN_BIT,
-			       save_data & NIGHT_6_BEATEN_BIT,
-			       save_data & MODE_20_BEATEN_BIT);
+			debugf("Reset night to %d with %d%d%d\n",
+			       SAVE_NIGHT_NUM,
+			       save_data & SAVE_NIGHT_5_BEATEN_BIT,
+			       save_data & SAVE_NIGHT_6_BEATEN_BIT,
+			       save_data & SAVE_MODE_20_BEATEN_BIT);
 			new_game_init = true;
 			return SCENE_TITLE_SCREEN;
 
 		case 1:
 			rdpq_call_deferred((void (*)(void *))_title_unload,
 					   NULL);
-			save_data = NIGHT_NUM > 5 ? 5 : NIGHT_NUM;
+			save_data = SAVE_NIGHT_NUM > 5 ? 5 : SAVE_NIGHT_NUM;
 			save_data |= tmp;
 			sfx_stop_all();
 			return SCENE_WHICH_NIGHT;
