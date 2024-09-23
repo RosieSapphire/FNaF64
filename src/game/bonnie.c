@@ -112,8 +112,9 @@ void bonnie_update(double dt)
 		return;
 	}
 
-	bool cam_flip_down = (!camera_is_visible && camera_was_visible);
-	if (bonnie_cam == YOURE_FUCKED && cam_flip_down) {
+	bool cam_being_flipped_down =
+		(!camera_is_visible && camera_was_visible);
+	if (bonnie_cam == YOURE_FUCKED && cam_being_flipped_down) {
 		bonnie_is_jumpscaring = true;
 		wav64_play(&jumpscare_sfx, SFXC_JUMPSCARE);
 		return;
@@ -156,7 +157,6 @@ void bonnie_update(double dt)
 
 	wav64_play(&deepstep_sfx, SFXC_FOOTSTEPS);
 	bonnie_cam = cam_next;
-	// bonnie_cam = CAM_2B;
 	which_spot = rand() & 1;
 
 	/* I have no fucking clue why I have to do this */
