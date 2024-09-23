@@ -23,21 +23,19 @@
 #include "game/foxy.h"
 #include "game/golden_freddy.h"
 #include "game/settings.h"
+#include "game/save_data.h"
 #include "game/game.h"
 
 static bool is_loaded = false;
 
 float night_timer;
 bool eeprom_failed = false;
-uint8_t save_data = 1;
 static float jumpscare_exit_timer = 40;
 int night_skip_correct;
 float ticks_since_load;
 float time_since_load;
 
 static float circus_timer;
-
-int settings_flags = 0; // SET_SUBTITLES_BIT;
 
 static void _game_load(void)
 {
@@ -60,7 +58,7 @@ static void _game_load(void)
 	golden_freddy_load();
 	hallucinations_load();
 
-	switch (NIGHT_NUM) {
+	switch (SAVE_NIGHT_NUM) {
 	case 1:
 		wav64_play(&phonecall1, SFXC_PHONECALL);
 		break;
@@ -150,7 +148,7 @@ void game_draw(void)
 
 	if (settings_flags & SET_SUBTITLES_BIT &&
 	    mixer_ch_playing(SFXC_PHONECALL)) {
-		subtitles_draw(night_timer, NIGHT_NUM, time_since_load);
+		subtitles_draw(night_timer, SAVE_NIGHT_NUM, time_since_load);
 	}
 
 	ui_draw();
@@ -209,7 +207,7 @@ enum scene game_update(update_parms_t uparms)
 		*sorry = 69;
 	}
 
-	if (!camera_is_visible && uparms.pressed.c_up && NIGHT_NUM <= 5)
+	if (!camera_is_visible && uparms.pressed.c_up && SAVE_NIGHT_NUM <= 5)
 		mixer_ch_stop(SFXC_PHONECALL);
 
 	_game_handle_cheat_code(uparms.pressed);
@@ -263,10 +261,10 @@ enum scene game_update(update_parms_t uparms)
 	chica_update(uparms.dt);
 	foxy_update(uparms.dt);
 	freddy_update(uparms.dt);
-	debug_view_push("Freddy Cam", &freddy_cam, DEBUG_VALUE_INT);
-	debug_view_push("Bonnie Cam", &bonnie_cam, DEBUG_VALUE_INT);
-	debug_view_push("Chica Cam", &chica_cam, DEBUG_VALUE_INT);
-	debug_view_push("Foxy Progress", &foxy_progress, DEBUG_VALUE_INT);
+	debug_view_push("Freddy AI", &freddy_ai_level, DEBUG_VALUE_INT);
+	debug_view_push("Bonnie AI", &bonnie_ai_level, DEBUG_VALUE_INT);
+	debug_view_push("Chica AI", &chica_ai_level, DEBUG_VALUE_INT);
+	debug_view_push("Foxy AI", &foxy_ai_level, DEBUG_VALUE_INT);
 
 	/* misc events */
 	camera_update(uparms);
