@@ -21,6 +21,7 @@
 #include "game/powerdown.h"
 #include "game/custom_night.h"
 #include "game/paycheck.h"
+#include "game/save_data.h"
 
 static void n64_init(void)
 {
@@ -28,6 +29,7 @@ static void n64_init(void)
 	debug_init_isviewer();
 	debug_init_usblog();
 	*/
+
 	srand(TICKS_READ());
 	display_init(RESOLUTION_320x240, DEPTH_16_BPP, 3, GAMMA_NONE,
 		     ANTIALIAS_RESAMPLE);
@@ -45,25 +47,8 @@ static void n64_init(void)
 	timer_init();
 	joypad_init();
 	subtitles_load();
-
-	eepfs_entry_t save_entry = { "fnaf.dat", sizeof(save_data) };
-	int eepfs_result = eepfs_init(&save_entry, sizeof(save_data));
-	eeprom_failed = eepfs_result != EEPFS_ESUCCESS;
-	if (eeprom_failed)
-		return;
-
-	if (!eepfs_verify_signature()) {
-		debugf("EEPFS verification failed. Wiping save filesystem.\n");
-		eepfs_wipe();
-		save_data = 1;
-		eepfs_write("fnaf.dat", &save_data, sizeof(save_data));
-	}
-
-	int read_result = eepfs_read("fnaf.dat", &save_data, sizeof(save_data));
-	if (read_result != EEPFS_ESUCCESS)
-		debugf("Failed to read from EEPFS.\n");
-	else
-		debugf("Sucessfully loaded save: %u\n", save_data);
+	if (!save_data_read())
+		debugf("FAILED TO READ SAVE DATA!\n");
 }
 
 int main(void)
