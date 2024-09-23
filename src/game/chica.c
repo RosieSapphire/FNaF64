@@ -190,13 +190,12 @@ void chica_update(double dt)
 
 	chica_cam_last = chica_cam;
 	int cam_next = new_cam_lut[chica_cam][which_room];
-	if (cam_next == YOURE_FUCKED && (button_state & BUTTON_RIGHT_DOOR)) {
+	/*
+	 * If the door is closed on Chica when attempting to get in,
+	 * she returns to Camera 4A
+	 */
+	if (cam_next == YOURE_FUCKED && (button_state & BUTTON_RIGHT_DOOR))
 		cam_next = CAM_4A;
-		/* BULLSHIT FIX THIS SHOULDN'T HAVE TO BE HERE! */
-		camera_states[CAM_4A] |= (CHICA_BIT | ROOM_SPOT_BIT);
-		if (cam_selected == CAM_4A)
-			chica_blackout_timer = 10;
-	}
 
 	if (cam_next < AT_DOOR) {
 		float foot_vol = footstep_vol_lut[cam_next];
@@ -205,17 +204,12 @@ void chica_update(double dt)
 
 	wav64_play(&deepstep_sfx, SFXC_FOOTSTEPS);
 	chica_cam = cam_next;
-	// chica_cam = CAM_4B;
 	which_spot = rand() & 1;
 
-	/* I have no fucking clue why I have to do this */
-	if (chica_cam_last < AT_DOOR) {
-		camera_states[chica_cam_last] &= ~(CHICA_BIT | ROOM_SPOT_BIT);
-		if (chica_cam < AT_DOOR)
-			camera_states[chica_cam] |=
-				CHICA_BIT | (ROOM_SPOT_BIT * which_spot);
+	/* Chica knocks out camera if moving while we're looking */
+	if (chica_cam_last != chica_cam &&
+	    (chica_cam_last == cam_selected || chica_cam == cam_selected))
 		chica_blackout_timer = 10;
-	}
 
 	if (chica_cam != AT_DOOR)
 		chica_scared = false;

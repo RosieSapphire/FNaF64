@@ -209,11 +209,4 @@ void freddy_update(double dt)
 		mixer_ch_stop(SFXC_MUSICBOX);
 
 	freddy_cam = cam_next;
-
-	/* I have no fucking clue why I have to do this */
-	if (freddy_cam_last < AT_DOOR) {
-		camera_states[freddy_cam_last] &= ~FREDDY_BIT;
-		if (freddy_cam < AT_DOOR)
-			camera_states[freddy_cam] |= FREDDY_BIT;
-	}
 }

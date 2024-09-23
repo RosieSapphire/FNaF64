@@ -1,5 +1,6 @@
 #include <stdlib.h>
 
+#include "debug_view.h"
 #include "config.h"
 
 #include "engine/object.h"
@@ -166,9 +167,11 @@ static camera_state_t *cam_states[CAM_COUNT] = {
 };
 
 static int camera_states_last[CAM_COUNT] = { 0 };
-int camera_states[CAM_COUNT] = {
+int camera_states[CAM_COUNT] = { 0 };
+/*
 	FREDDY_BIT | BONNIE_BIT | CHICA_BIT, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
+*/
 
 static float flip_timer = 0.0f;
 static float button_blink_timer = 0.0f;
@@ -206,9 +209,11 @@ void camera_load(void)
 	 * fucking set manually like this god-awful bullshit. Not only is
 	 * it inconsistent and dangerous, it makes bug-testing a LOT HARDER!
 	 */
+	/*
 	camera_states[0] = FREDDY_BIT | BONNIE_BIT | CHICA_BIT;
 	for (int i = 1; i < CAM_COUNT; i++)
 		camera_states[i] = 0;
+		*/
 
 	flip_timer = 0.0f;
 	camera_was_using = false;
@@ -653,9 +658,9 @@ static void camera_update_robot_voice(double dt)
 	if (!robot_voice_tick)
 		return;
 
-	bool bonnie_in_cam_and_looking =
+	bool bonnie_in_corner_cam_and_looking =
 		(cam_selected == bonnie_cam && bonnie_cam == CAM_2B);
-	bool chica_in_cam_and_looking =
+	bool chica_in_corner_cam_and_looking =
 		(cam_selected == chica_cam && chica_cam == CAM_4B);
 
 	if (!camera_is_visible || NIGHT_NUM < 4) {
@@ -663,7 +668,8 @@ static void camera_update_robot_voice(double dt)
 		return;
 	}
 
-	if (bonnie_in_cam_and_looking || chica_in_cam_and_looking) {
+	if (bonnie_in_corner_cam_and_looking ||
+	    chica_in_corner_cam_and_looking) {
 		float vol = (float)(1 + (rand() % 5) * 5) / 100.0f;
 		mixer_ch_set_vol(SFXC_ROBOTVOICE, vol, vol);
 		return;
@@ -689,8 +695,18 @@ static void camera_update_face_glitch(double dt)
 	camera_states[cam_selected] |= ((rand() % 30) + 1) << FACE_GLITCH_SHIFT;
 }
 
+static void camera_setup_states(void)
+{
+	for (int i = 0; i < CAM_COUNT; i++) {
+		camera_states[i] = ((i == bonnie_cam) * BONNIE_BIT) |
+				   ((i == chica_cam) * CHICA_BIT) |
+				   ((i == freddy_cam) * FREDDY_BIT);
+	}
+}
+
 void camera_update(update_parms_t uparms)
 {
+	camera_setup_states();
 	camera_flip_update(uparms);
 	camera_was_visible = camera_is_visible;
 	camera_is_visible = ((int)flip_timer == FLIP_FRAMES);

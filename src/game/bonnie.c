@@ -140,13 +140,13 @@ void bonnie_update(double dt)
 
 	bonnie_cam_last = bonnie_cam;
 	int cam_next = new_cam_lut[bonnie_cam][which_room];
-	if (cam_next == YOURE_FUCKED && (button_state & BUTTON_LEFT_DOOR)) {
+
+	/*
+	 * If the door is closed on Bonnie when attempting to get in,
+	 * he returns to Camera 1B
+	 */
+	if (cam_next == YOURE_FUCKED && (button_state & BUTTON_LEFT_DOOR))
 		cam_next = CAM_1B;
-		/* BULLSHIT FIX THIS SHOULDN'T HAVE TO BE HERE! */
-		camera_states[CAM_1B] |= (BONNIE_BIT | ROOM_SPOT_BIT);
-		if (cam_selected == CAM_1B)
-			bonnie_blackout_timer = 10;
-	}
 
 	if (cam_next < AT_DOOR) {
 		float foot_vol = footstep_vol_lut[cam_next];
@@ -159,14 +159,10 @@ void bonnie_update(double dt)
 	bonnie_cam = cam_next;
 	which_spot = rand() & 1;
 
-	/* I have no fucking clue why I have to do this */
-	if (bonnie_cam_last < AT_DOOR) {
-		camera_states[bonnie_cam_last] &= ~(BONNIE_BIT | ROOM_SPOT_BIT);
-		if (bonnie_cam < AT_DOOR)
-			camera_states[bonnie_cam] |=
-				BONNIE_BIT | (ROOM_SPOT_BIT * which_spot);
+	/* Bonnie knocks out camera if moving while we're looking */
+	if (bonnie_cam_last != bonnie_cam &&
+	    (bonnie_cam_last == cam_selected || bonnie_cam == cam_selected))
 		bonnie_blackout_timer = 10;
-	}
 
 	if (bonnie_cam != AT_DOOR)
 		bonnie_scared = false;
