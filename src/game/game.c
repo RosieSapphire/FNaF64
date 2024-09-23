@@ -234,6 +234,11 @@ enum scene game_update(update_parms_t uparms)
 		foxy_ai_level++;
 	}
 
+	/*
+	 * this is really only effective for custom night where AIs can
+	 * be set to 20, but AI increases throughout the night regardless,
+	 * so this clamp is in place.
+	 */
 	bonnie_ai_level = clampf(bonnie_ai_level, 0, 20);
 	chica_ai_level = clampf(chica_ai_level, 0, 20);
 	foxy_ai_level = clampf(foxy_ai_level, 0, 20);
@@ -247,16 +252,27 @@ enum scene game_update(update_parms_t uparms)
 		return SCENE_POWER_DOWN;
 	}
 
+	/* office events */
 	office_update(uparms);
 	fan_update(uparms.dt);
 	doors_update(uparms.dt);
 	buttons_update(uparms);
-	camera_update(uparms);
-	ui_update(uparms.dt);
+
+	/* animatronic events */
 	bonnie_update(uparms.dt);
 	chica_update(uparms.dt);
 	foxy_update(uparms.dt);
 	freddy_update(uparms.dt);
+	debug_view_push("Freddy Cam", &freddy_cam, DEBUG_VALUE_INT);
+	debug_view_push("Bonnie Cam", &bonnie_cam, DEBUG_VALUE_INT);
+	debug_view_push("Chica Cam", &chica_cam, DEBUG_VALUE_INT);
+	debug_view_push("Foxy Progress", &foxy_progress, DEBUG_VALUE_INT);
+
+	/* misc events */
+	camera_update(uparms);
+	ui_update(uparms.dt);
+
+	/* handle jumpscares */
 	if (bonnie_is_jumpscaring || chica_is_jumpscaring || foxy_is_scaring ||
 	    freddy_is_jumpscaring) {
 		jumpscare_exit_timer -= uparms.dt * 60;
@@ -268,11 +284,8 @@ enum scene game_update(update_parms_t uparms)
 			return SCENE_GAME_OVER;
 		}
 	}
-	debug_view_push("Freddy Cam", &freddy_cam, DEBUG_VALUE_INT);
-	debug_view_push("Bonnie Cam", &bonnie_cam, DEBUG_VALUE_INT);
-	debug_view_push("Chica Cam", &chica_cam, DEBUG_VALUE_INT);
-	debug_view_push("Foxy Progress", &foxy_progress, DEBUG_VALUE_INT);
 
+	/* exiting */
 	if (uparms.pressed.start) {
 		sfx_stop_all();
 		rdpq_call_deferred((void (*)(void *))_game_unload, NULL);
