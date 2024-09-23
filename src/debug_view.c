@@ -3,7 +3,7 @@
 #include "config.h"
 #include "debug_view.h"
 
-#define DEBUG_MODE 1
+#define DEBUG_MODE 0
 
 #if DEBUG_MODE
 #define DEBUG_VIEW_FONT_ID 3
