@@ -1,7 +1,12 @@
 #ifndef _DEBUG_VIEW_H_
 #define _DEBUG_VIEW_H_
 
-enum { DEBUG_VALUE_INT, DEBUG_VALUE_FLOAT, DEBUG_VALUE_COUNT };
+enum {
+	DEBUG_VALUE_INT,
+	DEBUG_VALUE_BOOL,
+	DEBUG_VALUE_FLOAT,
+	DEBUG_VALUE_COUNT
+};
 
 void debug_view_init(void);
 void debug_view_push(const char *label, const void *value, const int type);

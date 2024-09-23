@@ -3,7 +3,7 @@
 #include "config.h"
 #include "debug_view.h"
 
-#define DEBUG_MODE 0
+#define DEBUG_MODE 1
 
 #if DEBUG_MODE
 #define DEBUG_VIEW_FONT_ID 3
@@ -33,17 +33,16 @@ void debug_view_init(void)
 #if DEBUG_MODE
 void debug_view_push(const char *label, const void *value, const int type)
 {
-	/*
-	static const char *fmts[DEBUG_VALUE_COUNT] = {
-		"%s: %d",
-		"%s: %f",
-	};
-	*/
 	switch (type) {
 	case DEBUG_VALUE_INT:
 		snprintf(debug_buffers[debug_buffers_in_use++],
 			 DEBUG_VIEW_BUFFER_LENGTH, "%s: %d\n", label,
-			 *((int *)value));
+			 *(int *)value);
+		break;
+	case DEBUG_VALUE_BOOL:
+		snprintf(debug_buffers[debug_buffers_in_use++],
+			 DEBUG_VIEW_BUFFER_LENGTH, "%s: %s\n", label,
+			 (*(int *)value) ? "TRUE" : "FALSE");
 		break;
 	case DEBUG_VALUE_FLOAT:
 		snprintf(debug_buffers[debug_buffers_in_use++],
