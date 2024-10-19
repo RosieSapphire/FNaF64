@@ -83,7 +83,7 @@ cp -rvf /mnt/c/<CTFAK Directory>/Dumps/Five\ Nights\ at\ Freddys/* tmp/
 
 Run the script to convert the assets.
 ```bash
-./copy_assets.sh tmp/Images/ tmp/Sounds/
+./copy-assets.sh tmp
 ```
 
 Remove the temporary directory.
