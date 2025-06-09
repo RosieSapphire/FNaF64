@@ -1,5 +1,4 @@
-#ifndef GAME_SETTINGS_H
-#define GAME_SETTINGS_H
+#pragma once
 
 extern int settings_flags;
 #define SET_SMOOTH_TURN_BIT     1
@@ -12,5 +11,3 @@ extern int settings_flags;
 #define SETTING_COUNT           7
 
 #define HOUR_LEN_SECONDS ((settings_flags & SET_FAST_NIGHT_BIT) ? 45 : 90)
-
-#endif /* GAME_SETTINGS_H */

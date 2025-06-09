@@ -1,5 +1,4 @@
-#ifndef ENGINE_UTIL_H_
-#define ENGINE_UTIL_H_
+#pragma once
 
 #include <stdbool.h>
 
@@ -10,5 +9,3 @@ int icutoff(int x, int threshold);
 int vcon(int x);
 float speed_fps(int percent);
 float lerpf(float a, float b, float t);
-
-#endif /* ENGINE_UTIL_H_ */

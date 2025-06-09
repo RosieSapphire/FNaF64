@@ -1,5 +1,4 @@
-#ifndef GAME_GAME_OVER_H
-#define GAME_GAME_OVER_H
+#pragma once
 
 #include <libdragon.h>
 
@@ -8,5 +7,3 @@
 
 void game_over_draw(void);
 enum scene game_over_update(update_parms_t uparms);
-
-#endif /* GAME_GAME_OVER_H */

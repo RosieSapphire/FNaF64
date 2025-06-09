@@ -1,5 +1,4 @@
-#ifndef GAME_FOXY_H
-#define GAME_FOXY_H
+#pragma once
 
 #include <stdbool.h>
 #include "engine/object.h"
@@ -18,5 +17,3 @@ extern object_t foxy_run[FOXY_RUN_FRAMES];
 void foxy_load(void);
 void foxy_unload(void);
 void foxy_update(double dt);
-
-#endif /* GAME_FOXY_H */

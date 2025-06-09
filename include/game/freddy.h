@@ -1,5 +1,4 @@
-#ifndef GAME_FREDDY_H
-#define GAME_FREDDY_H
+#pragma once
 
 #include <stdbool.h>
 
@@ -16,5 +15,3 @@ void freddy_load(void);
 void freddy_unload(void);
 void freddy_draw_debug(void);
 void freddy_update(double dt);
-
-#endif /* GAME_FREDDY_H */

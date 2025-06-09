@@ -1,5 +1,4 @@
-#ifndef GAME_TEXTURE_INDEX_H
-#define GAME_TEXTURE_INDEX_H
+#pragma once
 
 /* Helpers */
 #define TX_ROM(PATH) ("rom:/" PATH)
@@ -272,5 +271,3 @@
 /* Golden Freddy */
 #define TX_GOLDEN_FREDDY_SIT   TX_ROM("ci8/573.sprite")
 #define TX_GOLDEN_FREDDY_SCARE TX_ROM("ci8/548.sprite")
-
-#endif /* GAME_TEXTURE_INDEX_H */

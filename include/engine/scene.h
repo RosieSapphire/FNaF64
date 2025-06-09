@@ -1,5 +1,4 @@
-#ifndef SCENE_H
-#define SCENE_H
+#pragma once
 
 enum scene {
 	SCENE_TITLE_SCREEN,
@@ -12,5 +11,3 @@ enum scene {
 	SCENE_CUSTOM_NIGHT,
 	SCENE_COUNT,
 };
-
-#endif /* SCENE_H */

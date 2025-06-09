@@ -1,5 +1,4 @@
-#ifndef GAME_BUTTONS_H
-#define GAME_BUTTONS_H
+#pragma once
 
 #include <libdragon.h>
 
@@ -16,5 +15,3 @@ void buttons_load(void);
 void buttons_unload(void);
 void buttons_draw(void);
 void buttons_update(update_parms_t uparms);
-
-#endif /* BUTTONS_H */

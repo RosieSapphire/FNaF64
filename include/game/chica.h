@@ -1,5 +1,4 @@
-#ifndef GAME_CHICA_H
-#define GAME_CHICA_H
+#pragma once
 
 #include <stdbool.h>
 
@@ -17,5 +16,3 @@ void chica_unload(void);
 void chica_draw_scare(void);
 void chica_draw_debug(void);
 void chica_update(double dt);
-
-#endif /* GAME_CHICA_H */

@@ -1,5 +1,4 @@
-#ifndef GAME_CUSTOM_NIGHT_H
-#define GAME_CUSTOM_NIGHT_H
+#pragma once
 
 #include <libdragon.h>
 
@@ -8,5 +7,3 @@
 
 void custom_night_draw(void);
 enum scene custom_night_update(update_parms_t uparms);
-
-#endif /* GAME_CUSTOM_NIGHT_H */

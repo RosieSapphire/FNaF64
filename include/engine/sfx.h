@@ -1,5 +1,4 @@
-#ifndef ENGINE_SFX_H_
-#define ENGINE_SFX_H_
+#pragma once
 
 #include <libdragon.h>
 
@@ -35,5 +34,3 @@ enum sfx_channels {
 
 void sfx_load(void);
 void sfx_stop_all(void);
-
-#endif /* ENGINE_SFX_H_ */

@@ -1,5 +1,4 @@
-#ifndef GAME_GAME_H
-#define GAME_GAME_H
+#pragma once
 
 #include <libdragon.h>
 
@@ -18,5 +17,3 @@ extern uint8_t save_data;
 
 void game_draw(void);
 enum scene game_update(update_parms_t uparms);
-
-#endif /* GAME_GAME_H */

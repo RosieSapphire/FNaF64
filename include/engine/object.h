@@ -1,5 +1,4 @@
-#ifndef ENGINE_OBJECT_H_
-#define ENGINE_OBJECT_H_
+#pragma once
 
 #include <stdbool.h>
 #include <libdragon.h>
@@ -17,5 +16,3 @@ void object_draw(object_t o, int px, int py, int ox, int oy);
 void object_draw_flipped(object_t o, int px, int py, int ox, int oy);
 void object_draw_index_x(object_t o, int px, int py, int w, int i);
 void object_draw_index_y(object_t o, int px, int py, int h, int i);
-
-#endif /* ENGINE_OBJECT_H_ */

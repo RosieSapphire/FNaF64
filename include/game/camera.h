@@ -1,5 +1,4 @@
-#ifndef GAME_CAMERA_H
-#define GAME_CAMERA_H
+#pragma once
 
 #include <libdragon.h>
 
@@ -32,5 +31,3 @@ void camera_flip_draw(void);
 void camera_view_draw(void);
 void camera_ui_draw(void);
 void camera_update(update_parms_t uparms);
-
-#endif /* GAME_CAMERA_H */
