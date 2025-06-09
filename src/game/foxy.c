@@ -5,8 +5,8 @@
 
 #include "game/camera.h"
 #include "game/buttons.h"
-#include "game/ui.h"
 #include "game/texture_index.h"
+#include "game/game.h"
 #include "game/foxy.h"
 
 int foxy_ai_level = 0;
@@ -89,12 +89,12 @@ static void _foxy_trigger_reset(void)
 	num_door_pounds++;
 
 	int power_deduct = 10 + (50 * num_door_pounds);
-	if(power_deduct >= ui_power_left) {
-		ui_power_left = 0;
+	if(power_deduct >= game_power_left) {
+		game_power_left = 0;
 		return;
 	}
 
-	ui_power_left -= power_deduct;
+	game_power_left -= power_deduct;
 }
 
 void foxy_update(double dt)

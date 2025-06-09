@@ -106,8 +106,8 @@ void power_down_draw(void)
 
 enum scene power_down_update(update_parms_t uparms)
 {
-	night_timer += uparms.dt;
-	if(night_timer >= 6 * HOUR_LEN_SECONDS) {
+	game_night_timer += uparms.dt;
+	if(game_night_timer >= 6 * HOUR_LEN_SECONDS) {
 		sfx_stop_all_channels();
 		rdpq_call_deferred((void (*)(void *))_power_down_unload, NULL);
 		return SCENE_NIGHT_END;
