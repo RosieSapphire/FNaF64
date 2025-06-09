@@ -20,34 +20,37 @@
 #include "game/custom_night.h"
 #include "game/paycheck.h"
 
-static void n64_init(void)
+enum {
+        RET_GOOD,
+        RET_EEPROM_FAILED
+};
+
+int main(void)
 {
+        /* N64 Init */
 	srand(TICKS_READ());
 	display_init(RESOLUTION_320x240, DEPTH_16_BPP, 3,
-			GAMMA_NONE, ANTIALIAS_RESAMPLE);
-
+		     GAMMA_NONE, ANTIALIAS_RESAMPLE);
 	rdpq_init();
-
 	dfs_init(DFS_DEFAULT_LOCATION);
-
-	/*
-	debug_init_isviewer();
-	debug_init_usblog();
-	rdpq_debug_start();
-	*/
-
 	audio_init(32000, 4);
 	mixer_init(SFXC_COUNT);
-
 	timer_init();
 	joypad_init();
-	subtitles_load();
 
-	eepfs_entry_t save_entry = {"fnaf.dat", sizeof(save_data)};
-	int eepfs_result = eepfs_init(&save_entry, sizeof(save_data));
-	eeprom_failed = eepfs_result != EEPFS_ESUCCESS;
-	if(eeprom_failed)
-		return;
+        /* Save Data Init */
+        {
+	        eepfs_entry_t save_entry;
+
+                save_entry.path = "fnaf.dat";
+                save_entry.size = sizeof(save_data);
+	        eeprom_failed =
+                        eepfs_init(&save_entry, sizeof(save_data)) !=
+                        EEPFS_ESUCCESS;
+	        if(eeprom_failed) {
+	        	return RET_EEPROM_FAILED;
+                }
+        }
 
 	if(!eepfs_verify_signature()) {
 		debugf("EEPFS verification failed. Wiping save filesystem.\n");
@@ -61,11 +64,9 @@ static void n64_init(void)
 		debugf("Failed to read from EEPFS.\n");
 	else
 		debugf("Sucessfully loaded save: %u\n", save_data);
-}
 
-int main(void)
-{
-	n64_init();
+        /* Game Init */
+	subtitles_load();
 	perspective_init();
 	sfx_load();
 	blip_load();
@@ -123,5 +124,5 @@ int main(void)
 
 	subtitles_unload();
 
-	return 0;
+	return RET_GOOD;
 }
