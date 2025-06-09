@@ -32,7 +32,7 @@ void ui_load(void)
 	object_load(&usage_atlas, TX_USAGE_ATLAS);
 
 	ui_power_usage = 1;
-	ui_power_left = /*999*/ 4;
+	ui_power_left = 999;
 	ui_power_timer = 0.0f;
 }
 
