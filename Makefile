@@ -1,24 +1,25 @@
-GAME=fnaf
-CFLAGS=-Wextra -Iinclude
+GAME := fnaf
+CFLAGS += -Wall -Wextra -Werror -pedantic -ansi -Iinclude
 BUILD_DIR=build
 include $(N64_INST)/include/n64.mk
 
-src = $(wildcard src/*.c src/*/*.c)
-assets_wav    = $(wildcard assets/*.wav)
-assets_ci4    = $(wildcard assets/ci4/*.png)
-assets_ci8    = $(wildcard assets/ci8/*.png)
-assets_i4     = $(wildcard assets/i4/*.png)
-assets_ia4    = $(wildcard assets/ia4/*.png)
-assets_custom = $(wildcard assets/custom/*.png)
-assets_ttf    = $(wildcard assets/custom/*.ttf)
+src := $(wildcard src/*.c src/*/*.c)
 
-assets_conv = $(addprefix filesystem/,$(notdir $(assets_wav:%.wav=%.wav64))) \
-              $(addprefix filesystem/custom/,$(notdir $(assets_custom:%.png=%.sprite))) \
-              $(addprefix filesystem/ci4/,$(notdir $(assets_ci4:%.png=%.sprite))) \
-              $(addprefix filesystem/ci8/,$(notdir $(assets_ci8:%.png=%.sprite))) \
-              $(addprefix filesystem/i4/,$(notdir $(assets_i4:%.png=%.sprite))) \
-              $(addprefix filesystem/ia4/,$(notdir $(assets_ia4:%.png=%.sprite))) \
-              $(addprefix filesystem/custom/,$(notdir $(assets_ttf:%.ttf=%.font64)))
+ASSETS_WAV    := $(wildcard assets/*.wav)
+ASSETS_CUSTOM := $(wildcard assets/custom/*.png)
+ASSETS_CI4    := $(wildcard assets/ci4/*.png)
+ASSETS_CI8    := $(wildcard assets/ci8/*.png)
+ASSETS_I4     := $(wildcard assets/i4/*.png)
+ASSETS_IA4    := $(wildcard assets/ia4/*.png)
+ASSETS_TTF    := $(wildcard assets/custom/*.ttf)
+
+assets_conv = $(addprefix filesystem/,$(notdir $(ASSETS_WAV:%.wav=%.wav64))) \
+              $(addprefix filesystem/custom/,$(notdir $(ASSETS_CUSTOM:%.png=%.sprite))) \
+              $(addprefix filesystem/ci4/,$(notdir $(ASSETS_CI4:%.png=%.sprite))) \
+              $(addprefix filesystem/ci8/,$(notdir $(ASSETS_CI8:%.png=%.sprite))) \
+              $(addprefix filesystem/i4/,$(notdir $(ASSETS_I4:%.png=%.sprite))) \
+              $(addprefix filesystem/ia4/,$(notdir $(ASSETS_IA4:%.png=%.sprite))) \
+              $(addprefix filesystem/custom/,$(notdir $(ASSETS_TTF:%.ttf=%.font64)))
 
 AUDIOCONV_FLAGS=--wav-compress 1
 MKSPRITE_FLAGS=-c 1

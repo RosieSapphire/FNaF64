@@ -2,8 +2,9 @@
 
 #include "engine/object.h"
 
-extern float night_timer;
-extern int power_left;
+/* TODO: These might fit better in game.c, honestly. */
+extern float ui_night_timer;
+extern int ui_power_left;
 
 void ui_load(void);
 void ui_unload(void);

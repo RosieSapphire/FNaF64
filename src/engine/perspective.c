@@ -4,7 +4,7 @@
 #include "engine/perspective.h"
 
 static surface_t persp_buffer;
-static rspq_block_t *persp_block;
+static rspq_block_t *persp_dl;
 
 void perspective_init(void)
 {
@@ -21,12 +21,12 @@ void perspective_init(void)
 		const rdpq_blitparms_t parms = {
 			.width = div_width,
 			.s0 = div_width * i,
-			.scale_y = -scale_y,
+			.scale_y = scale_y,
 			.cy = 120,
 		};
 		rdpq_tex_blit(&persp_buffer, div_width * i, 120, &parms);
 	}
-	persp_block = rspq_block_end();
+	persp_dl = rspq_block_end();
 }
 
 void perspective_begin(void)
@@ -37,5 +37,11 @@ void perspective_begin(void)
 void perspective_end(void)
 {
 	rdpq_detach();
-	rspq_block_run(persp_block);
+	rspq_block_run(persp_dl);
+}
+
+void perspective_free(void)
+{
+	surface_free(&persp_buffer);
+        rspq_block_free(persp_dl);
 }

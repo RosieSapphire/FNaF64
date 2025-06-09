@@ -4,10 +4,12 @@
 
 #include "engine/update.h"
 
-#define BUTTON_LEFT_DOOR   1
-#define BUTTON_LEFT_LIGHT  2
-#define BUTTON_RIGHT_DOOR  4
-#define BUTTON_RIGHT_LIGHT 8
+enum {
+        BUTTON_LEFT_DOOR   = (1 << 0),
+        BUTTON_LEFT_LIGHT  = (1 << 1),
+        BUTTON_RIGHT_DOOR  = (1 << 2),
+        BUTTON_RIGHT_LIGHT = (1 << 3)
+};
 
 extern int button_state;
 

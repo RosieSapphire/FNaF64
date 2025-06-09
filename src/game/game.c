@@ -21,13 +21,12 @@
 #include "game/foxy.h"
 #include "game/golden_freddy.h"
 #include "game/settings.h"
+#include "game/save_data.h"
 #include "game/game.h"
 
 static bool is_loaded = false;
 
 float night_timer;
-bool eeprom_failed = false;
-uint8_t save_data = 1;
 static float jumpscare_exit_timer = 40;
 int night_skip_correct;
 float ticks_since_load;
@@ -58,25 +57,25 @@ static void _game_load(void)
 	golden_freddy_load();
 	hallucinations_load();
 	
-	switch(NIGHT_NUM) {
+	switch(SAVE_NIGHT_NUM(save_data)) {
 	case 1:
-		wav64_play(&phonecall1, SFXC_PHONECALL);
+		wav64_play(&phonecall1, SFX_CH_PHONECALL);
 		break;
 
 	case 2:
-		wav64_play(&phonecall2, SFXC_PHONECALL);
+		wav64_play(&phonecall2, SFX_CH_PHONECALL);
 		break;
 
 	case 3:
-		wav64_play(&phonecall3, SFXC_PHONECALL);
+		wav64_play(&phonecall3, SFX_CH_PHONECALL);
 		break;
 
 	case 4:
-		wav64_play(&phonecall4, SFXC_PHONECALL);
+		wav64_play(&phonecall4, SFX_CH_PHONECALL);
 		break;
 		
 	case 5:
-		wav64_play(&phonecall5, SFXC_PHONECALL);
+		wav64_play(&phonecall5, SFX_CH_PHONECALL);
 		break;
 	}
 
@@ -148,8 +147,8 @@ void game_draw(void)
 	}
 
 	if(settings_flags & SET_SUBTITLES_BIT &&
-			mixer_ch_playing(SFXC_PHONECALL)) {
-		subtitles_draw(night_timer, NIGHT_NUM, time_since_load);
+			mixer_ch_playing(SFX_CH_PHONECALL)) {
+		subtitles_draw(night_timer, SAVE_NIGHT_NUM(save_data), time_since_load);
 	}
 
 	ui_draw();
@@ -188,8 +187,8 @@ static void _game_update_random_events(float dt)
 	bool play_circus_music;
 	circus_timer = wrapf(circus_timer + dt, 5, &play_circus_music);
 	if(play_circus_music && (rand() % 30) == 1) {
-		mixer_ch_set_vol(SFXC_AMBIENCE, 0.05f, 0.05f);
-		wav64_play(&circus_music, SFXC_AMBIENCE);
+		mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.05f, 0.05f);
+		wav64_play(&circus_music, SFX_CH_AMBIENCE);
 	}
 }
 
@@ -208,15 +207,18 @@ enum scene game_update(update_parms_t uparms)
 		*sorry = 69;
 	}
 
-	if(!camera_is_visible && uparms.pressed.c_up && NIGHT_NUM <= 5)
-		mixer_ch_stop(SFXC_PHONECALL);
+	if(!camera_is_visible && uparms.pressed.c_up &&
+           SAVE_NIGHT_NUM(save_data) <= 5) {
+		mixer_ch_stop(SFX_CH_PHONECALL);
+        }
 
 	_game_handle_cheat_code(uparms.pressed);
 	_game_update_random_events(uparms.dt);
 
 	night_timer += uparms.dt;
 	if(night_timer >= 6 * HOUR_LEN_SECONDS) {
-		sfx_stop_all();
+		sfx_stop_all_channels();
+                /* TODO: Maybe replace this with an `rspq_wait()`. */
 		rdpq_call_deferred((void (*)(void *))_game_unload, NULL);
 		return SCENE_NIGHT_END;
 	}
@@ -240,8 +242,8 @@ enum scene game_update(update_parms_t uparms)
 
 	hour_last = hour;
 
-	if(power_left <= 0) {
-		sfx_stop_all();
+	if(ui_power_left <= 0) {
+		sfx_stop_all_channels();
 		rdpq_call_deferred((void (*)(void *))_game_unload, NULL);
 		return SCENE_POWER_DOWN;
 	}
@@ -260,7 +262,7 @@ enum scene game_update(update_parms_t uparms)
 			foxy_is_scaring || freddy_is_jumpscaring) {
 		jumpscare_exit_timer -= uparms.dt * 60;
 		if(jumpscare_exit_timer <= 0) {
-			sfx_stop_all();
+			sfx_stop_all_channels();
 			rdpq_call_deferred((void (*)(void *))_game_unload,
 					NULL);
 			jumpscare_exit_timer = 40;
@@ -269,7 +271,8 @@ enum scene game_update(update_parms_t uparms)
 	}
 	
 	if(uparms.pressed.start) {
-		sfx_stop_all();
+		sfx_stop_all_channels();
+                /* TODO: Replace with `rspq_wait()`. */
 		rdpq_call_deferred((void (*)(void *))_game_unload, NULL);
 		return SCENE_TITLE_SCREEN;
 	}

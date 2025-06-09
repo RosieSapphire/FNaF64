@@ -1,7 +1,3 @@
-#include <stdlib.h>
-#include <time.h>
-#include <libdragon.h>
-
 #include "engine/object.h"
 #include "engine/scene.h"
 #include "engine/sfx.h"
@@ -19,6 +15,7 @@
 #include "game/powerdown.h"
 #include "game/custom_night.h"
 #include "game/paycheck.h"
+#include "game/save_data.h"
 
 enum {
         RET_GOOD,
@@ -28,49 +25,25 @@ enum {
 int main(void)
 {
         /* N64 Init */
+        int dfs_handle;
+
 	srand(TICKS_READ());
 	display_init(RESOLUTION_320x240, DEPTH_16_BPP, 3,
 		     GAMMA_NONE, ANTIALIAS_RESAMPLE);
 	rdpq_init();
-	dfs_init(DFS_DEFAULT_LOCATION);
+	dfs_handle = dfs_init(DFS_DEFAULT_LOCATION);
 	audio_init(32000, 4);
-	mixer_init(SFXC_COUNT);
+	mixer_init(SFX_CH_CNT);
 	timer_init();
 	joypad_init();
 
-        /* Save Data Init */
-        {
-	        eepfs_entry_t save_entry;
-
-                save_entry.path = "fnaf.dat";
-                save_entry.size = sizeof(save_data);
-	        eeprom_failed =
-                        eepfs_init(&save_entry, sizeof(save_data)) !=
-                        EEPFS_ESUCCESS;
-	        if(eeprom_failed) {
-	        	return RET_EEPROM_FAILED;
-                }
-        }
-
-	if(!eepfs_verify_signature()) {
-		debugf("EEPFS verification failed. Wiping save filesystem.\n");
-		eepfs_wipe();
-		save_data = 1;
-		eepfs_write("fnaf.dat", &save_data, sizeof(save_data));
-	}
-
-	int read_result = eepfs_read("fnaf.dat", &save_data, sizeof(save_data));
-	if(read_result != EEPFS_ESUCCESS)
-		debugf("Failed to read from EEPFS.\n");
-	else
-		debugf("Sucessfully loaded save: %u\n", save_data);
-
         /* Game Init */
+        save_data_init();
 	subtitles_load();
 	perspective_init();
 	sfx_load();
-	blip_load();
 	static_load();
+	blip_create();
 
 	enum scene scene = SCENE_TITLE_SCREEN;
 	long ticks_last = get_ticks();
@@ -122,7 +95,22 @@ int main(void)
 		audio_write_end();
 	}
 
+        /* N64 Init */
+	joypad_close();
+	timer_close();
+	mixer_close();
+	audio_close();
+	dfs_close(dfs_handle);
+	rdpq_close();
+	display_close();
+
+        /* Game Init */
+	blip_destroy();
+	static_unload();
+	sfx_unload();
+	perspective_free();
 	subtitles_unload();
+        save_data_free();
 
 	return RET_GOOD;
 }

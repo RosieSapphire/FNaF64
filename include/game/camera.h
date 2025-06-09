@@ -30,4 +30,4 @@ void camera_unload(void);
 void camera_flip_draw(void);
 void camera_view_draw(void);
 void camera_ui_draw(void);
-void camera_update(update_parms_t uparms);
+void camera_update(const update_parms_t uparms);

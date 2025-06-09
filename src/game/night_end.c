@@ -9,6 +9,7 @@
 #include "game/foxy.h"
 #include "game/settings.h"
 #include "game/texture_index.h"
+#include "game/save_data.h"
 #include "game/night_end.h"
 
 static object_t am, six, five;
@@ -16,24 +17,26 @@ static float timer;
 static bool is_loaded = false;
 static bool played_cheer;
 
-static void _night_end_load(void)
+static void night_end_load(void)
 {
-	if(is_loaded)
+	if(is_loaded) {
 		return;
+        }
 
 	timer = 0.0f;
-	save_data |= (NIGHT_NUM == 5) * NIGHT_5_BEATEN_BIT;
-	save_data |= (NIGHT_NUM == 6) * NIGHT_6_BEATEN_BIT;
+	save_data |= (SAVE_NIGHT_NUM(save_data) == 5) * SAVE_NIGHT_5_BEATEN_BIT;
+	save_data |= (SAVE_NIGHT_NUM(save_data) == 6) * SAVE_NIGHT_6_BEATEN_BIT;
 
 	if(freddy_ai_level == 20 && bonnie_ai_level == 20 &&
-			chica_ai_level == 20 && foxy_ai_level == 20 &&
-			!(settings_flags & SET_ROBOT_CHEAT_BIT) &&
-			!(settings_flags & SET_FAST_NIGHT_BIT))
-		save_data |= (NIGHT_NUM == 7) * MODE_20_BEATEN_BIT;
+	   chica_ai_level == 20 && foxy_ai_level == 20 &&
+	   !(settings_flags & SET_ROBOT_CHEAT_BIT) &&
+           !(settings_flags & SET_FAST_NIGHT_BIT)) {
+		save_data |= (SAVE_NIGHT_NUM(save_data) == 7) * SAVE_MODE_20_BEATEN_BIT;
+        }
 
 	save_data++;
-	mixer_ch_set_vol(SFXC_AMBIENCE, 0.8f, 0.8f);
-	wav64_play(&chimes_sfx, SFXC_AMBIENCE);
+	mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.8f, 0.8f);
+	wav64_play(&chimes_sfx, SFX_CH_AMBIENCE);
 
 	object_load(&am, TX_END_AM);
 	object_load(&six, TX_END_SIX);
@@ -43,10 +46,12 @@ static void _night_end_load(void)
 	is_loaded = true;
 }
 
-static void _night_end_unload(void)
+static void night_end_unload(void)
 {
-	if(!is_loaded)
+	if(!is_loaded) {
 		return;
+        }
+
 	object_unload(&six);
 	object_unload(&five);
 	object_unload(&am);
@@ -55,7 +60,7 @@ static void _night_end_unload(void)
 
 void night_end_draw(void)
 {
-	_night_end_load();
+	night_end_load();
 
 	rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
 	rdpq_fill_rectangle(0, 0, 320, 240);
@@ -91,28 +96,33 @@ void night_end_draw(void)
 	rdpq_fill_rectangle(0, 0, 320, 240);
 }
 
-enum scene night_end_update(update_parms_t uparms)
+enum scene night_end_update(const update_parms_t uparms)
 {
 	timer += uparms.dt;
 
 	if(timer >= 6.2f && !played_cheer) {
 		played_cheer = true;
-		mixer_ch_set_vol(SFXC_FAN, 0.8f, 0.8f);
-		wav64_play(&cheering_sfx, SFXC_FAN);
+		mixer_ch_set_vol(SFX_CH_FAN, 0.8f, 0.8f);
+		wav64_play(&cheering_sfx, SFX_CH_FAN);
 	}
 
 	if(timer >= 11.5f) {
-		if(!eeprom_failed)
+		if(!save_data_eeprom_failed) {
 			eepfs_write("fnaf.dat", &save_data, 1);
-		debugf("Saved night %d and %d%d%d to save file.\n", NIGHT_NUM,
-				(save_data & NIGHT_5_BEATEN_BIT) > 0,
-				(save_data & NIGHT_6_BEATEN_BIT) > 0,
-				(save_data & MODE_20_BEATEN_BIT) > 0);
-		rdpq_call_deferred((void(*)(void *))_night_end_unload, NULL);
-		sfx_stop_all();
+                }
 
-		if(NIGHT_NUM < 6)
+		debugf("Saved night %d and %d%d%d to save file.\n",
+                       SAVE_NIGHT_NUM(save_data),
+		       (save_data & SAVE_NIGHT_5_BEATEN_BIT) > 0,
+		       (save_data & SAVE_NIGHT_6_BEATEN_BIT) > 0,
+		       (save_data & SAVE_MODE_20_BEATEN_BIT) > 0);
+                /* Use `rspq_wait()`. */
+		rdpq_call_deferred((void(*)(void *))night_end_unload, NULL);
+		sfx_stop_all_channels();
+
+		if(SAVE_NIGHT_NUM(save_data) < 6) {
 			return SCENE_WHICH_NIGHT;
+                }
 
 		return SCENE_PAYCHECK;
 	}

@@ -115,7 +115,7 @@ void bonnie_update(double dt)
 	bool cam_flip_down = (!camera_is_visible && camera_was_visible);
 	if(bonnie_cam == YOURE_FUCKED && cam_flip_down) {
 		bonnie_is_jumpscaring = true;
-		wav64_play(&jumpscare_sfx, SFXC_JUMPSCARE);
+		wav64_play(&jumpscare_sfx, SFX_CH_JUMPSCARE);
 		return;
 	}
 
@@ -151,10 +151,10 @@ void bonnie_update(double dt)
 		float foot_vol = footstep_vol_lut[cam_next];
 
 		debugf("%f\n", foot_vol);
-		mixer_ch_set_vol(SFXC_FOOTSTEPS, foot_vol, foot_vol);
+		mixer_ch_set_vol(SFX_CH_FOOTSTEPS, foot_vol, foot_vol);
 	}
 
-	wav64_play(&deepstep_sfx, SFXC_FOOTSTEPS);
+	wav64_play(&deepstep_sfx, SFX_CH_FOOTSTEPS);
 	bonnie_cam = cam_next;
 	// bonnie_cam = CAM_2B;
 	which_spot = rand() & 1;

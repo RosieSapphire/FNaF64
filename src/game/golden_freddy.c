@@ -57,8 +57,8 @@ void golden_freddy_update(double dt)
 		if(cam_selected == CAM_2B && camera_is_visible &&
 				bonnie_cam != CAM_2B) {
 			golden_freddy_progress = 2;
-			mixer_ch_set_vol(SFXC_FREDDYLAUGH, 1.0f, 1.0f);
-       			wav64_play(&girl_giggle, SFXC_FREDDYLAUGH);
+			mixer_ch_set_vol(SFX_CH_FREDDYLAUGH, 1.0f, 1.0f);
+       			wav64_play(&girl_giggle, SFX_CH_FREDDYLAUGH);
 		}
 
 		return;
@@ -78,8 +78,8 @@ void golden_freddy_update(double dt)
 
 		jumpscare_timer += dt * 60;
 		if(jumpscare_timer >= 300) {
-			sfx_stop_all();
-			wav64_play(&jumpscare_low, SFXC_JUMPSCARE);
+			sfx_stop_all_channels();
+			wav64_play(&jumpscare_low, SFX_CH_JUMPSCARE);
 			golden_freddy_progress++;
 			jumpscare_timer = 0;
 		}

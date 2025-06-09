@@ -15,17 +15,18 @@
 #include "game/texture_index.h"
 #include "game/office.h"
 
-#define ROOM_VIEWS 5
+/* TODO: Rename this from ROOM to OFFICE to be more consistent. */
+#define ROOM_VIEW_CNT 5
 
 float office_turn;
 static float office_turn_lerp;
 float flicker_rand_timer;
 int flicker_rand;
 
-static object_t room_views[ROOM_VIEWS];
-static const char *room_view_paths[ROOM_VIEWS] = {
-	TX_ROOM_NORMAL, TX_ROOM_LEFT_EMPTY, TX_ROOM_RIGHT_EMPTY,
-	TX_ROOM_LEFT_BONNIE, TX_ROOM_RIGHT_CHICA,
+static object_t room_views[ROOM_VIEW_CNT];
+static const char *room_view_paths[ROOM_VIEW_CNT] = {
+	TX_OFFICE_NORMAL, TX_OFFICE_LEFT_EMPTY, TX_OFFICE_RIGHT_EMPTY,
+	TX_OFFICE_LEFT_BONNIE, TX_OFFICE_RIGHT_CHICA,
 };
 
 object_t foxy_scare[FOXY_SCARE_FRAMES];
@@ -68,19 +69,19 @@ static int room_get_state(void)
 
 void office_load(void)
 {
-	office_turn = ROOM_TURN_MIN >> 1;
+	office_turn = OFFICE_TURN_MIN >> 1;
 	office_turn_lerp = office_turn;
 	flicker_rand_timer = 0.0f;
 	flicker_rand = 0;
 
-	objects_load(room_views, ROOM_VIEWS, room_view_paths);
+	objects_load(room_views, ROOM_VIEW_CNT, room_view_paths);
 	objects_load(foxy_scare, FOXY_SCARE_FRAMES, foxy_scare_paths);
-	wav64_play(&light_sfx, SFXC_LIGHT);
+	wav64_play(&light_sfx, SFX_CH_LIGHT);
 }
 
 void office_unload(void)
 {
-	objects_unload(room_views, ROOM_VIEWS);
+	objects_unload(room_views, ROOM_VIEW_CNT);
 	objects_unload(foxy_scare, FOXY_SCARE_FRAMES);
 }
 
@@ -115,17 +116,17 @@ void office_draw(void)
 static void _office_update_turn_normal(update_parms_t uparms)
 {
 	const int stick_clamped = icutoff(uparms.sticks.stick_x, 10);
-	const float turn_amount = stick_clamped * ROOM_TURN_SPEED;
+	const float turn_amount = stick_clamped * OFFICE_TURN_SPEED;
 	office_turn -= turn_amount * uparms.dt;
-	office_turn = clampf(office_turn, ROOM_TURN_MIN, 0);
+	office_turn = clampf(office_turn, OFFICE_TURN_MIN, 0);
 }
 
 static void _office_update_turn_smooth(update_parms_t uparms)
 {
 	const int stick_clamped = icutoff(uparms.sticks.stick_x, 10);
-	const float turn_amount = stick_clamped * ROOM_TURN_SPEED;
+	const float turn_amount = stick_clamped * OFFICE_TURN_SPEED;
 	office_turn_lerp -= turn_amount * uparms.dt;
-	office_turn_lerp = clampf(office_turn_lerp, ROOM_TURN_MIN, 0);
+	office_turn_lerp = clampf(office_turn_lerp, OFFICE_TURN_MIN, 0);
 
 	if(fabsf(office_turn_lerp - office_turn) < 0.001f) {
 		office_turn = office_turn_lerp;
@@ -151,17 +152,17 @@ void office_update(update_parms_t uparms)
 
 	if(button_state & (BUTTON_LEFT_LIGHT | BUTTON_RIGHT_LIGHT) &&
 			flicker_rand > 1)
-		mixer_ch_set_vol(SFXC_LIGHT, 1, 1);
+		mixer_ch_set_vol(SFX_CH_LIGHT, 1, 1);
 	else
-		mixer_ch_set_vol(SFXC_LIGHT, 0, 0);
+		mixer_ch_set_vol(SFX_CH_LIGHT, 0, 0);
 
 	static bool bonnie_scared_last = false;
 	if((button_state & BUTTON_LEFT_LIGHT) && bonnie_cam == AT_DOOR)
 		bonnie_scared = true;
 	if(bonnie_scared && !bonnie_scared_last)
 	{
-		mixer_ch_set_vol(SFXC_AMBIENCE, 0.8f, 0.8f);
-		wav64_play(&window_scare, SFXC_AMBIENCE);
+		mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.8f, 0.8f);
+		wav64_play(&window_scare, SFX_CH_AMBIENCE);
 
 	}
 	bonnie_scared_last = bonnie_scared;
@@ -170,7 +171,7 @@ void office_update(update_parms_t uparms)
 	if((button_state & BUTTON_RIGHT_LIGHT) && chica_cam == AT_DOOR)
 		chica_scared = true;
 	if(chica_scared && !chica_scared_last)
-		wav64_play(&window_scare, SFXC_AMBIENCE);
+		wav64_play(&window_scare, SFX_CH_AMBIENCE);
 	chica_scared_last = chica_scared;
 
 	bool do_rand;
@@ -185,5 +186,5 @@ void office_update(update_parms_t uparms)
 
 	if(fabsf(office_turn + 193) < 32 &&
 			(uparms.pressed.a || uparms.pressed.b))
-		wav64_play(&boop_sfx, SFXC_BLIP);
+		wav64_play(&boop_sfx, SFX_CH_BLIP);
 }

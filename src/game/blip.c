@@ -3,12 +3,12 @@
 
 #include "game/blip.h"
 
-#define FRAMES 9
+#define BLIP_FRAME_CNT 9
 
-static float timer = 0.0f;
-static rspq_block_t *blocks[FRAMES];
+static float timer = 0.f;
+static rspq_block_t *blocks[BLIP_FRAME_CNT];
 
-void blip_load(void)
+void blip_create(void)
 {
 	rdpq_set_mode_fill(RGBA16(0xFF, 0xFF, 0xFF, 0xFF));
 
@@ -56,23 +56,37 @@ void blip_load(void)
 
 void blip_draw(void)
 {
-	int frame = (int)timer;
-	if(frame >= FRAMES)
+	int frame;
+
+        frame = (int)timer;
+	if(frame >= BLIP_FRAME_CNT) {
 		return;
+        }
+
 	rdpq_set_mode_fill(RGBA16(0xFF, 0xFF, 0xFF, 0xFF));
 	rspq_block_run(blocks[frame]);
 }
 
-void blip_update(double dt)
+void blip_update(const float dt)
 {
 	timer += speed_fps(70) * dt;
-	timer = clampf(timer, 0, FRAMES);
+	timer = clampf(timer, 0, BLIP_FRAME_CNT);
 }
 
-void blip_trigger(bool is_visual)
+void blip_trigger(const bool is_visual)
 {
-	wav64_play(&blip_sfx, SFXC_BLIP);
+	wav64_play(&blip_sfx, SFX_CH_BLIP);
 
-	if(is_visual)
+	if(is_visual) {
 		timer = 0;
+        }
+}
+
+void blip_destroy(void)
+{
+        int i;
+
+        for (i = 0; i < BLIP_FRAME_CNT; ++i) {
+                rspq_block_free(blocks[i]);
+        }
 }

@@ -1,7 +1,7 @@
 #pragma once
 
-#define ROOM_TURN_MIN -640
-#define ROOM_TURN_SPEED 12 
+#define OFFICE_TURN_MIN -640
+#define OFFICE_TURN_SPEED 12 
 
 #include <libdragon.h>
 

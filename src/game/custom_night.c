@@ -9,7 +9,7 @@
 #include "game/texture_index.h"
 #include "game/custom_night.h"
 
-object_t face_icons;
+static object_t face_icons;
 static object_t buttons;
 static object_t nums;
 static int ai_selected = 0;
@@ -127,7 +127,7 @@ enum scene custom_night_update(update_parms_t uparms)
 				chica_ai_level == 8 && foxy_ai_level == 7)
 			assertf(0, "Insert Golden Freddy jumpscare here.\n");
 
-		sfx_stop_all();
+		sfx_stop_all_channels();
 		rdpq_call_deferred((void (*)(void *))_custom_night_unload,
 				NULL);
 		return SCENE_WHICH_NIGHT;

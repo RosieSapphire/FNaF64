@@ -75,12 +75,12 @@ static void _foxy_trigger_jumpscare(void)
 {
 	camera_is_using = false;
 	foxy_is_scaring = true;
-	wav64_play(&jumpscare_sfx, SFXC_JUMPSCARE);
+	wav64_play(&jumpscare_sfx, SFX_CH_JUMPSCARE);
 }
 
 static void _foxy_trigger_reset(void)
 {
-	wav64_play(&banging_sfx, SFXC_JUMPSCARE);
+	wav64_play(&banging_sfx, SFX_CH_JUMPSCARE);
 	foxy_progress = rand() & 1;
 	no_check_timer = 0;
 	foxy_run_timer = 0;
@@ -89,12 +89,12 @@ static void _foxy_trigger_reset(void)
 	num_door_pounds++;
 
 	int power_deduct = 10 + (50 * num_door_pounds);
-	if(power_deduct >= power_left) {
-		power_left = 0;
+	if(power_deduct >= ui_power_left) {
+		ui_power_left = 0;
 		return;
 	}
 
-	power_left -= power_deduct;
+	ui_power_left -= power_deduct;
 }
 
 void foxy_update(double dt)
@@ -102,13 +102,13 @@ void foxy_update(double dt)
 	/* Checking for humming */
 	bool is_looking_at = camera_is_visible && cam_selected == CAM_1C;
 	float foxsong_vol = 0.05f + 0.1f * is_looking_at;
-	mixer_ch_set_vol(SFXC_FOXSONG, foxsong_vol, foxsong_vol);
+	mixer_ch_set_vol(SFX_CH_FOXSONG, foxsong_vol, foxsong_vol);
 
 	fox_song_timer += dt;
 	bool fox_song_play;
 	fox_song_timer = wrapf(fox_song_timer, 4.0f, &fox_song_play);
 	if(fox_song_play && (rand() % 30) == 1)
-		wav64_play(&foxy_hum, SFXC_FOXSONG);
+		wav64_play(&foxy_hum, SFX_CH_FOXSONG);
 
 	/* Handle jumpscaring */
 	if(foxy_is_scaring) {
@@ -121,7 +121,7 @@ void foxy_update(double dt)
 	if(cam_selected == CAM_2A && camera_is_visible
 			&& foxy_progress == 3 && !use_run_timer) {
 		use_run_timer = true;
-		wav64_play(&foxy_running, SFXC_JUMPSCARE);
+		wav64_play(&foxy_running, SFX_CH_JUMPSCARE);
 	}
 
 	if(use_run_timer) {

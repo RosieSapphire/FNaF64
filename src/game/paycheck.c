@@ -5,6 +5,7 @@
 
 #include "game/game.h"
 #include "game/texture_index.h"
+#include "game/save_data.h"
 #include "game/paycheck.h"
 
 static bool is_loaded = false;
@@ -12,7 +13,7 @@ static bool is_loaded = false;
 static float timer;
 static object_t screens[3];
 
-static void _paycheck_load(void)
+static void paycheck_load(void)
 {
 	if(is_loaded)
 		return;
@@ -21,13 +22,13 @@ static void _paycheck_load(void)
 	object_load(screens + 0, TX_PAYCHECK1);
 	object_load(screens + 1, TX_PAYCHECK2);
 	object_load(screens + 2, TX_PINK_SLIP);
-	mixer_ch_set_vol(SFXC_AMBIENCE, 0.8f, 0.8f);
-	wav64_play(&musicbox_sfx, SFXC_AMBIENCE);
+	mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.8f, 0.8f);
+	wav64_play(&musicbox_sfx, SFX_CH_AMBIENCE);
 
 	is_loaded = true;
 }
 
-static void _paycheck_unload(void)
+static void paycheck_unload(void)
 {
 	if(!is_loaded)
 		return;
@@ -39,7 +40,7 @@ static void _paycheck_unload(void)
 
 void paycheck_draw(void)
 {
-	_paycheck_load();
+	paycheck_load();
 
 	float alpha = 1.0f;
 	if(timer <= 2.0f)
@@ -55,7 +56,7 @@ void paycheck_draw(void)
 	rdpq_mode_alphacompare(true);
 	rdpq_set_fog_color(RGBA32(0xFF, 0xFF, 0xFF, alpha * 255));
      	rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
-	object_draw(screens[NIGHT_NUM - 6], 0, 0, 0, 0);
+	object_draw(screens[SAVE_NIGHT_NUM(save_data) - 6], 0, 0, 0, 0);
 }
 
 enum scene paycheck_update(update_parms_t uparms)
@@ -69,8 +70,9 @@ enum scene paycheck_update(update_parms_t uparms)
 		timer = 17.0f;
 
 	if(timer >= 19.0f) {
-		rdpq_call_deferred((void(*)(void *))_paycheck_unload, NULL);
-		sfx_stop_all();
+                /* Use `rspq_wait()`. */
+		rdpq_call_deferred((void(*)(void *))paycheck_unload, NULL);
+		sfx_stop_all_channels();
 		return SCENE_TITLE_SCREEN;
 	}
 

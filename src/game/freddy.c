@@ -86,13 +86,13 @@ void freddy_draw_debug(void)
 
 static void _freddy_handle_music_box(void)
 {
-	mixer_ch_set_vol(SFXC_MUSICBOX, 0, 0);
+	mixer_ch_set_vol(SFX_CH_MUSICBOX, 0, 0);
 	if(freddy_cam != CAM_6)
 		return;
 
 	float vol = (camera_is_visible && (cam_selected == CAM_6))
 		? 0.5f : 0.05f;
-	mixer_ch_set_vol(SFXC_MUSICBOX, vol, vol);
+	mixer_ch_set_vol(SFX_CH_MUSICBOX, vol, vol);
 }
 
 void freddy_update(double dt)
@@ -106,7 +106,7 @@ void freddy_update(double dt)
 		if(try_scare && ((rand() % 4) == 0)) {
 			freddy_is_jumpscaring = true;
 			ready_to_scare = false;
-			wav64_play(&jumpscare_sfx, SFXC_JUMPSCARE);
+			wav64_play(&jumpscare_sfx, SFX_CH_JUMPSCARE);
 			return;
 		}
 		return;
@@ -190,30 +190,30 @@ void freddy_update(double dt)
 	if(cam_next < AT_DOOR) {
 		float laugh_vol = vol_lut[cam_next][0];
 		float foot_vol = vol_lut[cam_next][1];
-		mixer_ch_set_vol(SFXC_FREDDYLAUGH, laugh_vol, laugh_vol);
-		mixer_ch_set_vol(SFXC_FREDDYRUN, foot_vol, foot_vol);
+		mixer_ch_set_vol(SFX_CH_FREDDYLAUGH, laugh_vol, laugh_vol);
+		mixer_ch_set_vol(SFX_CH_FREDDYRUN, foot_vol, foot_vol);
 	}
 
 	switch(rand() % 3) {
 	case 0:
-		wav64_play(&freddylaugh1, SFXC_FREDDYLAUGH);
+		wav64_play(&freddylaugh1, SFX_CH_FREDDYLAUGH);
 		break;
 
 	case 1:
-		wav64_play(&freddylaugh2, SFXC_FREDDYLAUGH);
+		wav64_play(&freddylaugh2, SFX_CH_FREDDYLAUGH);
 		break;
 
 	case 2:
-		wav64_play(&freddylaugh3, SFXC_FREDDYLAUGH);
+		wav64_play(&freddylaugh3, SFX_CH_FREDDYLAUGH);
 		break;
 	}
 
-	wav64_play(&freddyrun_sfx, SFXC_FREDDYRUN);
+	wav64_play(&freddyrun_sfx, SFX_CH_FREDDYRUN);
 
 	if(cam_next == CAM_6)
-		wav64_play(&musicbox_sfx, SFXC_MUSICBOX);
+		wav64_play(&musicbox_sfx, SFX_CH_MUSICBOX);
 	else 
-		mixer_ch_stop(SFXC_MUSICBOX);
+		mixer_ch_stop(SFX_CH_MUSICBOX);
 
 	freddy_cam = cam_next;
 

@@ -15,6 +15,7 @@
 #include "game/golden_freddy.h"
 #include "game/settings.h"
 #include "game/texture_index.h"
+#include "game/save_data.h"
 #include "game/camera.h"
 
 #define FLIP_FRAMES 11
@@ -228,7 +229,7 @@ void camera_load(void)
 	object_load(&name_atlas, TX_CAM_NAME_ATLAS);
 	object_load(&missing_footage, TX_CAM_CORRUPTED);
 
-	wav64_play(&robotvoice_sfx, SFXC_ROBOTVOICE);
+	wav64_play(&robotvoice_sfx, SFX_CH_ROBOTVOICE);
 }
 
 static const char *camera_get_view_path(void)
@@ -452,9 +453,9 @@ static void camera_flip_update(const update_parms_t uparms)
 static void camera_handle_sfx(void)
 {
 	if(camera_is_visible)
-		mixer_ch_set_vol(SFXC_FAN, 0.1f, 0.1f);
+		mixer_ch_set_vol(SFX_CH_FAN, 0.1f, 0.1f);
 	else
-		mixer_ch_set_vol(SFXC_FAN, 0.25f, 0.25f);
+		mixer_ch_set_vol(SFX_CH_FAN, 0.25f, 0.25f);
 
 	if(!camera_was_visible && camera_is_visible) {
 		blip_trigger(true);
@@ -465,13 +466,13 @@ static void camera_handle_sfx(void)
 		return;
 
 	if(camera_is_using) {
-		wav64_play(&cam_up_sfx, SFXC_BLIP);
-		wav64_play(&cam_scan_sfx, SFXC_CAMERA);
+		wav64_play(&cam_up_sfx, SFX_CH_BLIP);
+		wav64_play(&cam_scan_sfx, SFX_CH_CAMERA);
 		return;
 	}
 
-	wav64_play(&cam_down_sfx, SFXC_BLIP);
-	mixer_ch_stop(SFXC_CAMERA);
+	wav64_play(&cam_down_sfx, SFX_CH_BLIP);
+	mixer_ch_stop(SFX_CH_CAMERA);
 
 	return;
 }
@@ -554,19 +555,19 @@ static void camera_update_glitch_timer(double dt)
 		if(camera_is_visible) {
 			switch(rand() % 4) {
 			case 0:
-				wav64_play(&camglitch1, SFXC_CAMERA);
+				wav64_play(&camglitch1, SFX_CH_CAMERA);
 				break;
 
 			case 1:
-				wav64_play(&camglitch2, SFXC_CAMERA);
+				wav64_play(&camglitch2, SFX_CH_CAMERA);
 				break;
 
 			case 2:
-				wav64_play(&camglitch3, SFXC_CAMERA);
+				wav64_play(&camglitch3, SFX_CH_CAMERA);
 				break;
 
 			case 3:
-				wav64_play(&camglitch4, SFXC_CAMERA);
+				wav64_play(&camglitch4, SFX_CH_CAMERA);
 				break;
 			}
 			camera_glitch_timer = 300;
@@ -646,7 +647,7 @@ static void camera_update_robot_voice(double dt)
 	robot_voice_timer = wrapf(robot_voice_timer, 0.1f, &robot_voice_tick);
 	
 	if(!camera_is_visible) {
-		mixer_ch_set_vol(SFXC_ROBOTVOICE, 0, 0);
+		mixer_ch_set_vol(SFX_CH_ROBOTVOICE, 0, 0);
 		return;
 	}
 
@@ -658,18 +659,18 @@ static void camera_update_robot_voice(double dt)
 	bool chica_in_cam_and_looking =
 		(cam_selected == chica_cam && chica_cam == CAM_4B);
 
-	if(!camera_is_visible || NIGHT_NUM < 4) {
-		mixer_ch_set_vol(SFXC_ROBOTVOICE, 0, 0);
+	if(!camera_is_visible || SAVE_NIGHT_NUM(save_data) < 4) {
+		mixer_ch_set_vol(SFX_CH_ROBOTVOICE, 0, 0);
 		return;
 	}
 
 	if(bonnie_in_cam_and_looking || chica_in_cam_and_looking) {
 		float vol = (float)(1 + (rand() % 5) * 5) / 100.0f;
-		mixer_ch_set_vol(SFXC_ROBOTVOICE, vol, vol);
+		mixer_ch_set_vol(SFX_CH_ROBOTVOICE, vol, vol);
 		return;
 	}
 
-	mixer_ch_set_vol(SFXC_ROBOTVOICE, 0, 0);
+	mixer_ch_set_vol(SFX_CH_ROBOTVOICE, 0, 0);
 }
 
 static void camera_update_face_glitch(double dt)
@@ -683,13 +684,13 @@ static void camera_update_face_glitch(double dt)
 
 	camera_states[cam_selected] &= ~(FACE_GLITCH_MASK);
 
-	if(NIGHT_NUM < 4)
+	if(SAVE_NIGHT_NUM(save_data) < 4)
 		return;
 
 	camera_states[cam_selected] |= ((rand() % 30) + 1) << FACE_GLITCH_SHIFT;
 }
 
-void camera_update(update_parms_t uparms)
+void camera_update(const update_parms_t uparms)
 {
 	camera_flip_update(uparms);
 	camera_was_visible = camera_is_visible;

@@ -248,14 +248,14 @@
 #define TX_DOOR_ANIM13         TX_ROM("ci8/101.sprite")
 #define TX_DOOR_ANIM14         TX_ROM("ci8/102.sprite")
 
-/* Room States */
-#define TX_ROOM_NORMAL         TX_ROM("ci8/39.sprite")
-#define TX_ROOM_LEFT_EMPTY     TX_ROM("ci8/58.sprite")
-#define TX_ROOM_LEFT_BONNIE    TX_ROM("ci8/225.sprite")
-#define TX_ROOM_RIGHT_EMPTY    TX_ROM("ci8/127.sprite")
-#define TX_ROOM_RIGHT_CHICA    TX_ROM("ci8/227.sprite")
-#define TX_ROOM_POWERDOWN0     TX_ROM("ci8/304.sprite")
-#define TX_ROOM_POWERDOWN1     TX_ROM("ci8/305.sprite")
+/* Office States */
+#define TX_OFFICE_NORMAL         TX_ROM("ci8/39.sprite")
+#define TX_OFFICE_LEFT_EMPTY     TX_ROM("ci8/58.sprite")
+#define TX_OFFICE_LEFT_BONNIE    TX_ROM("ci8/225.sprite")
+#define TX_OFFICE_RIGHT_EMPTY    TX_ROM("ci8/127.sprite")
+#define TX_OFFICE_RIGHT_CHICA    TX_ROM("ci8/227.sprite")
+#define TX_OFFICE_POWERDOWN0     TX_ROM("ci8/304.sprite")
+#define TX_OFFICE_POWERDOWN1     TX_ROM("ci8/305.sprite")
 
 /* Hallucinations */
 #define TX_HALLUCINATION0      TX_ROM("ci4/525.sprite")

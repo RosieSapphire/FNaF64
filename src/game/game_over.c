@@ -20,9 +20,9 @@ static void _game_over_load(void)
 	over_timer = 0.0f;
 	blip_trigger(true);
 
-	sfx_stop_all();
-	mixer_ch_set_vol(SFXC_AMBIENCE, 0.5f, 0.5f);
-	wav64_play(&static_sfx, SFXC_AMBIENCE);
+	sfx_stop_all_channels();
+	mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.5f, 0.5f);
+	wav64_play(&static_sfx, SFX_CH_AMBIENCE);
 	is_loaded = true;
 }
 
@@ -58,8 +58,9 @@ enum scene game_over_update(update_parms_t uparms)
 	over_timer += uparms.dt;
 
 	bool show_over_screen = over_timer >= 10;
-	if(show_over_screen)
-		sfx_stop_all();
+	if(show_over_screen) {
+		sfx_stop_all_channels();
+        }
 
 	bool attempt_skip = uparms.pressed.a ||
 		uparms.pressed.b || uparms.pressed.start;

@@ -10,6 +10,7 @@
 #include "game/game.h"
 #include "game/settings.h"
 #include "game/texture_index.h"
+#include "game/save_data.h"
 #include "game/title.h"
 
 static float face_timer = 0.0f;
@@ -68,9 +69,9 @@ static void _title_load(void)
 	object_load(&newspaper, TX_NEWSPAPER);
 
 	blip_trigger(true);
-	wav64_play(&static_sfx, SFXC_STATIC);
-	mixer_ch_set_vol(SFXC_AMBIENCE, 0.8f, 0.8f);
-	wav64_play(&title_music, SFXC_AMBIENCE);
+	wav64_play(&static_sfx, SFX_CH_STATIC);
+	mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.8f, 0.8f);
+	wav64_play(&title_music, SFX_CH_AMBIENCE);
 	new_game_init = false;
 	new_game_timer = 0.0f;
 
@@ -149,9 +150,10 @@ void title_draw(void)
 	rdpq_mode_alphacompare(true);
 
 	int star_count = 0;
-	star_count += (save_data & NIGHT_5_BEATEN_BIT) > 0;
-	star_count += (save_data & NIGHT_6_BEATEN_BIT) > 0;
-	star_count += (save_data & MODE_20_BEATEN_BIT) > 0;
+        /* FIXME: Possibly add the popcount of the bitmasked nights beaten. */
+	star_count += (save_data & SAVE_NIGHT_5_BEATEN_BIT) > 0;
+	star_count += (save_data & SAVE_NIGHT_6_BEATEN_BIT) > 0;
+	star_count += (save_data & SAVE_MODE_20_BEATEN_BIT) > 0;
 	available = clampf(star_count, 0, 2) + 2;
 	for(int i = 0; i < star_count; i++)
 		object_draw(star, 93 + 77 * i, 350, 28, 27);
@@ -162,14 +164,16 @@ void title_draw(void)
 	object_draw(selector, 40, 429 + selected * 66, 0, 0);
 
 	if(selected == 1) {
-		int clamped = clampf(NIGHT_NUM, 1, 5);
+                /* TODO: Replace with either "CLAMP" or "clampi". */
+		int clamped = (int)clampf(SAVE_NIGHT_NUM(save_data), 1, 5);
+
 		object_draw(night_text, 444, 509, 0, 0);
 		object_draw_index_y(night_atlas, 512, 509, 6, clamped);
 	}
 
 	blip_draw();
 
-	if(eeprom_failed && !eeprom_fail_notice) {
+	if(save_data_eeprom_failed && !eeprom_fail_notice) {
 		rdpq_set_mode_standard();
 		rdpq_set_prim_color(RGBA32(0x0, 0x0, 0x0, 0xD8));
 		rdpq_mode_combiner(RDPQ_COMBINER_FLAT);
@@ -184,8 +188,8 @@ void title_draw(void)
 	if(!new_game_init)
 		return;
 
+	float alpha = 1.f;
 draw_newspaper:
-	float alpha = 1.0f;
 	if(new_game_timer <= 2.0f)
 		alpha = new_game_timer * 0.5f;
 
@@ -205,7 +209,7 @@ draw_newspaper:
 static void _title_update_settings(joypad_buttons_t down)
 {
 	if(down.l)
-		wav64_play(&boop_sfx, SFXC_BLIP);
+		wav64_play(&boop_sfx, SFX_CH_BLIP);
 
 	if(down.d_down || down.c_down) {
 		blip_trigger(false);
@@ -246,8 +250,9 @@ static void _title_update_deleting(update_parms_t uparms)
 	delete_timer = 0.0f;
 	already_deleted = true;
 	selected = 0;
-	if(!eeprom_failed)
+	if(!save_data_eeprom_failed) {
 		eepfs_write("fnaf.dat", &save_data, sizeof(save_data));
+        }
 
 	debugf("Wiped save file to night %d\n", save_data);
 }
@@ -260,7 +265,7 @@ enum scene title_update(update_parms_t uparms)
 	if(tick)
 		face_state = rand() % 100;
 
-	if(eeprom_failed && !eeprom_fail_notice) {
+	if(save_data_eeprom_failed && !eeprom_fail_notice) {
 		eeprom_fail_notice = uparms.pressed.start;
 		return SCENE_TITLE_SCREEN;
 	}
@@ -281,7 +286,7 @@ enum scene title_update(update_parms_t uparms)
 		if(new_game_timer >= 9.0f) {
 			rdpq_call_deferred((void (*)(void *))_title_unload,
 					NULL);
-			sfx_stop_all();
+			sfx_stop_all_channels();
 			return SCENE_WHICH_NIGHT;
 		}
 			
@@ -312,32 +317,36 @@ enum scene title_update(update_parms_t uparms)
 	}
 
 	if(uparms.pressed.start || uparms.pressed.a) {
-		uint8_t tmp = save_data & (NIGHT_5_BEATEN_BIT |
-				NIGHT_6_BEATEN_BIT | MODE_20_BEATEN_BIT);
+		uint8_t tmp = save_data & (SAVE_NIGHT_5_BEATEN_BIT |
+			      SAVE_NIGHT_6_BEATEN_BIT |
+                              SAVE_MODE_20_BEATEN_BIT);
 		switch(selected) {
+                /* TODO: Maybe make enum for selected case "NEW_GAME", etc. */
 		case 0:
 			/* Just reset the nights, not the stars */
-			save_data &= NIGHT_5_BEATEN_BIT |
-				NIGHT_6_BEATEN_BIT |
-				MODE_20_BEATEN_BIT;
+			save_data &= SAVE_NIGHT_5_BEATEN_BIT |
+				     SAVE_NIGHT_6_BEATEN_BIT |
+				     SAVE_MODE_20_BEATEN_BIT;
 			save_data |= 1;
 
-			if(!eeprom_failed)
+			if(!save_data_eeprom_failed)
 				eepfs_write("fnaf.dat", &save_data, 1);
 			debugf("Reset night to %d with %d%d%d\n",
-					NIGHT_NUM,
-					save_data & NIGHT_5_BEATEN_BIT,
-					save_data & NIGHT_6_BEATEN_BIT,
-					save_data & MODE_20_BEATEN_BIT);
+					SAVE_NIGHT_NUM(save_data),
+					save_data & SAVE_NIGHT_5_BEATEN_BIT,
+					save_data & SAVE_NIGHT_6_BEATEN_BIT,
+					save_data & SAVE_MODE_20_BEATEN_BIT);
 			new_game_init = true;
 			return SCENE_TITLE_SCREEN;
 
 		case 1:
 			rdpq_call_deferred((void (*)(void *))_title_unload,
 					NULL);
-			save_data = NIGHT_NUM > 5 ? 5 : NIGHT_NUM;
+                        /* TODO: Add `clampi` or something */
+			save_data = SAVE_NIGHT_NUM(save_data) > 5 ?
+                                    5 : SAVE_NIGHT_NUM(save_data);
 			save_data |= tmp;
-			sfx_stop_all();
+			sfx_stop_all_channels();
 			return SCENE_WHICH_NIGHT;
 
 		case 2:
@@ -345,7 +354,7 @@ enum scene title_update(update_parms_t uparms)
 					NULL);
 			save_data = 6;
 			save_data |= tmp;
-			sfx_stop_all();
+			sfx_stop_all_channels();
 			return SCENE_WHICH_NIGHT;
 
 		case 3:

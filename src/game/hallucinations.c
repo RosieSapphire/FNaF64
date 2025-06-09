@@ -65,11 +65,11 @@ void hallucinations_update(double dt)
 		if(timeout >= 150) {
 			is_running = false;
 			timeout = 0;
-			mixer_ch_set_vol(SFXC_ROBOTVOICE, 0, 0);
+			mixer_ch_set_vol(SFX_CH_ROBOTVOICE, 0, 0);
 			return;
 		}
 
-		mixer_ch_set_vol(SFXC_ROBOTVOICE, 1, 1);
+		mixer_ch_set_vol(SFX_CH_ROBOTVOICE, 1, 1);
 
 		return;
 	}
