@@ -29,7 +29,7 @@ int main(void)
 
 	srand(TICKS_READ());
 	display_init(RESOLUTION_320x240, DEPTH_16_BPP, 3,
-		     GAMMA_NONE, ANTIALIAS_RESAMPLE);
+		     GAMMA_NONE, FILTERS_RESAMPLE);
 	rdpq_init();
 	dfs_handle = dfs_init(DFS_DEFAULT_LOCATION);
 	audio_init(32000, 4);
@@ -37,9 +37,11 @@ int main(void)
 	timer_init();
 	joypad_init();
 
+#ifdef DEBUG_ENABLED
         debug_init_isviewer();
         debug_init_usblog();
         rdpq_debug_start();
+#endif
 
         /* Game Init */
         save_data_init();
@@ -105,7 +107,9 @@ int main(void)
 	mixer_close();
 	audio_close();
 	dfs_close(dfs_handle);
+#ifdef DEBUG_ENABLED
         rdpq_debug_stop();
+#endif
 	rdpq_close();
 	display_close();
 

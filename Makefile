@@ -1,5 +1,12 @@
+DEBUG_ENABLED := 0
 GAME := fnaf
 CFLAGS += -Wall -Wextra -Werror -pedantic -ansi -Iinclude
+ifeq ($(DEBUG_ENABLED), 1)
+	CFLAGS += -O0 -DDEBUG_ENABLED
+else
+	CFLAGS += -Ofast
+endif
+
 BUILD_DIR=build
 include $(N64_INST)/include/n64.mk
 
