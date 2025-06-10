@@ -14,7 +14,7 @@ void object_load(struct object *o, const char *path)
 	local_loaded = loaded - 8;
 #ifdef OBJECT_DEBUG_ENABLED
         debugf("%d loaded (%s)\n", local_loaded, path);
-#endif /* OBJECT_DEBUG_ENABLED */
+#endif
 }
 
 void objects_load(struct object *o, int num, const char **paths)
