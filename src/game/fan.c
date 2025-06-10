@@ -31,7 +31,7 @@ void fan_load(void)
 void fan_draw(void)
 {
         /* TODO: Change these into bitflags on the game itself possibly. */
-	if(foxy_is_scaring || bonnie_is_jumpscaring ||
+	if (foxy_is_scaring || bonnie_is_jumpscaring ||
 	   chica_is_jumpscaring || freddy_is_jumpscaring)
 		return;
 

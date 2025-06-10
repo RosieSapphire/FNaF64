@@ -26,7 +26,7 @@ static const int night_ai_lut[6][4] = {
 
 static void _which_night_load(void)
 {
-	if(is_loaded)
+	if (is_loaded)
 		return;
 	timer = 0.0f;
 	object_load(&which_night_atlas, TX_WHICH_NIGHT_ATLAS);
@@ -44,7 +44,7 @@ static void _which_night_load(void)
 
 static void _which_night_unload(void)
 {
-	if(!is_loaded)
+	if (!is_loaded)
 		return;
 	object_unload(&which_night_atlas);
 	is_loaded = false;
@@ -73,7 +73,7 @@ enum scene which_night_update(update_parms_t uparms)
 {
 	timer += uparms.dt * 60;
 
-	if(timer >= 130) {
+	if (timer >= 130) {
 		rdpq_call_deferred((void (*)(void *))_which_night_unload, NULL);
 		return SCENE_MAIN_GAME;
 	}

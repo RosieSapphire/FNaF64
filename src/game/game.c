@@ -41,7 +41,7 @@ int settings_flags = 0;// SET_SUBTITLES_BIT;
 
 static void _game_load(void)
 {
-	if(game_is_loaded)
+	if (game_is_loaded)
 		return;
 
 	game_ticks_since_load = get_ticks();
@@ -98,7 +98,7 @@ static void _game_load(void)
 
 static void _game_unload(void)
 {
-	if(!game_is_loaded)
+	if (!game_is_loaded)
 		return;
 	hallucinations_unload();
 	golden_freddy_unload();
@@ -120,12 +120,12 @@ void game_draw(void)
 {
 	_game_load();
 
-	if(golden_freddy_progress == 4) {
+	if (golden_freddy_progress == 4) {
 		golden_freddy_draw_scare();
 		return;
 	}
 
-	if(!camera_is_visible) {
+	if (!camera_is_visible) {
 		perspective_begin();
 		office_draw();
 		fan_draw();
@@ -133,10 +133,10 @@ void game_draw(void)
 		doors_draw();
 		buttons_draw();
 
-		if(bonnie_is_jumpscaring)
+		if (bonnie_is_jumpscaring)
 			bonnie_draw_scare();
 
-		if(chica_is_jumpscaring)
+		if (chica_is_jumpscaring)
 			chica_draw_scare();
 
 		perspective_end();
@@ -147,13 +147,13 @@ void game_draw(void)
 		blip_draw();
 	}
 
-	if(settings_flags & SET_ROBOT_CHEAT_BIT) {
+	if (settings_flags & SET_ROBOT_CHEAT_BIT) {
 		bonnie_draw_debug();
 		chica_draw_debug();
 		freddy_draw_debug();
 	}
 
-	if(settings_flags & SET_SUBTITLES_BIT &&
+	if (settings_flags & SET_SUBTITLES_BIT &&
 			mixer_ch_playing(SFX_CH_PHONECALL)) {
 		subtitles_draw(game_night_timer, SAVE_NIGHT_NUM(save_data), game_time_since_load);
 	}
@@ -165,27 +165,42 @@ void game_draw(void)
 
 static void _game_handle_cheat_code(joypad_buttons_t down)
 {
-	int cheat_inputs[6] = {
-		down.c_up,    down.c_down, down.c_left,
-		down.c_right, down.b,      down.a,
-	};
+        int i, cheat_inputs[6], cheat_indis[10];
 
-	int cheat_indis[10] = {0, 0, 1, 1, 2, 3, 2, 3, 4, 5};
+        cheat_inputs[0] = down.c_up;
+        cheat_inputs[1] = down.c_down;
+        cheat_inputs[2] = down.c_left;
+        cheat_inputs[3] = down.c_right;
+        cheat_inputs[4] = down.b;
+        cheat_inputs[5] = down.a;
 
-	for(int i = 0; i < 6; i++) {
-		if(!cheat_inputs[i])
+        cheat_indis[0] = 0;
+        cheat_indis[1] = 0;
+        cheat_indis[2] = 1;
+        cheat_indis[3] = 1;
+        cheat_indis[4] = 2;
+        cheat_indis[5] = 3;
+        cheat_indis[6] = 2;
+        cheat_indis[7] = 3;
+        cheat_indis[8] = 4;
+        cheat_indis[9] = 5;
+
+	for (i = 0; i < 6; ++i) {
+		if (!cheat_inputs[i]) {
 			continue;
+                }
 
-		if(i != cheat_indis[game_night_skip_correct]) {
+		if (i != cheat_indis[game_night_skip_correct]) {
 			game_night_skip_correct = 0;
 			break;
 		}
 
-		game_night_skip_correct++;
+		++game_night_skip_correct;
 	}
 
-	if(game_night_skip_correct == 10)
+	if (game_night_skip_correct == 10) {
 		game_night_timer = 6 * HOUR_LEN_SECONDS;
+        }
 }
 
 static void _game_update_random_events(float dt)
@@ -193,7 +208,7 @@ static void _game_update_random_events(float dt)
 	/* Circus music */
 	bool play_circus_music;
 	circus_timer = wrapf(circus_timer + dt, 5, &play_circus_music);
-	if(play_circus_music && (rand() % 30) == 1) {
+	if (play_circus_music && (rand() % 30) == 1) {
 		mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.05f, 0.05f);
 		wav64_play(&sfx_circus_music, SFX_CH_AMBIENCE);
 	}
@@ -204,17 +219,17 @@ enum scene game_update(update_parms_t uparms)
 	golden_freddy_update(uparms.dt);
 	hallucinations_update(uparms.dt);
 
-	if(golden_freddy_progress == 4) {
+	if (golden_freddy_progress == 4) {
 		golden_freddy_update(uparms.dt);
 		return SCENE_MAIN_GAME;
 	}
 
-	if(golden_freddy_progress == 6) {
+	if (golden_freddy_progress == 6) {
 		uint32_t *sorry = NULL;
 		*sorry = 69;
 	}
 
-	if(!camera_is_visible && uparms.pressed.c_up &&
+	if (!camera_is_visible && uparms.pressed.c_up &&
            SAVE_NIGHT_NUM(save_data) <= 5) {
 		mixer_ch_stop(SFX_CH_PHONECALL);
         }
@@ -223,7 +238,7 @@ enum scene game_update(update_parms_t uparms)
 	_game_update_random_events(uparms.dt);
 
 	game_night_timer += uparms.dt;
-	if(game_night_timer >= 6 * HOUR_LEN_SECONDS) {
+	if (game_night_timer >= 6 * HOUR_LEN_SECONDS) {
 		sfx_stop_all_channels();
                 /* TODO: Maybe replace this with an `rspq_wait()`. */
 		rdpq_call_deferred((void (*)(void *))_game_unload, NULL);
@@ -232,11 +247,11 @@ enum scene game_update(update_parms_t uparms)
 
 	static int hour_last = 0;
 	int hour = (game_night_timer / (float)HOUR_LEN_SECONDS);
-	if(hour == 2 && hour_last != 2) {
+	if (hour == 2 && hour_last != 2) {
 		bonnie_ai_level++;
 	}
 
-	if((hour == 3 && hour_last != 3) || (hour == 4 && hour_last != 4)) {
+	if ((hour == 3 && hour_last != 3) || (hour == 4 && hour_last != 4)) {
 		bonnie_ai_level++;
 		chica_ai_level++;
 		foxy_ai_level++;
@@ -249,7 +264,7 @@ enum scene game_update(update_parms_t uparms)
 
 	hour_last = hour;
 
-	if(game_power_left <= 0) {
+	if (game_power_left <= 0) {
 		sfx_stop_all_channels();
 		rdpq_call_deferred((void (*)(void *))_game_unload, NULL);
 		return SCENE_POWER_DOWN;
@@ -265,10 +280,10 @@ enum scene game_update(update_parms_t uparms)
 	chica_update(uparms.dt);
 	foxy_update(uparms.dt);
 	freddy_update(uparms.dt);
-	if(bonnie_is_jumpscaring || chica_is_jumpscaring ||
+	if (bonnie_is_jumpscaring || chica_is_jumpscaring ||
 			foxy_is_scaring || freddy_is_jumpscaring) {
 		game_sfx_jumpscare_exit_timer -= uparms.dt * 60;
-		if(game_sfx_jumpscare_exit_timer <= 0) {
+		if (game_sfx_jumpscare_exit_timer <= 0) {
 			sfx_stop_all_channels();
 			rdpq_call_deferred((void (*)(void *))_game_unload,
 					NULL);
@@ -277,7 +292,7 @@ enum scene game_update(update_parms_t uparms)
 		}
 	}
 	
-	if(uparms.pressed.start) {
+	if (uparms.pressed.start) {
 		sfx_stop_all_channels();
                 /* TODO: Replace with `rspq_wait()`. */
 		rdpq_call_deferred((void (*)(void *))_game_unload, NULL);

@@ -131,7 +131,7 @@ void sfx_stop_all_channels(void)
 {
         int i;
 
-	for(i = 0; i < SFX_CH_CNT; i++) {
+	for (i = 0; i < SFX_CH_CNT; ++i) {
 		mixer_ch_stop(i);
         }
 }

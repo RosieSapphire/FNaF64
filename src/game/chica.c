@@ -106,17 +106,17 @@ void chica_draw_debug(void)
 
 static void _chica_update_kitchen_volume(void)
 {
-	if(CAM_6 != chica_cam) {
+	if (CAM_6 != chica_cam) {
 		mixer_ch_set_vol(SFX_CH_KITCHEN, 0, 0);
 		return;
 	}
 
-	if(!camera_is_visible) {
+	if (!camera_is_visible) {
 		mixer_ch_set_vol(SFX_CH_KITCHEN, 0.1f, 0.1f);
 		return;
 	}
 
-	if(cam_selected == chica_cam)
+	if (cam_selected == chica_cam)
 		mixer_ch_set_vol(SFX_CH_KITCHEN, 0.75f, 0.75f);
 	else
 		mixer_ch_set_vol(SFX_CH_KITCHEN, 0.2f, 0.2f);
@@ -125,14 +125,14 @@ static void _chica_update_kitchen_volume(void)
 
 void chica_update(double dt)
 {
-	if(chica_is_jumpscaring) {
+	if (chica_is_jumpscaring) {
 		scare_timer += dt * speed_fps(50);
 		scare_timer = wrapf(scare_timer, CHICA_SCARE_FRAMES, NULL);
 		return;
 	}
 
 	bool cam_flip_down = (!camera_is_visible && camera_was_visible);
-	if(chica_cam == YOURE_FUCKED && cam_flip_down) {
+	if (chica_cam == YOURE_FUCKED && cam_flip_down) {
 		chica_is_jumpscaring = true;
 		wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
 		return;
@@ -145,7 +145,7 @@ void chica_update(double dt)
 	kitchen_noise_timer = wrapf(kitchen_noise_timer,
 			4, &kitchen_noise_tick);
 
-	if(kitchen_noise_tick) {
+	if (kitchen_noise_tick) {
 		int kitchen_rand_val = rand() % 10;
 		/* I'm sorry I have to do this, but for some reason, the way
 		 * that Libdragon handles wav64_t, I have no choice */
@@ -175,7 +175,7 @@ void chica_update(double dt)
 	which_room_timer += dt;
 	bool switch_which;
 	which_room_timer = wrapf(which_room_timer, 1, &switch_which);
-	if(switch_which)
+	if (switch_which)
 		which_room = rand() & 1;
 
 	chica_blackout_timer -= dt * 60;
@@ -184,23 +184,23 @@ void chica_update(double dt)
 	move_timer += dt;
 	bool try_move;
 	move_timer = wrapf(move_timer, MOVE_TIMER, &try_move);
-	if(!try_move)
+	if (!try_move)
 		return;
 
-	if((1 + (rand() % 20)) > chica_ai_level)
+	if ((1 + (rand() % 20)) > chica_ai_level)
 		return;
 
 	chica_cam_last = chica_cam;
 	int cam_next = new_cam_lut[chica_cam][which_room];
-	if(cam_next == YOURE_FUCKED && (button_state & BUTTON_RIGHT_DOOR)) {
+	if (cam_next == YOURE_FUCKED && (button_state & BUTTON_RIGHT_DOOR)) {
 		cam_next = CAM_4A;
 		/* BULLSHIT FIX THIS SHOULDN'T HAVE TO BE HERE! */
                 camera_states[CAM_4A] |= (CHICA_BIT | ROOM_SPOT_BIT);
-		if(cam_selected == CAM_4A)
+		if (cam_selected == CAM_4A)
 			chica_blackout_timer = 10;
         }
 
-	if(cam_next < AT_DOOR) {
+	if (cam_next < AT_DOOR) {
 		float foot_vol = footstep_vol_lut[cam_next];
 		mixer_ch_set_vol(SFX_CH_FOOTSTEPS, foot_vol, foot_vol);
 	}
@@ -211,18 +211,18 @@ void chica_update(double dt)
 	which_spot = rand() & 1;
 
 	/* I have no fucking clue why I have to do this */
-	if(chica_cam_last < AT_DOOR) {
+	if (chica_cam_last < AT_DOOR) {
         	camera_states[chica_cam_last] &= ~(CHICA_BIT | ROOM_SPOT_BIT);
-		if(chica_cam < AT_DOOR)
+		if (chica_cam < AT_DOOR)
         		camera_states[chica_cam] |=
 				CHICA_BIT | (ROOM_SPOT_BIT * which_spot);
         	chica_blackout_timer = 10;
 	}
 
-	if(chica_cam != AT_DOOR)
+	if (chica_cam != AT_DOOR)
 		chica_scared = false;
 
-	if(             (chica_cam == AT_DOOR && chica_cam_last != AT_DOOR) ||
+	if (             (chica_cam == AT_DOOR && chica_cam_last != AT_DOOR) ||
 			(chica_cam != AT_DOOR && chica_cam_last == AT_DOOR))
 		button_state &= ~BUTTON_RIGHT_LIGHT;
 }

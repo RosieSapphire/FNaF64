@@ -54,7 +54,7 @@ void foxy_unload(void)
 
 static void _foxy_update_stun_timer(double dt)
 {
-	if(camera_is_visible) {
+	if (camera_is_visible) {
 		stun_timer = 50 + (rand() % 1000);
 		return;
 	}
@@ -89,7 +89,7 @@ static void _foxy_trigger_reset(void)
 	num_door_pounds++;
 
 	int power_deduct = 10 + (50 * num_door_pounds);
-	if(power_deduct >= game_power_left) {
+	if (power_deduct >= game_power_left) {
 		game_power_left = 0;
 		return;
 	}
@@ -107,49 +107,49 @@ void foxy_update(double dt)
 	fox_song_timer += dt;
 	bool fox_song_play;
 	fox_song_timer = wrapf(fox_song_timer, 4.0f, &fox_song_play);
-	if(fox_song_play && (rand() % 30) == 1)
+	if (fox_song_play && (rand() % 30) == 1)
 		wav64_play(&sfx_foxy_hum, SFX_CH_FOXSONG);
 
 	/* Handle jumpscaring */
-	if(foxy_is_scaring) {
+	if (foxy_is_scaring) {
 		foxy_scare_timer += speed_fps(25) * dt;
 		foxy_scare_timer = clampf(foxy_scare_timer,
 				0, FOXY_SCARE_FRAMES - 1);
 		return;
 	}
 
-	if(cam_selected == CAM_2A && camera_is_visible &&
+	if (cam_selected == CAM_2A && camera_is_visible &&
 	   foxy_progress == 3 && !use_run_timer) {
 		use_run_timer = true;
 		wav64_play(&sfx_foxy_running, SFX_CH_JUMPSCARE);
 	}
 
-	if(use_run_timer) {
+	if (use_run_timer) {
 		foxy_run_timer += dt * 60;
 		foxy_run_timer = clampf(foxy_run_timer, 0, 100);
-		if(foxy_run_timer == 100) {
-			if(button_state & BUTTON_LEFT_DOOR)
+		if (foxy_run_timer == 100) {
+			if (button_state & BUTTON_LEFT_DOOR)
 				_foxy_trigger_reset();
 			else
 				_foxy_trigger_sfx_jumpscare();
 		}
 	}
 
-	if(foxy_progress == 3 && !foxy_is_scaring)
+	if (foxy_progress == 3 && !foxy_is_scaring)
 		no_check_timer += dt * 60;
 
-	if(no_check_timer >= 1500 && !foxy_is_scaring) {
-		if(button_state & BUTTON_LEFT_DOOR)
+	if (no_check_timer >= 1500 && !foxy_is_scaring) {
+		if (button_state & BUTTON_LEFT_DOOR)
 			_foxy_trigger_reset();
 		else
 			_foxy_trigger_sfx_jumpscare();
 	}
 
 	_foxy_update_stun_timer(dt);
-	if(!_foxy_update_move_timer(dt) || stun_timer > 0 || foxy_progress >= 3)
+	if (!_foxy_update_move_timer(dt) || stun_timer > 0 || foxy_progress >= 3)
 		return;
 
-	if((1 + (rand() % 20)) > foxy_ai_level)
+	if ((1 + (rand() % 20)) > foxy_ai_level)
 		return;
 
 	foxy_progress++;

@@ -396,8 +396,8 @@ void subtitles_draw(const float timer, const int night, const float offset)
 	rdpq_textparms_t params;
 
         line_cur_index = 0;
-	for(i = 0; i < sub_night_line_nums[night - 1]; ++i) {
-		if(timer >= sub_night_line_times[night - 1][i] + offset) {
+	for (i = 0; i < sub_night_line_nums[night - 1]; ++i) {
+		if (timer >= sub_night_line_times[night - 1][i] + offset) {
 			line_cur_index = i;
                 }
 	}

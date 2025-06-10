@@ -28,7 +28,7 @@ void static_load(void)
 	objects_load(static_frames, STATIC_FRAME_CNT, static_frame_paths);
 }
 
-void static_draw(const bool as_overlay);
+void static_draw(const bool as_overlay)
 {
 	rdpq_set_mode_standard();
 	if (as_overlay) {

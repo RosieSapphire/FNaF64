@@ -48,7 +48,7 @@ static bool eeprom_fail_notice = false;
 
 static void _title_load(void)
 {
-	if(is_loaded)
+	if (is_loaded)
 		return;
 	selected = 0;
 
@@ -80,7 +80,7 @@ static void _title_load(void)
 
 static void _title_unload(void)
 {
-	if(!is_loaded)
+	if (!is_loaded)
 		return;
 	object_unload(&eeprom_error);
 	object_unload(&setting_descs);
@@ -100,8 +100,11 @@ static void _title_unload(void)
 
 static void _title_draw_settings(void)
 {
-	if(!settings_triggered)
+        int i;
+
+	if (!settings_triggered) {
 		return;
+        }
 
 	rdpq_set_mode_standard();
 	rdpq_mode_alphacompare(true);
@@ -115,9 +118,9 @@ static void _title_draw_settings(void)
 	object_draw_index_y(setting_descs, 132, 162, 20, selected_setting);
 
 	rdpq_set_mode_fill(RGBA32(0xff, 0xff, 0xff, 0xff));
-	for(int i = 0; i < SETTING_COUNT; i++) {
+	for (i = 0; i < SETTING_COUNT; ++i) {
 		bool is_using = settings_flags & (1 << i);
-		if(!is_using)
+		if (!is_using)
 			continue;
 
 		int x0 = 280 + 6;
@@ -131,9 +134,11 @@ static void _title_draw_settings(void)
 
 void title_draw(void)
 {
+        int i;
+
 	_title_load();
 
-	if(new_game_timer >= 2.0f)
+	if (new_game_timer >= 2.0f)
 		goto draw_newspaper;
 
 	rdpq_set_mode_copy(false);
@@ -141,7 +146,7 @@ void title_draw(void)
 	object_draw(freddy_face[face], 0, 0, 0, 0);
 	static_draw(true);
 
-	if(settings_triggered) {
+	if (settings_triggered) {
 		_title_draw_settings();
 		return;
 	}
@@ -155,15 +160,16 @@ void title_draw(void)
 	star_count += (save_data & SAVE_NIGHT_6_BEATEN_BIT) > 0;
 	star_count += (save_data & SAVE_MODE_20_BEATEN_BIT) > 0;
 	available = clampf(star_count, 0, 2) + 2;
-	for(int i = 0; i < star_count; i++)
+	for (i = 0; i < star_count; ++i) {
 		object_draw(star, 93 + 77 * i, 350, 28, 27);
+        }
 
 	object_draw_index_y(option_text, 118, 420, 22 * available, 0);
 	object_draw(title_text, 70, 68, 0, 0);
 	object_draw(bind_buttons_text, 558, 45, 0, 0);
 	object_draw(selector, 40, 429 + selected * 66, 0, 0);
 
-	if(selected == 1) {
+	if (selected == 1) {
                 /* TODO: Replace with either "CLAMP" or "clampi". */
 		int clamped = (int)clampf(SAVE_NIGHT_NUM(save_data), 1, 5);
 
@@ -173,7 +179,7 @@ void title_draw(void)
 
 	blip_draw();
 
-	if(save_data_eeprom_failed && !eeprom_fail_notice) {
+	if (save_data_eeprom_failed && !eeprom_fail_notice) {
 		rdpq_set_mode_standard();
 		rdpq_set_prim_color(RGBA32(0x0, 0x0, 0x0, 0xD8));
 		rdpq_mode_combiner(RDPQ_COMBINER_FLAT);
@@ -185,15 +191,15 @@ void title_draw(void)
 		object_draw(eeprom_error, 96, 168, 0, 0);
 	}
 
-	if(!new_game_init)
+	if (!new_game_init)
 		return;
 
 	float alpha = 1.f;
 draw_newspaper:
-	if(new_game_timer <= 2.0f)
+	if (new_game_timer <= 2.0f)
 		alpha = new_game_timer * 0.5f;
 
-	if(new_game_timer >= 7.0f) {
+	if (new_game_timer >= 7.0f) {
 		alpha = 1.0f - ((new_game_timer - 7.0f) * 0.5f);
 		rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
 		rdpq_fill_rectangle(0, 0, 320, 240);
@@ -208,23 +214,23 @@ draw_newspaper:
 
 static void _title_update_settings(joypad_buttons_t down)
 {
-	if(down.l)
+	if (down.l)
 		wav64_play(&sfx_boop, SFX_CH_BLIP);
 
-	if(down.d_down || down.c_down) {
+	if (down.d_down || down.c_down) {
 		blip_trigger(false);
 		selected_setting++;
 	}
 
-	if(selected_setting >= SETTING_COUNT)
+	if (selected_setting >= SETTING_COUNT)
 		selected_setting = 0;
 
-	if(down.d_up || down.c_up) {
+	if (down.d_up || down.c_up) {
 		blip_trigger(false);
 		selected_setting--;
 	}
 
-	if(selected_setting < 0)
+	if (selected_setting < 0)
 		selected_setting = SETTING_COUNT - 1;
 
 	settings_flags ^= (down.a << selected_setting);
@@ -234,15 +240,15 @@ static void _title_update_deleting(update_parms_t uparms)
 {
 	static float delete_timer = 0.0f;
 	static bool already_deleted = false;
-	if(uparms.held.z) {
-		if(!already_deleted)
+	if (uparms.held.z) {
+		if (!already_deleted)
 			delete_timer += uparms.dt;
 	} else {
 		delete_timer = 0.0f;
 		already_deleted = false;
 	}
 
-	if(delete_timer < 1.0f)
+	if (delete_timer < 1.0f)
 		return;
 
 	blip_trigger(false);
@@ -250,7 +256,7 @@ static void _title_update_deleting(update_parms_t uparms)
 	delete_timer = 0.0f;
 	already_deleted = true;
 	selected = 0;
-	if(!save_data_eeprom_failed) {
+	if (!save_data_eeprom_failed) {
 		eepfs_write("fnaf.dat", &save_data, sizeof(save_data));
         }
 
@@ -262,15 +268,15 @@ enum scene title_update(update_parms_t uparms)
 	face_timer += uparms.dt * 60 * 0.08f;
 	bool tick;
 	face_timer = wrapf(face_timer, 1, &tick);
-	if(tick)
+	if (tick)
 		face_state = rand() % 100;
 
-	if(save_data_eeprom_failed && !eeprom_fail_notice) {
+	if (save_data_eeprom_failed && !eeprom_fail_notice) {
 		eeprom_fail_notice = uparms.pressed.start;
 		return SCENE_TITLE_SCREEN;
 	}
 
-	if(new_game_init) {
+	if (new_game_init) {
 		new_game_timer += uparms.dt;
 
 		/* Check for skipping */
@@ -280,10 +286,10 @@ enum scene title_update(update_parms_t uparms)
 			uparms.pressed.start) > 0;
 		const bool can_skip =
 			new_game_timer < 7.0f && new_game_timer > 2.0f;
-		if(a_b_or_start_down && can_skip)
+		if (a_b_or_start_down && can_skip)
 			new_game_timer = 7.0f;
 
-		if(new_game_timer >= 9.0f) {
+		if (new_game_timer >= 9.0f) {
 			rdpq_call_deferred((void (*)(void *))_title_unload,
 					NULL);
 			sfx_stop_all_channels();
@@ -296,27 +302,27 @@ enum scene title_update(update_parms_t uparms)
 	_title_update_deleting(uparms);
 
 	settings_triggered ^= uparms.pressed.r;
-	if(settings_triggered) {
+	if (settings_triggered) {
 		_title_update_settings(uparms.pressed);
 		return SCENE_TITLE_SCREEN;
 	}
 
 	/* inputs */
-	if(uparms.pressed.d_up || uparms.pressed.c_up) {
+	if (uparms.pressed.d_up || uparms.pressed.c_up) {
 		selected--;
 		blip_trigger(false);
-		if(selected < 0)
+		if (selected < 0)
 			selected = available - 1;
 	}
 
-	if(uparms.pressed.d_down || uparms.pressed.c_down) {
+	if (uparms.pressed.d_down || uparms.pressed.c_down) {
 		selected++;
 		blip_trigger(false);
-		if(selected >= available)
+		if (selected >= available)
 			selected = 0;
 	}
 
-	if(uparms.pressed.start || uparms.pressed.a) {
+	if (uparms.pressed.start || uparms.pressed.a) {
 		uint8_t tmp = save_data & (SAVE_NIGHT_5_BEATEN_BIT |
 			      SAVE_NIGHT_6_BEATEN_BIT |
                               SAVE_MODE_20_BEATEN_BIT);
@@ -329,7 +335,7 @@ enum scene title_update(update_parms_t uparms)
 				     SAVE_MODE_20_BEATEN_BIT;
 			save_data |= 1;
 
-			if(!save_data_eeprom_failed)
+			if (!save_data_eeprom_failed)
 				eepfs_write("fnaf.dat", &save_data, 1);
 			debugf("Reset night to %d with %d%d%d\n",
 					SAVE_NIGHT_NUM(save_data),

@@ -7,9 +7,9 @@
 
 float clampf(float x, float min, float max)
 {
-	if(x > max)
+	if (x > max)
 		return max;
-	if(x < min)
+	if (x < min)
 		return min;
 	return x;
 }
@@ -23,7 +23,7 @@ float wrapf(float x, float max, bool *has_wrapped)
 		wrapped = true;
 	}
 
-	if(has_wrapped)
+	if (has_wrapped)
 		*has_wrapped = wrapped;
 
 	return x;
@@ -31,7 +31,7 @@ float wrapf(float x, float max, bool *has_wrapped)
 
 float fcutoff(float x, float threshold)
 {
-	if(fabsf(x) < threshold)
+	if (fabsf(x) < threshold)
 		return 0.0f;
 
 	return x;
@@ -39,7 +39,7 @@ float fcutoff(float x, float threshold)
 
 int icutoff(int x, int threshold)
 {
-	if(abs(x) < threshold)
+	if (abs(x) < threshold)
 		return 0.0f;
 
 	return x;

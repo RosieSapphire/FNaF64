@@ -59,7 +59,7 @@ void blip_draw(void)
 	int frame;
 
         frame = (int)timer;
-	if(frame >= BLIP_FRAME_CNT) {
+	if (frame >= BLIP_FRAME_CNT) {
 		return;
         }
 
@@ -77,7 +77,7 @@ void blip_trigger(const bool is_visual)
 {
 	wav64_play(&sfx_blip, SFX_CH_BLIP);
 
-	if(is_visual) {
+	if (is_visual) {
 		timer = 0;
         }
 }

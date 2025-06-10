@@ -15,7 +15,7 @@ static object_t screens[3];
 
 static void paycheck_load(void)
 {
-	if(is_loaded)
+	if (is_loaded)
 		return;
 
 	timer = 0.0f;
@@ -30,7 +30,7 @@ static void paycheck_load(void)
 
 static void paycheck_unload(void)
 {
-	if(!is_loaded)
+	if (!is_loaded)
 		return;
 	
 	objects_unload(screens, 3);
@@ -43,10 +43,10 @@ void paycheck_draw(void)
 	paycheck_load();
 
 	float alpha = 1.0f;
-	if(timer <= 2.0f)
+	if (timer <= 2.0f)
 		alpha = timer * 0.5f;
 
-	if(timer >= 17.0f)
+	if (timer >= 17.0f)
 		alpha = 1.0f - ((timer - 17.0f) * 0.5f);
 
 	rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
@@ -66,10 +66,10 @@ enum scene paycheck_update(update_parms_t uparms)
 	const bool a_b_or_start_down =
 		(uparms.pressed.a + uparms.pressed.b + uparms.pressed.start);
 	const bool can_skip = timer < 7.0f && timer > 2.0f;
-	if(a_b_or_start_down && can_skip)
+	if (a_b_or_start_down && can_skip)
 		timer = 17.0f;
 
-	if(timer >= 19.0f) {
+	if (timer >= 19.0f) {
                 /* Use `rspq_wait()`. */
 		rdpq_call_deferred((void(*)(void *))paycheck_unload, NULL);
 		sfx_stop_all_channels();

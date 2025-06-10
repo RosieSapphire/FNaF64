@@ -13,7 +13,7 @@ static float over_timer = 0.0f;
 
 static void _game_over_load(void)
 {
-	if(is_loaded)
+	if (is_loaded)
 		return;
 	object_load(&over_screen, TX_GAME_OVER_SCREEN);
 	object_load(&over_text, TX_GAME_OVER_TEXT);
@@ -28,7 +28,7 @@ static void _game_over_load(void)
 
 static void _game_over_unload(void)
 {
-	if(!is_loaded)
+	if (!is_loaded)
 		return;
 	object_unload(&over_screen);
 	object_unload(&over_text);
@@ -41,7 +41,7 @@ void game_over_draw(void)
 	_game_over_load();
 
 	bool show_over_screen = over_timer >= 10;
-	if(show_over_screen) {
+	if (show_over_screen) {
 		rdpq_set_mode_copy(false);
 		object_draw(over_screen, 0, 0, 0, 0);
 		rdpq_set_mode_standard();
@@ -58,19 +58,19 @@ enum scene game_over_update(update_parms_t uparms)
 	over_timer += uparms.dt;
 
 	bool show_over_screen = over_timer >= 10;
-	if(show_over_screen) {
+	if (show_over_screen) {
 		sfx_stop_all_channels();
         }
 
 	bool attempt_skip = uparms.pressed.a ||
 		uparms.pressed.b || uparms.pressed.start;
-	if(attempt_skip && show_over_screen) {
+	if (attempt_skip && show_over_screen) {
 		rdpq_call_deferred((void(*)(void *))_game_over_unload, NULL);
 		over_timer = 0.0f;
 		return SCENE_TITLE_SCREEN;
 	}
 
-	if(over_timer < 20)
+	if (over_timer < 20)
 		return SCENE_GAME_OVER;
 
 	rdpq_call_deferred((void(*)(void *))_game_over_unload, NULL);

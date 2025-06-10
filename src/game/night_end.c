@@ -19,7 +19,7 @@ static bool played_cheer;
 
 static void night_end_load(void)
 {
-	if(is_loaded) {
+	if (is_loaded) {
 		return;
         }
 
@@ -27,7 +27,7 @@ static void night_end_load(void)
 	save_data |= (SAVE_NIGHT_NUM(save_data) == 5) * SAVE_NIGHT_5_BEATEN_BIT;
 	save_data |= (SAVE_NIGHT_NUM(save_data) == 6) * SAVE_NIGHT_6_BEATEN_BIT;
 
-	if(freddy_ai_level == 20 && bonnie_ai_level == 20 &&
+	if (freddy_ai_level == 20 && bonnie_ai_level == 20 &&
 	   chica_ai_level == 20 && foxy_ai_level == 20 &&
 	   !(settings_flags & SET_ROBOT_CHEAT_BIT) &&
            !(settings_flags & SET_FAST_NIGHT_BIT)) {
@@ -48,7 +48,7 @@ static void night_end_load(void)
 
 static void night_end_unload(void)
 {
-	if(!is_loaded) {
+	if (!is_loaded) {
 		return;
         }
 
@@ -84,7 +84,7 @@ void night_end_draw(void)
 			vcon(339) + vcon(159), vcon(384) + vcon(120));
 
 	float fade;
-	if(timer < 9)
+	if (timer < 9)
  		fade = clampf(1.0f - timer, 0, 1);
 	else
  		fade = clampf(timer - 10.5f, 0, 1);
@@ -100,14 +100,14 @@ enum scene night_end_update(const update_parms_t uparms)
 {
 	timer += uparms.dt;
 
-	if(timer >= 6.2f && !played_cheer) {
+	if (timer >= 6.2f && !played_cheer) {
 		played_cheer = true;
 		mixer_ch_set_vol(SFX_CH_FAN, 0.8f, 0.8f);
 		wav64_play(&sfx_cheering, SFX_CH_FAN);
 	}
 
-	if(timer >= 11.5f) {
-		if(!save_data_eeprom_failed) {
+	if (timer >= 11.5f) {
+		if (!save_data_eeprom_failed) {
 			eepfs_write("fnaf.dat", &save_data, 1);
                 }
 
@@ -120,7 +120,7 @@ enum scene night_end_update(const update_parms_t uparms)
 		rdpq_call_deferred((void(*)(void *))night_end_unload, NULL);
 		sfx_stop_all_channels();
 
-		if(SAVE_NIGHT_NUM(save_data) < 6) {
+		if (SAVE_NIGHT_NUM(save_data) < 6) {
 			return SCENE_WHICH_NIGHT;
                 }
 

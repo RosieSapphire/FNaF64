@@ -15,7 +15,7 @@ void perspective_init(void)
 	rdpq_set_mode_standard();
 	div_cnt = 40;
 	div_width = 320 / div_cnt;
-	for(i = 0; i < div_cnt; i++) {
+	for (i = 0; i < div_cnt; ++i) {
 		float i_dist, scale_y;
                 rdpq_blitparms_t params;
 

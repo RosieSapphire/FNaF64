@@ -90,10 +90,10 @@ int main(void)
 		blip_update(uparms.dt);
 		static_update(uparms.dt);
 
-		if(scene_last != scene)
+		if (scene_last != scene)
 			rspq_wait();
 
-		if(!audio_can_write())
+		if (!audio_can_write())
 			continue;
 
 		short *audio_buf = audio_write_begin();
