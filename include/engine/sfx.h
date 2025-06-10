@@ -2,16 +2,48 @@
 
 #include <libdragon.h>
 
-extern wav64_t fan_sfx, light_sfx, door_sfx, boop_sfx, cam_up_sfx,
-               cam_down_sfx, blip_sfx, cam_scan_sfx, static_sfx, title_music,
-               window_scare, error_sfx, jumpscare_sfx, jumpscare_low,
-               kitchen_sfx0, kitchen_sfx1, kitchen_sfx2, kitchen_sfx3,
-               deepstep_sfx, robotvoice_sfx, banging_sfx, foxy_running,
-               powerdown_sfx, musicbox_sfx, chimes_sfx, cheering_sfx,
-               phonecall1, phonecall2, phonecall3, phonecall4, phonecall5,
-               freddylaugh1, freddylaugh2, freddylaugh3, freddyrun_sfx,
-               camglitch1, camglitch2, camglitch3, camglitch4, foxy_hum,
-               circus_music, girl_giggle;
+extern wav64_t sfx_fan;
+extern wav64_t sfx_light;
+extern wav64_t sfx_door;
+extern wav64_t sfx_boop;
+extern wav64_t sfx_cam_up;
+extern wav64_t sfx_cam_down;
+extern wav64_t sfx_blip;
+extern wav64_t sfx_cam_scan;
+extern wav64_t sfx_static;
+extern wav64_t sfx_title_music;
+extern wav64_t sfx_window_scare;
+extern wav64_t sfx_error;
+extern wav64_t sfx_jumpscare;
+extern wav64_t sfx_jumpscare_low;
+extern wav64_t sfx_kitchen_0;
+extern wav64_t sfx_kitchen_1;
+extern wav64_t sfx_kitchen_2;
+extern wav64_t sfx_kitchen_3;
+extern wav64_t sfx_deep_step;
+extern wav64_t sfx_robot_voice;
+extern wav64_t sfx_banging;
+extern wav64_t sfx_foxy_running;
+extern wav64_t sfx_power_down;
+extern wav64_t sfx_music_box;
+extern wav64_t sfx_chimes;
+extern wav64_t sfx_cheering;
+extern wav64_t sfx_phone_call_1;
+extern wav64_t sfx_phone_call_2;
+extern wav64_t sfx_phone_call_3;
+extern wav64_t sfx_phone_call_4;
+extern wav64_t sfx_phone_call_5;
+extern wav64_t sfx_freddy_laugh_1;
+extern wav64_t sfx_freddy_laugh_2;
+extern wav64_t sfx_freddy_laugh_3;
+extern wav64_t sfx_freddy_run;
+extern wav64_t sfx_cam_glitch_1;
+extern wav64_t sfx_cam_glitch_2;
+extern wav64_t sfx_cam_glitch_3;
+extern wav64_t sfx_cam_glitch_4;
+extern wav64_t sfx_foxy_hum;
+extern wav64_t sfx_circus_music;
+extern wav64_t sfx_girl_giggle;
 
 enum sfx_channels {
 	SFX_CH_AMBIENCE,

@@ -71,16 +71,16 @@ static bool _foxy_update_move_timer(double dt)
 	return move_tick;
 }
 
-static void _foxy_trigger_jumpscare(void)
+static void _foxy_trigger_sfx_jumpscare(void)
 {
 	camera_is_using = false;
 	foxy_is_scaring = true;
-	wav64_play(&jumpscare_sfx, SFX_CH_JUMPSCARE);
+	wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
 }
 
 static void _foxy_trigger_reset(void)
 {
-	wav64_play(&banging_sfx, SFX_CH_JUMPSCARE);
+	wav64_play(&sfx_banging, SFX_CH_JUMPSCARE);
 	foxy_progress = rand() & 1;
 	no_check_timer = 0;
 	foxy_run_timer = 0;
@@ -108,7 +108,7 @@ void foxy_update(double dt)
 	bool fox_song_play;
 	fox_song_timer = wrapf(fox_song_timer, 4.0f, &fox_song_play);
 	if(fox_song_play && (rand() % 30) == 1)
-		wav64_play(&foxy_hum, SFX_CH_FOXSONG);
+		wav64_play(&sfx_foxy_hum, SFX_CH_FOXSONG);
 
 	/* Handle jumpscaring */
 	if(foxy_is_scaring) {
@@ -118,10 +118,10 @@ void foxy_update(double dt)
 		return;
 	}
 
-	if(cam_selected == CAM_2A && camera_is_visible
-			&& foxy_progress == 3 && !use_run_timer) {
+	if(cam_selected == CAM_2A && camera_is_visible &&
+	   foxy_progress == 3 && !use_run_timer) {
 		use_run_timer = true;
-		wav64_play(&foxy_running, SFX_CH_JUMPSCARE);
+		wav64_play(&sfx_foxy_running, SFX_CH_JUMPSCARE);
 	}
 
 	if(use_run_timer) {
@@ -131,7 +131,7 @@ void foxy_update(double dt)
 			if(button_state & BUTTON_LEFT_DOOR)
 				_foxy_trigger_reset();
 			else
-				_foxy_trigger_jumpscare();
+				_foxy_trigger_sfx_jumpscare();
 		}
 	}
 
@@ -142,7 +142,7 @@ void foxy_update(double dt)
 		if(button_state & BUTTON_LEFT_DOOR)
 			_foxy_trigger_reset();
 		else
-			_foxy_trigger_jumpscare();
+			_foxy_trigger_sfx_jumpscare();
 	}
 
 	_foxy_update_stun_timer(dt);

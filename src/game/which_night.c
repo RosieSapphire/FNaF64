@@ -66,7 +66,7 @@ void which_night_draw(void)
 	rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
 	rdpq_fill_rectangle(0, 0, 320, 240);
 
-	blip_draw();
+        blip_draw();
 }
 
 enum scene which_night_update(update_parms_t uparms)

@@ -36,7 +36,7 @@ static void night_end_load(void)
 
 	save_data++;
 	mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.8f, 0.8f);
-	wav64_play(&chimes_sfx, SFX_CH_AMBIENCE);
+	wav64_play(&sfx_chimes, SFX_CH_AMBIENCE);
 
 	object_load(&am, TX_END_AM);
 	object_load(&six, TX_END_SIX);
@@ -103,7 +103,7 @@ enum scene night_end_update(const update_parms_t uparms)
 	if(timer >= 6.2f && !played_cheer) {
 		played_cheer = true;
 		mixer_ch_set_vol(SFX_CH_FAN, 0.8f, 0.8f);
-		wav64_play(&cheering_sfx, SFX_CH_FAN);
+		wav64_play(&sfx_cheering, SFX_CH_FAN);
 	}
 
 	if(timer >= 11.5f) {

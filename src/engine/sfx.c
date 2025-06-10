@@ -1,98 +1,130 @@
 #include "engine/sfx.h"
 
-wav64_t fan_sfx, light_sfx, door_sfx, boop_sfx, cam_up_sfx,
-        cam_down_sfx, blip_sfx, cam_scan_sfx, static_sfx, title_music,
-        window_scare, error_sfx, jumpscare_sfx, jumpscare_low,
-        kitchen_sfx0, kitchen_sfx1, kitchen_sfx2, kitchen_sfx3,
-        deepstep_sfx, robotvoice_sfx, banging_sfx, foxy_running,
-        powerdown_sfx, musicbox_sfx, chimes_sfx, cheering_sfx,
-        phonecall1, phonecall2, phonecall3, phonecall4, phonecall5,
-        freddylaugh1, freddylaugh2, freddylaugh3, freddyrun_sfx,
-        camglitch1, camglitch2, camglitch3, camglitch4, foxy_hum,
-        circus_music, girl_giggle;
+wav64_t sfx_fan;
+wav64_t sfx_light;
+wav64_t sfx_door;
+wav64_t sfx_boop;
+wav64_t sfx_cam_up;
+wav64_t sfx_cam_down;
+wav64_t sfx_blip;
+wav64_t sfx_cam_scan;
+wav64_t sfx_static;
+wav64_t sfx_title_music;
+wav64_t sfx_window_scare;
+wav64_t sfx_error;
+wav64_t sfx_jumpscare;
+wav64_t sfx_jumpscare_low;
+wav64_t sfx_kitchen_0;
+wav64_t sfx_kitchen_1;
+wav64_t sfx_kitchen_2;
+wav64_t sfx_kitchen_3;
+wav64_t sfx_deep_step;
+wav64_t sfx_robot_voice;
+wav64_t sfx_banging;
+wav64_t sfx_foxy_running;
+wav64_t sfx_power_down;
+wav64_t sfx_music_box;
+wav64_t sfx_chimes;
+wav64_t sfx_cheering;
+wav64_t sfx_phone_call_1;
+wav64_t sfx_phone_call_2;
+wav64_t sfx_phone_call_3;
+wav64_t sfx_phone_call_4;
+wav64_t sfx_phone_call_5;
+wav64_t sfx_freddy_laugh_1;
+wav64_t sfx_freddy_laugh_2;
+wav64_t sfx_freddy_laugh_3;
+wav64_t sfx_freddy_run;
+wav64_t sfx_cam_glitch_1;
+wav64_t sfx_cam_glitch_2;
+wav64_t sfx_cam_glitch_3;
+wav64_t sfx_cam_glitch_4;
+wav64_t sfx_foxy_hum;
+wav64_t sfx_circus_music;
+wav64_t sfx_girl_giggle;
 
 void sfx_load(void)
 {
 	mixer_ch_set_vol(SFX_CH_FAN, 0.25f, 0.25f);
-	wav64_open(&fan_sfx, "rom:/Buzz_Fan_Florescent2.wav64");
-	wav64_set_loop(&fan_sfx, true);
+	wav64_open(&sfx_fan, "rom:/Buzz_Fan_Florescent2.wav64");
+	wav64_set_loop(&sfx_fan, true);
 
 	mixer_ch_set_vol(SFX_CH_LIGHT, 0.8f, 0.8f);
-	wav64_open(&light_sfx, "rom:/BallastHumMedium2.wav64");
-	wav64_set_loop(&light_sfx, true);
+	wav64_open(&sfx_light, "rom:/BallastHumMedium2.wav64");
+	wav64_set_loop(&sfx_light, true);
 
 	mixer_ch_set_vol(SFX_CH_DOOR, 0.8f, 0.8f);
-	wav64_open(&door_sfx, "rom:/SFXBible_12478.wav64");
+	wav64_open(&sfx_door, "rom:/SFXBible_12478.wav64");
 
 	mixer_ch_set_vol(SFX_CH_BLIP, 0.8f, 0.8f);
-	wav64_open(&boop_sfx, "rom:/PartyFavorraspyPart_AC01__3.wav64");
-	wav64_open(&blip_sfx, "rom:/blip3.wav64");
-	wav64_open(&cam_up_sfx, "rom:/CAMERA_VIDEO_LOA_60105303.wav64");
-	wav64_open(&cam_down_sfx, "rom:/put_down.wav64");
+	wav64_open(&sfx_boop, "rom:/PartyFavorraspyPart_AC01__3.wav64");
+	wav64_open(&sfx_blip, "rom:/blip3.wav64");
+	wav64_open(&sfx_cam_up, "rom:/CAMERA_VIDEO_LOA_60105303.wav64");
+	wav64_open(&sfx_cam_down, "rom:/put_down.wav64");
 
 	mixer_ch_set_vol(SFX_CH_CAMERA, 0.8f, 0.8f);
-	wav64_open(&cam_scan_sfx, "rom:/MiniDV_Tape_Eject_1.wav64");
+	wav64_open(&sfx_cam_scan, "rom:/MiniDV_Tape_Eject_1.wav64");
 
 	mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.6f, 0.6f);
-	wav64_open(&title_music, "rom:/darkness_music.wav64");
-	wav64_set_loop(&title_music, true);
+	wav64_open(&sfx_title_music, "rom:/darkness_music.wav64");
+	wav64_set_loop(&sfx_title_music, true);
 
 	mixer_ch_set_vol(SFX_CH_STATIC, 0.8f, 0.8f);
-	wav64_open(&static_sfx, "rom:/static2.wav64");
+	wav64_open(&sfx_static, "rom:/static2.wav64");
 
-	wav64_open(&window_scare, "rom:/windowscare.wav64");
-	wav64_open(&error_sfx, "rom:/error.wav64");
+	wav64_open(&sfx_window_scare, "rom:/windowscare.wav64");
+	wav64_open(&sfx_error, "rom:/error.wav64");
 
 	mixer_ch_set_vol(SFX_CH_JUMPSCARE, 0.8f, 0.8f);
-	wav64_open(&jumpscare_sfx, "rom:/XSCREAM.wav64");
-	wav64_open(&jumpscare_low, "rom:/XSCREAM2.wav64");
+	wav64_open(&sfx_jumpscare, "rom:/XSCREAM.wav64");
+	wav64_open(&sfx_jumpscare_low, "rom:/XSCREAM2.wav64");
 
 	mixer_ch_set_vol(SFX_CH_KITCHEN, 0, 0);
-	wav64_open(&kitchen_sfx0, "rom:/OVEN-DRA_1_GEN-HDF18119.wav64");
-	wav64_open(&kitchen_sfx1, "rom:/OVEN-DRA_2_GEN-HDF18120.wav64");
-	wav64_open(&kitchen_sfx2, "rom:/OVEN-DRA_7_GEN-HDF18121.wav64");
-	wav64_open(&kitchen_sfx3, "rom:/OVEN-DRAWE_GEN-HDF18122.wav64");
+	wav64_open(&sfx_kitchen_0, "rom:/OVEN-DRA_1_GEN-HDF18119.wav64");
+	wav64_open(&sfx_kitchen_1, "rom:/OVEN-DRA_2_GEN-HDF18120.wav64");
+	wav64_open(&sfx_kitchen_2, "rom:/OVEN-DRA_7_GEN-HDF18121.wav64");
+	wav64_open(&sfx_kitchen_3, "rom:/OVEN-DRAWE_GEN-HDF18122.wav64");
 
 	mixer_ch_set_vol(SFX_CH_FOOTSTEPS, 0, 0);
-	wav64_open(&deepstep_sfx, "rom:/deep_steps.wav64");
+	wav64_open(&sfx_deep_step, "rom:/deep_steps.wav64");
 
 	mixer_ch_set_vol(SFX_CH_ROBOTVOICE, 0, 0);
-	wav64_open(&robotvoice_sfx, "rom:/robotvoice.wav64");
-	wav64_set_loop(&robotvoice_sfx, true);
+	wav64_open(&sfx_robot_voice, "rom:/robotvoice.wav64");
+	wav64_set_loop(&sfx_robot_voice, true);
 
-	wav64_open(&banging_sfx, "rom:/knock2.wav64");
-	wav64_open(&foxy_running, "rom:/run.wav64");
-	wav64_open(&powerdown_sfx, "rom:/powerdown.wav64");
+	wav64_open(&sfx_banging, "rom:/knock2.wav64");
+	wav64_open(&sfx_foxy_running, "rom:/run.wav64");
+	wav64_open(&sfx_power_down, "rom:/powerdown.wav64");
 
 	mixer_ch_set_vol(SFX_CH_MUSICBOX, 0.8f, 0.8f);
-	wav64_open(&musicbox_sfx, "rom:/music_box.wav64");
-	wav64_open(&chimes_sfx, "rom:/chimes_2.wav64");
-	wav64_open(&cheering_sfx, "rom:/CROWD_SMALL_CHIL_EC049202.wav64");
+	wav64_open(&sfx_music_box, "rom:/music_box.wav64");
+	wav64_open(&sfx_chimes, "rom:/chimes_2.wav64");
+	wav64_open(&sfx_cheering, "rom:/CROWD_SMALL_CHIL_EC049202.wav64");
 
 	mixer_ch_set_vol(SFX_CH_PHONECALL, 0.8f, 0.8f);
-	wav64_open(&phonecall1, "rom:/voiceover1c.wav64");
-	wav64_open(&phonecall2, "rom:/voiceover2a.wav64");
-	wav64_open(&phonecall3, "rom:/voiceover3.wav64");
-	wav64_open(&phonecall4, "rom:/voiceover4.wav64");
-	wav64_open(&phonecall5, "rom:/voiceover5.wav64");
+	wav64_open(&sfx_phone_call_1, "rom:/voiceover1c.wav64");
+	wav64_open(&sfx_phone_call_2, "rom:/voiceover2a.wav64");
+	wav64_open(&sfx_phone_call_3, "rom:/voiceover3.wav64");
+	wav64_open(&sfx_phone_call_4, "rom:/voiceover4.wav64");
+	wav64_open(&sfx_phone_call_5, "rom:/voiceover5.wav64");
 
-	wav64_open(&freddylaugh1, "rom:/Laugh_Giggle_Girl_1d.wav64");
-	wav64_open(&freddylaugh2, "rom:/Laugh_Giggle_Girl_2d.wav64");
-	wav64_open(&freddylaugh3, "rom:/Laugh_Giggle_Girl_8d.wav64");
+	wav64_open(&sfx_freddy_laugh_1, "rom:/Laugh_Giggle_Girl_1d.wav64");
+	wav64_open(&sfx_freddy_laugh_2, "rom:/Laugh_Giggle_Girl_2d.wav64");
+	wav64_open(&sfx_freddy_laugh_3, "rom:/Laugh_Giggle_Girl_8d.wav64");
 
 	mixer_ch_set_vol(SFX_CH_FREDDYRUN, 1, 1);
-	wav64_open(&freddyrun_sfx, "rom:/running_fast3.wav64");
+	wav64_open(&sfx_freddy_run, "rom:/running_fast3.wav64");
 
-	wav64_open(&camglitch1, "rom:/COMPUTER_DIGITAL_L2076505.wav64");
-	wav64_open(&camglitch2, "rom:/garble1.wav64");
-	wav64_open(&camglitch3, "rom:/garble2.wav64");
-	wav64_open(&camglitch4, "rom:/garble3.wav64");
+	wav64_open(&sfx_cam_glitch_1, "rom:/COMPUTER_DIGITAL_L2076505.wav64");
+	wav64_open(&sfx_cam_glitch_2, "rom:/garble1.wav64");
+	wav64_open(&sfx_cam_glitch_3, "rom:/garble2.wav64");
+	wav64_open(&sfx_cam_glitch_4, "rom:/garble3.wav64");
 
 	mixer_ch_set_vol(SFX_CH_FOXSONG, 1, 1);
-	wav64_open(&foxy_hum, "rom:/pirate_song2.wav64");
+	wav64_open(&sfx_foxy_hum, "rom:/pirate_song2.wav64");
 
-	wav64_open(&circus_music, "rom:/circus.wav64");
-	wav64_open(&girl_giggle, "rom:/Laugh_Giggle_Girl_1.wav64");
+	wav64_open(&sfx_circus_music, "rom:/circus.wav64");
+	wav64_open(&sfx_girl_giggle, "rom:/Laugh_Giggle_Girl_1.wav64");
 }
 
 void sfx_stop_all_channels(void)
@@ -106,46 +138,46 @@ void sfx_stop_all_channels(void)
 
 void sfx_unload(void)
 {
-	wav64_close(&girl_giggle);
-	wav64_close(&circus_music);
-	wav64_close(&foxy_hum);
-	wav64_close(&camglitch4);
-	wav64_close(&camglitch3);
-	wav64_close(&camglitch2);
-	wav64_close(&camglitch1);
-	wav64_close(&freddyrun_sfx);
-	wav64_close(&freddylaugh3);
-	wav64_close(&freddylaugh2);
-	wav64_close(&freddylaugh1);
-	wav64_close(&phonecall5);
-	wav64_close(&phonecall4);
-	wav64_close(&phonecall3);
-	wav64_close(&phonecall2);
-	wav64_close(&phonecall1);
-	wav64_close(&cheering_sfx);
-	wav64_close(&chimes_sfx);
-	wav64_close(&musicbox_sfx);
-	wav64_close(&powerdown_sfx);
-	wav64_close(&foxy_running);
-	wav64_close(&banging_sfx);
-	wav64_close(&robotvoice_sfx);
-	wav64_close(&deepstep_sfx);
-	wav64_close(&kitchen_sfx3);
-	wav64_close(&kitchen_sfx2);
-	wav64_close(&kitchen_sfx1);
-	wav64_close(&kitchen_sfx0);
-	wav64_close(&jumpscare_low);
-	wav64_close(&jumpscare_sfx);
-	wav64_close(&error_sfx);
-	wav64_close(&window_scare);
-	wav64_close(&static_sfx);
-	wav64_close(&title_music);
-	wav64_close(&cam_scan_sfx);
-	wav64_close(&cam_down_sfx);
-	wav64_close(&cam_up_sfx);
-	wav64_close(&blip_sfx);
-	wav64_close(&boop_sfx);
-	wav64_close(&door_sfx);
-	wav64_close(&light_sfx);
-	wav64_close(&fan_sfx);
+        wav64_close(&sfx_fan);
+        wav64_close(&sfx_light);
+        wav64_close(&sfx_door);
+        wav64_close(&sfx_boop);
+        wav64_close(&sfx_cam_up);
+        wav64_close(&sfx_cam_down);
+        wav64_close(&sfx_blip);
+        wav64_close(&sfx_cam_scan);
+        wav64_close(&sfx_static);
+        wav64_close(&sfx_title_music);
+        wav64_close(&sfx_window_scare);
+        wav64_close(&sfx_error);
+        wav64_close(&sfx_jumpscare);
+        wav64_close(&sfx_jumpscare_low);
+        wav64_close(&sfx_kitchen_0);
+        wav64_close(&sfx_kitchen_1);
+        wav64_close(&sfx_kitchen_2);
+        wav64_close(&sfx_kitchen_3);
+        wav64_close(&sfx_deep_step);
+        wav64_close(&sfx_robot_voice);
+        wav64_close(&sfx_banging);
+        wav64_close(&sfx_foxy_running);
+        wav64_close(&sfx_power_down);
+        wav64_close(&sfx_music_box);
+        wav64_close(&sfx_chimes);
+        wav64_close(&sfx_cheering);
+        wav64_close(&sfx_phone_call_1);
+        wav64_close(&sfx_phone_call_2);
+        wav64_close(&sfx_phone_call_3);
+        wav64_close(&sfx_phone_call_4);
+        wav64_close(&sfx_phone_call_5);
+        wav64_close(&sfx_freddy_laugh_1);
+        wav64_close(&sfx_freddy_laugh_2);
+        wav64_close(&sfx_freddy_laugh_3);
+        wav64_close(&sfx_freddy_run);
+        wav64_close(&sfx_cam_glitch_1);
+        wav64_close(&sfx_cam_glitch_2);
+        wav64_close(&sfx_cam_glitch_3);
+        wav64_close(&sfx_cam_glitch_4);
+        wav64_close(&sfx_foxy_hum);
+        wav64_close(&sfx_circus_music);
+        wav64_close(&sfx_girl_giggle);
 }

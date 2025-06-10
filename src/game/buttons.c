@@ -87,13 +87,13 @@ static void button_left_update(update_parms_t uparms)
 
 	if(bonnie_cam == YOURE_FUCKED) {
 		if(uparms.pressed.b || uparms.pressed.a)
-			wav64_play(&error_sfx, SFX_CH_BLIP);
+			wav64_play(&sfx_error, SFX_CH_BLIP);
 		return;
 	}
 
 	if(uparms.pressed.b && left_door_can_interact) {
 		button_state ^= BUTTON_LEFT_DOOR;
-		wav64_play(&door_sfx, SFX_CH_DOOR);
+		wav64_play(&sfx_door, SFX_CH_DOOR);
 	}
 
 	if(settings_flags & SET_LIGHT_HOLD_BIT) {
@@ -120,13 +120,13 @@ static void button_right_update(update_parms_t uparms)
 
 	if(chica_cam == YOURE_FUCKED) {
 		if(uparms.pressed.b || uparms.pressed.a)
-			wav64_play(&error_sfx, SFX_CH_BLIP);
+			wav64_play(&sfx_error, SFX_CH_BLIP);
 		return;
 	}
 
 	if(uparms.pressed.b && right_door_can_interact) {
 		button_state ^= BUTTON_RIGHT_DOOR;
-		wav64_play(&door_sfx, SFX_CH_DOOR);
+		wav64_play(&sfx_door, SFX_CH_DOOR);
 	}
 
 	if(settings_flags & SET_LIGHT_HOLD_BIT) {

@@ -22,7 +22,7 @@ static void _game_over_load(void)
 
 	sfx_stop_all_channels();
 	mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.5f, 0.5f);
-	wav64_play(&static_sfx, SFX_CH_AMBIENCE);
+	wav64_play(&sfx_static, SFX_CH_AMBIENCE);
 	is_loaded = true;
 }
 

@@ -30,7 +30,7 @@ float game_night_timer;
 int game_power_left;
 int game_power_usage;
 float game_power_timer;
-static float game_jumpscare_exit_timer = 40;
+static float game_sfx_jumpscare_exit_timer = 40;
 int game_night_skip_correct;
 float game_ticks_since_load;
 float game_time_since_load;
@@ -60,25 +60,26 @@ static void _game_load(void)
 	golden_freddy_load();
 	hallucinations_load();
 	
+        /* TODO: Turn into a jumptable. */
 	switch(SAVE_NIGHT_NUM(save_data)) {
 	case 1:
-		wav64_play(&phonecall1, SFX_CH_PHONECALL);
+		wav64_play(&sfx_phone_call_1, SFX_CH_PHONECALL);
 		break;
 
 	case 2:
-		wav64_play(&phonecall2, SFX_CH_PHONECALL);
+		wav64_play(&sfx_phone_call_2, SFX_CH_PHONECALL);
 		break;
 
 	case 3:
-		wav64_play(&phonecall3, SFX_CH_PHONECALL);
+		wav64_play(&sfx_phone_call_3, SFX_CH_PHONECALL);
 		break;
 
 	case 4:
-		wav64_play(&phonecall4, SFX_CH_PHONECALL);
+		wav64_play(&sfx_phone_call_4, SFX_CH_PHONECALL);
 		break;
 		
 	case 5:
-		wav64_play(&phonecall5, SFX_CH_PHONECALL);
+		wav64_play(&sfx_phone_call_5, SFX_CH_PHONECALL);
 		break;
 	}
 
@@ -194,7 +195,7 @@ static void _game_update_random_events(float dt)
 	circus_timer = wrapf(circus_timer + dt, 5, &play_circus_music);
 	if(play_circus_music && (rand() % 30) == 1) {
 		mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.05f, 0.05f);
-		wav64_play(&circus_music, SFX_CH_AMBIENCE);
+		wav64_play(&sfx_circus_music, SFX_CH_AMBIENCE);
 	}
 }
 
@@ -266,12 +267,12 @@ enum scene game_update(update_parms_t uparms)
 	freddy_update(uparms.dt);
 	if(bonnie_is_jumpscaring || chica_is_jumpscaring ||
 			foxy_is_scaring || freddy_is_jumpscaring) {
-		game_jumpscare_exit_timer -= uparms.dt * 60;
-		if(game_jumpscare_exit_timer <= 0) {
+		game_sfx_jumpscare_exit_timer -= uparms.dt * 60;
+		if(game_sfx_jumpscare_exit_timer <= 0) {
 			sfx_stop_all_channels();
 			rdpq_call_deferred((void (*)(void *))_game_unload,
 					NULL);
-			game_jumpscare_exit_timer = 40;
+			game_sfx_jumpscare_exit_timer = 40;
 			return SCENE_GAME_OVER;
 		}
 	}

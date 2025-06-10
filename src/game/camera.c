@@ -229,7 +229,7 @@ void camera_load(void)
 	object_load(&name_atlas, TX_CAM_NAME_ATLAS);
 	object_load(&missing_footage, TX_CAM_CORRUPTED);
 
-	wav64_play(&robotvoice_sfx, SFX_CH_ROBOTVOICE);
+	wav64_play(&sfx_robot_voice, SFX_CH_ROBOTVOICE);
 }
 
 static const char *camera_get_view_path(void)
@@ -466,12 +466,12 @@ static void camera_handle_sfx(void)
 		return;
 
 	if(camera_is_using) {
-		wav64_play(&cam_up_sfx, SFX_CH_BLIP);
-		wav64_play(&cam_scan_sfx, SFX_CH_CAMERA);
+		wav64_play(&sfx_cam_up, SFX_CH_BLIP);
+		wav64_play(&sfx_cam_scan, SFX_CH_CAMERA);
 		return;
 	}
 
-	wav64_play(&cam_down_sfx, SFX_CH_BLIP);
+	wav64_play(&sfx_cam_down, SFX_CH_BLIP);
 	mixer_ch_stop(SFX_CH_CAMERA);
 
 	return;
@@ -544,7 +544,7 @@ static void camera_update_glitch_timer(double dt)
 	camera_glitch_timer -= dt * 60;
 	camera_glitch_timer = clampf(camera_glitch_timer, 0, 300);
 
-	static bool has_blipped = false;
+	static bool has_sfx_blipped = false;
 	bool bonnie_glitch = (bonnie_cam == cam_selected ||
 			bonnie_cam_last == cam_selected) &&
 			bonnie_blackout_timer > 0;
@@ -555,26 +555,26 @@ static void camera_update_glitch_timer(double dt)
 		if(camera_is_visible) {
 			switch(rand() % 4) {
 			case 0:
-				wav64_play(&camglitch1, SFX_CH_CAMERA);
+				wav64_play(&sfx_cam_glitch_1, SFX_CH_CAMERA);
 				break;
 
 			case 1:
-				wav64_play(&camglitch2, SFX_CH_CAMERA);
+				wav64_play(&sfx_cam_glitch_2, SFX_CH_CAMERA);
 				break;
 
 			case 2:
-				wav64_play(&camglitch3, SFX_CH_CAMERA);
+				wav64_play(&sfx_cam_glitch_3, SFX_CH_CAMERA);
 				break;
 
 			case 3:
-				wav64_play(&camglitch4, SFX_CH_CAMERA);
+				wav64_play(&sfx_cam_glitch_4, SFX_CH_CAMERA);
 				break;
 			}
 			camera_glitch_timer = 300;
 
-			if(!has_blipped) {
+			if(!has_sfx_blipped) {
 				blip_trigger(true);
-				has_blipped = true;
+				has_sfx_blipped = true;
 			}
 		}
 		object_unload(views + cam_selected);
@@ -584,7 +584,7 @@ static void camera_update_glitch_timer(double dt)
 	if(camera_glitch_timer > 0)
 		return;
 
-	has_blipped = false;
+	has_sfx_blipped = false;
 }
 
 static void camera_update_flicker(double dt)

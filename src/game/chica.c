@@ -134,7 +134,7 @@ void chica_update(double dt)
 	bool cam_flip_down = (!camera_is_visible && camera_was_visible);
 	if(chica_cam == YOURE_FUCKED && cam_flip_down) {
 		chica_is_jumpscaring = true;
-		wav64_play(&jumpscare_sfx, SFX_CH_JUMPSCARE);
+		wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
 		return;
 	}
 
@@ -151,23 +151,23 @@ void chica_update(double dt)
 		 * that Libdragon handles wav64_t, I have no choice */
 		switch(kitchen_rand_val) {
 		case 0:
-			wav64_play(&kitchen_sfx0, SFX_CH_KITCHEN);
+			wav64_play(&sfx_kitchen_0, SFX_CH_KITCHEN);
 			break;
 
 		case 1:
-			wav64_play(&kitchen_sfx1, SFX_CH_KITCHEN);
+			wav64_play(&sfx_kitchen_1, SFX_CH_KITCHEN);
 			break;
 
 		case 2:
-			wav64_play(&kitchen_sfx2, SFX_CH_KITCHEN);
+			wav64_play(&sfx_kitchen_2, SFX_CH_KITCHEN);
 			break;
 
 		case 3:
-			wav64_play(&kitchen_sfx2, SFX_CH_KITCHEN);
+			wav64_play(&sfx_kitchen_2, SFX_CH_KITCHEN);
 			break;
 
 		case 4:
-			wav64_play(&kitchen_sfx3, SFX_CH_KITCHEN);
+			wav64_play(&sfx_kitchen_3, SFX_CH_KITCHEN);
 			break;
 		}
 	}
@@ -205,7 +205,7 @@ void chica_update(double dt)
 		mixer_ch_set_vol(SFX_CH_FOOTSTEPS, foot_vol, foot_vol);
 	}
 
-	wav64_play(&deepstep_sfx, SFX_CH_FOOTSTEPS);
+	wav64_play(&sfx_deep_step, SFX_CH_FOOTSTEPS);
 	chica_cam = cam_next;
 	// chica_cam = CAM_4B;
 	which_spot = rand() & 1;

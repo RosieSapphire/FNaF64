@@ -62,7 +62,7 @@ static void _power_down_load(void)
 	shut_down_flicker = 0;
 	objects_load(room_views, 2, room_view_paths);
 	mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.6f, 0.6f);
-	wav64_play(&powerdown_sfx, SFX_CH_AMBIENCE);
+	wav64_play(&sfx_power_down, SFX_CH_AMBIENCE);
 
 	is_loaded = true;
 }
@@ -130,7 +130,7 @@ enum scene power_down_update(update_parms_t uparms)
 		if((trigger_freddy && (rand() % 5) == 0) || total_timer >= 20) {
 			freddy_state = 1;
 			mixer_ch_set_vol(SFX_CH_MUSICBOX, 0.8f, 0.8f);
-			wav64_play(&musicbox_sfx, SFX_CH_MUSICBOX);
+			wav64_play(&sfx_music_box, SFX_CH_MUSICBOX);
 		}
 		break;
 
@@ -144,7 +144,7 @@ enum scene power_down_update(update_parms_t uparms)
 				freddy_music_timer_full >= 20) {
 			freddy_state = 2;
 			sfx_stop_all_channels();
-			wav64_play(&fan_sfx, SFX_CH_FAN);
+			wav64_play(&sfx_fan, SFX_CH_FAN);
 			shut_down_timer = 20;
 		}
 		break;
@@ -182,7 +182,7 @@ enum scene power_down_update(update_parms_t uparms)
 		if((try_scare && (rand() & 1)) ||
 				freddy_scare_rand_timer >= 20) {
 			freddy_state = 4;
-			wav64_play(&jumpscare_sfx, SFX_CH_JUMPSCARE);
+			wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
 		}
 		break;
 
@@ -202,7 +202,7 @@ enum scene power_down_update(update_parms_t uparms)
 
 	if(fabsf(office_turn + 193) < 32 &&
 			(uparms.pressed.a || uparms.pressed.b))
-		wav64_play(&boop_sfx, SFX_CH_BLIP);
+		wav64_play(&sfx_boop, SFX_CH_BLIP);
 
 	return SCENE_POWER_DOWN;
 }

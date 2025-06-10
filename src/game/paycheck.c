@@ -23,7 +23,7 @@ static void paycheck_load(void)
 	object_load(screens + 1, TX_PAYCHECK2);
 	object_load(screens + 2, TX_PINK_SLIP);
 	mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.8f, 0.8f);
-	wav64_play(&musicbox_sfx, SFX_CH_AMBIENCE);
+	wav64_play(&sfx_music_box, SFX_CH_AMBIENCE);
 
 	is_loaded = true;
 }

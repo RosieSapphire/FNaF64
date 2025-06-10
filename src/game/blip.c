@@ -75,7 +75,7 @@ void blip_update(const float dt)
 
 void blip_trigger(const bool is_visual)
 {
-	wav64_play(&blip_sfx, SFX_CH_BLIP);
+	wav64_play(&sfx_blip, SFX_CH_BLIP);
 
 	if(is_visual) {
 		timer = 0;

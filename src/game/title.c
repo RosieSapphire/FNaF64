@@ -69,9 +69,9 @@ static void _title_load(void)
 	object_load(&newspaper, TX_NEWSPAPER);
 
 	blip_trigger(true);
-	wav64_play(&static_sfx, SFX_CH_STATIC);
+	wav64_play(&sfx_static, SFX_CH_STATIC);
 	mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.8f, 0.8f);
-	wav64_play(&title_music, SFX_CH_AMBIENCE);
+	wav64_play(&sfx_title_music, SFX_CH_AMBIENCE);
 	new_game_init = false;
 	new_game_timer = 0.0f;
 
@@ -209,7 +209,7 @@ draw_newspaper:
 static void _title_update_settings(joypad_buttons_t down)
 {
 	if(down.l)
-		wav64_play(&boop_sfx, SFX_CH_BLIP);
+		wav64_play(&sfx_boop, SFX_CH_BLIP);
 
 	if(down.d_down || down.c_down) {
 		blip_trigger(false);

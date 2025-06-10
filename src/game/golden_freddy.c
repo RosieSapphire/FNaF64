@@ -14,7 +14,7 @@
 static float attempt_timer;
 static object_t yellow_bear;
 static object_t yellow_scare;
-static float jumpscare_timer;
+static float sfx_jumpscare_timer;
 
 int golden_freddy_progress;
 
@@ -23,7 +23,7 @@ void golden_freddy_load(void)
 	attempt_timer = 0;
 	object_load(&yellow_bear, TX_GOLDEN_FREDDY_SIT);
 	object_load(&yellow_scare, TX_GOLDEN_FREDDY_SCARE);
-	jumpscare_timer = 0.0f;
+	sfx_jumpscare_timer = 0.0f;
 	golden_freddy_progress = 0;
 }
 
@@ -58,7 +58,7 @@ void golden_freddy_update(double dt)
 				bonnie_cam != CAM_2B) {
 			golden_freddy_progress = 2;
 			mixer_ch_set_vol(SFX_CH_FREDDYLAUGH, 1.0f, 1.0f);
-       			wav64_play(&girl_giggle, SFX_CH_FREDDYLAUGH);
+       			wav64_play(&sfx_girl_giggle, SFX_CH_FREDDYLAUGH);
 		}
 
 		return;
@@ -76,18 +76,18 @@ void golden_freddy_update(double dt)
 		if(camera_is_visible)
 			golden_freddy_progress = 5;
 
-		jumpscare_timer += dt * 60;
-		if(jumpscare_timer >= 300) {
+		sfx_jumpscare_timer += dt * 60;
+		if(sfx_jumpscare_timer >= 300) {
 			sfx_stop_all_channels();
-			wav64_play(&jumpscare_low, SFX_CH_JUMPSCARE);
+			wav64_play(&sfx_jumpscare_low, SFX_CH_JUMPSCARE);
 			golden_freddy_progress++;
-			jumpscare_timer = 0;
+			sfx_jumpscare_timer = 0;
 		}
 		return;
 
 	case 4:
-		jumpscare_timer += dt;
-		if(jumpscare_timer >= 1.5f)
+		sfx_jumpscare_timer += dt;
+		if(sfx_jumpscare_timer >= 1.5f)
 			golden_freddy_progress = 6;
 		return;
 	

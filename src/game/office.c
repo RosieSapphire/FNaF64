@@ -76,7 +76,7 @@ void office_load(void)
 
 	objects_load(room_views, ROOM_VIEW_CNT, room_view_paths);
 	objects_load(foxy_scare, FOXY_SCARE_FRAMES, foxy_scare_paths);
-	wav64_play(&light_sfx, SFX_CH_LIGHT);
+	wav64_play(&sfx_light, SFX_CH_LIGHT);
 }
 
 void office_unload(void)
@@ -157,12 +157,12 @@ void office_update(update_parms_t uparms)
 		mixer_ch_set_vol(SFX_CH_LIGHT, 0, 0);
 
 	static bool bonnie_scared_last = false;
-	if((button_state & BUTTON_LEFT_LIGHT) && bonnie_cam == AT_DOOR)
+	if((button_state & BUTTON_LEFT_LIGHT) && bonnie_cam == AT_DOOR) {
 		bonnie_scared = true;
-	if(bonnie_scared && !bonnie_scared_last)
-	{
+        }
+	if(bonnie_scared && !bonnie_scared_last) {
 		mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.8f, 0.8f);
-		wav64_play(&window_scare, SFX_CH_AMBIENCE);
+		wav64_play(&sfx_window_scare, SFX_CH_AMBIENCE);
 
 	}
 	bonnie_scared_last = bonnie_scared;
@@ -171,7 +171,7 @@ void office_update(update_parms_t uparms)
 	if((button_state & BUTTON_RIGHT_LIGHT) && chica_cam == AT_DOOR)
 		chica_scared = true;
 	if(chica_scared && !chica_scared_last)
-		wav64_play(&window_scare, SFX_CH_AMBIENCE);
+		wav64_play(&sfx_window_scare, SFX_CH_AMBIENCE);
 	chica_scared_last = chica_scared;
 
 	bool do_rand;
@@ -186,5 +186,5 @@ void office_update(update_parms_t uparms)
 
 	if(fabsf(office_turn + 193) < 32 &&
 			(uparms.pressed.a || uparms.pressed.b))
-		wav64_play(&boop_sfx, SFX_CH_BLIP);
+		wav64_play(&sfx_boop, SFX_CH_BLIP);
 }

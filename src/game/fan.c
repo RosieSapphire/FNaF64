@@ -25,7 +25,7 @@ void fan_load(void)
 	fan_timer = 0.0f;
 	objects_load(fan_anim, FAN_FRAME_CNT, fan_anim_paths);
 	mixer_ch_set_vol(SFX_CH_FAN, 0.25f, 0.25f);
-	wav64_play(&fan_sfx, SFX_CH_FAN);
+	wav64_play(&sfx_fan, SFX_CH_FAN);
 }
 
 void fan_draw(void)

@@ -106,7 +106,7 @@ void freddy_update(double dt)
 		if(try_scare && ((rand() % 4) == 0)) {
 			freddy_is_jumpscaring = true;
 			ready_to_scare = false;
-			wav64_play(&jumpscare_sfx, SFX_CH_JUMPSCARE);
+			wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
 			return;
 		}
 		return;
@@ -194,26 +194,28 @@ void freddy_update(double dt)
 		mixer_ch_set_vol(SFX_CH_FREDDYRUN, foot_vol, foot_vol);
 	}
 
+        /* TODO: Motherfucking lookup table! */
 	switch(rand() % 3) {
 	case 0:
-		wav64_play(&freddylaugh1, SFX_CH_FREDDYLAUGH);
+		wav64_play(&sfx_freddy_laugh_1, SFX_CH_FREDDYLAUGH);
 		break;
 
 	case 1:
-		wav64_play(&freddylaugh2, SFX_CH_FREDDYLAUGH);
+		wav64_play(&sfx_freddy_laugh_2, SFX_CH_FREDDYLAUGH);
 		break;
 
 	case 2:
-		wav64_play(&freddylaugh3, SFX_CH_FREDDYLAUGH);
+		wav64_play(&sfx_freddy_laugh_3, SFX_CH_FREDDYLAUGH);
 		break;
 	}
 
-	wav64_play(&freddyrun_sfx, SFX_CH_FREDDYRUN);
+	wav64_play(&sfx_freddy_run, SFX_CH_FREDDYRUN);
 
-	if(cam_next == CAM_6)
-		wav64_play(&musicbox_sfx, SFX_CH_MUSICBOX);
-	else 
+	if(cam_next == CAM_6) {
+		wav64_play(&sfx_music_box, SFX_CH_MUSICBOX);
+        } else {
 		mixer_ch_stop(SFX_CH_MUSICBOX);
+        }
 
 	freddy_cam = cam_next;
 
