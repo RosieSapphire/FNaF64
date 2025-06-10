@@ -1,13 +1,27 @@
 #pragma once
 
-extern int settings_flags;
-#define SET_SMOOTH_TURN_BIT     1
-#define SET_MANUAL_CAM_TURN_BIT 2
-#define SET_SUBTITLES_BIT       4
-#define SET_LIGHT_HOLD_BIT      8 
-#define SET_ROBOT_CHEAT_BIT     16
-#define SET_GOOFY_MODE_BIT      32
-#define SET_FAST_NIGHT_BIT      64
-#define SETTING_COUNT           7
+extern uint8_t settings_flags;
 
-#define HOUR_LEN_SECONDS ((settings_flags & SET_FAST_NIGHT_BIT) ? 45 : 90)
+enum {
+        SET_SMOOTH_TURN_BIT_SHIFT,
+        SET_MANUAL_CAM_TURN_BIT_SHIFT,
+        SET_SUBTITLES_BIT_SHIFT,
+        SET_LIGHT_HOLD_BIT_SHIFT,
+        SET_ROBOT_CHEAT_BIT_SHIFT,
+        SET_GOOFY_MODE_BIT_SHIFT,
+        SET_FAST_NIGHT_BIT_SHIFT
+};
+
+enum {
+        SET_SMOOTH_TURN_BIT     = (1 << SET_SMOOTH_TURN_BIT_SHIFT),
+        SET_MANUAL_CAM_TURN_BIT = (1 << SET_MANUAL_CAM_TURN_BIT_SHIFT),
+        SET_SUBTITLES_BIT       = (1 << SET_SUBTITLES_BIT_SHIFT),
+        SET_LIGHT_HOLD_BIT      = (1 << SET_LIGHT_HOLD_BIT_SHIFT),
+        SET_ROBOT_CHEAT_BIT     = (1 << SET_ROBOT_CHEAT_BIT_SHIFT),
+        SET_GOOFY_MODE_BIT      = (1 << SET_GOOFY_MODE_BIT_SHIFT),
+        SET_FAST_NIGHT_BIT      = (1 << SET_FAST_NIGHT_BIT_SHIFT)
+};
+
+#define SETTING_COUNT 7
+#define HOUR_LEN_SECONDS (90 >> ((settings_flags & SET_FAST_NIGHT_BIT) >> \
+                                 SET_FAST_NIGHT_BIT_SHIFT))

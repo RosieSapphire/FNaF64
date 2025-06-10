@@ -37,8 +37,6 @@ float game_time_since_load;
 
 static float circus_timer;
 
-int settings_flags = 0;// SET_SUBTITLES_BIT;
-
 static void _game_load(void)
 {
 	if (game_is_loaded)
@@ -296,8 +294,9 @@ enum scene game_update(struct update_params uparms)
 		return SCENE_TITLE_SCREEN;
 	}
 
-        /* Debug printing */
-        debugf("game_night_timer: %f", game_night_timer);
+#ifdef GAME_DEBUG_ENABLED
+        debugf("game_night_timer: %f\n", game_night_timer);
+#endif
 
 	return SCENE_MAIN_GAME;
 }
