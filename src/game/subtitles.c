@@ -2,13 +2,13 @@
 
 #include "game/subtitles.h"
 
-#define MAX_LINES 64
+#define SUBS_MAX_LINE_CNT 64
+#define SUB_FONT_ID 2
 
-static const int night_line_nums[5] = {63, 25, 19, 20, 13};
-
+static const int sub_night_line_nums[5] = {63, 25, 19, 20, 13};
 rdpq_font_t *sub_font;
 
-static float night_times[5][MAX_LINES] = {
+static float sub_night_line_times[5][SUBS_MAX_LINE_CNT] = {
 	{ // night 1
 		0, // nothing
 		3.4f, // ringing
@@ -165,7 +165,7 @@ static float night_times[5][MAX_LINES] = {
 	},
 };
 
-static const char *night_dialogue[5][MAX_LINES] = {
+static const char *sub_night_line_strs[5][SUBS_MAX_LINE_CNT] = {
 	{ // night 1
 		"",
 		"*phone ringing*",
@@ -379,41 +379,52 @@ static const char *night_dialogue[5][MAX_LINES] = {
 
 void subtitles_load(void)
 {
+        rdpq_fontstyle_t style;
+
 	sub_font = rdpq_font_load("rom:/custom/debug_font.font64");
-	rdpq_font_style(sub_font, 0, &(rdpq_fontstyle_t){
-		.color = RGBA32(0xFF, 0xFF, 0xFF, 0xFF),
-	});
-	rdpq_text_register_font(2, sub_font);
+        style.color = RGBA32(0xFF, 0xFF, 0xFF, 0xFF);
+        style.outline_color = color_from_packed16(0x0001);
+        style.custom = NULL;
+        style.custom_arg = NULL;
+	rdpq_font_style(sub_font, 0, &style);
+	rdpq_text_register_font(SUB_FONT_ID, sub_font);
 }
 
-static int _subtitles_get_ind(float timer, int night, float offset) {
-	int highest = 0;
-	for(int i = 0; i < night_line_nums[night - 1]; i++) {
-		if(timer >= night_times[night - 1][i] + offset)
-			highest = i;
+void subtitles_draw(const float timer, const int night, const float offset)
+{
+	int i, line_cur_index;
+	rdpq_textparms_t params;
+
+        line_cur_index = 0;
+	for(i = 0; i < sub_night_line_nums[night - 1]; ++i) {
+		if(timer >= sub_night_line_times[night - 1][i] + offset) {
+			line_cur_index = i;
+                }
 	}
 
-	return highest;
-}
-
-static const char *_subtitles_get_text(float timer, int night, float offset)
-{
-	return night_dialogue[night - 1]
-		[_subtitles_get_ind(timer, night, offset)];
-	
-}
-
-void subtitles_draw(float timer, int night, float offset)
-{
-	const rdpq_textparms_t parms = {
-		.align = 1, .valign = 1,
-		.width = 320,
-	};
-	rdpq_text_printf(&parms, 2, 0, 48,
-			_subtitles_get_text(timer, night, offset));
+        params.style_id = 0;
+        params.width = 320;
+        params.height = 240;
+        params.align = ALIGN_CENTER;
+        params.valign = VALIGN_CENTER;
+        params.indent = 0;
+        params.char_spacing = 0;
+        params.line_spacing = 0;
+        params.wrap = WRAP_WORD;
+        params.tabstops = NULL;
+        params.disable_aa_fix = false;
+        params.preserve_overlap = false;
+        rdpq_sync_full(NULL, NULL);
+        rdpq_sync_pipe();
+        rdpq_sync_load();
+        rdpq_sync_tile();
+        rspq_wait();
+	rdpq_text_printf(&params, SUB_FONT_ID, 0, 48, "%s",
+                         sub_night_line_strs[night - 1][line_cur_index]);
 }
 
 void subtitles_unload(void)
 {
+	rdpq_text_unregister_font(SUB_FONT_ID);
 	rdpq_font_free(sub_font);
 }

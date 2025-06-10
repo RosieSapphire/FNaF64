@@ -37,6 +37,10 @@ int main(void)
 	timer_init();
 	joypad_init();
 
+        debug_init_isviewer();
+        debug_init_usblog();
+        rdpq_debug_start();
+
         /* Game Init */
         save_data_init();
 	subtitles_load();
@@ -95,16 +99,17 @@ int main(void)
 		audio_write_end();
 	}
 
-        /* N64 Init */
+        /* N64 Terminate */
 	joypad_close();
 	timer_close();
 	mixer_close();
 	audio_close();
 	dfs_close(dfs_handle);
+        rdpq_debug_stop();
 	rdpq_close();
 	display_close();
 
-        /* Game Init */
+        /* Game Terminate */
 	blip_destroy();
 	static_unload();
 	sfx_unload();
