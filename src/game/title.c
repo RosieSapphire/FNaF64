@@ -98,6 +98,7 @@ static void _title_unload(void)
 	is_loaded = false;
 }
 
+/* TODO: Make it so that this uses Libdragon's builtin text feature! */
 static void _title_draw_settings(void)
 {
         int i;
@@ -371,6 +372,10 @@ enum scene title_update(struct update_params uparms)
 			return SCENE_CUSTOM_NIGHT;
 		}
 	}
+
+#ifdef TITLE_DEBUG_ENABLED
+        debugf("Hour Length in Seconds: %d\n", HOUR_LEN_SECONDS);
+#endif
 
 	return SCENE_TITLE_SCREEN;
 }

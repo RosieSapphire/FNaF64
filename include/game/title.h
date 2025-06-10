@@ -1,5 +1,7 @@
 #pragma once
 
+#define TITLE_DEBUG_ENABLED
+
 #include <libdragon.h>
 
 #include "engine/scene.h"
