@@ -8,23 +8,38 @@ static rspq_block_t *persp_dl;
 
 void perspective_init(void)
 {
+        int div_cnt, div_width, i;
+
 	persp_buffer = surface_alloc(FMT_RGBA16, 320, 240);
 	rspq_block_begin();
 	rdpq_set_mode_standard();
-	int num_divs = 40;
-	int div_width = 320 / num_divs;
-	for(int i = 0; i < num_divs; i++) {
-		float i_dist = fabs((float)(i - (num_divs >> 1)));
-		float scale_y = (i_dist * 0.032f);
+	div_cnt = 40;
+	div_width = 320 / div_cnt;
+	for(i = 0; i < div_cnt; i++) {
+		float i_dist, scale_y;
+                rdpq_blitparms_t params;
+
+		i_dist = fabs((float)(i - (div_cnt >> 1)));
+		scale_y = (i_dist * 0.032f);
 		scale_y *= scale_y;
 		scale_y += 1;
-		const rdpq_blitparms_t parms = {
-			.width = div_width,
-			.s0 = div_width * i,
-			.scale_y = scale_y,
-			.cy = 120,
-		};
-		rdpq_tex_blit(&persp_buffer, div_width * i, 120, &parms);
+
+                params.tile = TILE0;
+                params.s0 = div_width * i;
+                params.t0 = 0;
+                params.width = div_width;
+                params.height = 0;
+                params.flip_x = false;
+                params.flip_y = false;
+                params.cx = 0;
+                params.cy = 120;
+                params.scale_x = 1;
+                params.scale_y = scale_y;
+                params.theta = 0.f;
+                params.filtering = false;
+                params.nx = 0;
+                params.ny = 0;
+		rdpq_tex_blit(&persp_buffer, div_width * i, 120, &params);
 	}
 	persp_dl = rspq_block_end();
 }
