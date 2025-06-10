@@ -17,7 +17,7 @@ float clampf(float x, float min, float max)
 float wrapf(float x, float max, bool *has_wrapped)
 {
 	bool wrapped = false;
-	while(x >= max) {
+	while (x >= max) {
 		float dist = x - max;
 		x = dist;
 		wrapped = true;

@@ -54,7 +54,7 @@ int main(void)
 	enum scene scene = SCENE_TITLE_SCREEN;
 	long ticks_last = get_ticks();
 
-	while(1) {
+	while (1) {
 		long ticks_now = get_ticks();
 		long tick_delta = TICKS_DISTANCE(ticks_last, ticks_now);
 		ticks_last = ticks_now;
