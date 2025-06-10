@@ -9,7 +9,7 @@
 
 #define NUM_HALLUC 4
 
-static object_t visuals[NUM_HALLUC];
+static struct object visuals[NUM_HALLUC];
 static const char *visual_paths[NUM_HALLUC] = {
 	TX_HALLUCINATION0, TX_HALLUCINATION1,
 	TX_HALLUCINATION2, TX_HALLUCINATION3,

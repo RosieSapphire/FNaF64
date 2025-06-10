@@ -56,7 +56,7 @@ static const int new_cam_lut[CAM_COUNT + 2][2] = {
 
 #define CHICA_SCARE_FRAMES 8
 
-object_t chica_scare[CHICA_SCARE_FRAMES];
+struct object chica_scare[CHICA_SCARE_FRAMES];
 const char *chica_scare_paths[CHICA_SCARE_FRAMES] = {
 	TX_CHICA_SCARE0, TX_CHICA_SCARE1, TX_CHICA_SCARE2,
 	TX_CHICA_SCARE3, TX_CHICA_SCARE4, TX_CHICA_SCARE5,

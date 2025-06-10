@@ -23,20 +23,20 @@ static float office_turn_lerp;
 float flicker_rand_timer;
 int flicker_rand;
 
-static object_t room_views[ROOM_VIEW_CNT];
+static struct object room_views[ROOM_VIEW_CNT];
 static const char *room_view_paths[ROOM_VIEW_CNT] = {
 	TX_OFFICE_NORMAL, TX_OFFICE_LEFT_EMPTY, TX_OFFICE_RIGHT_EMPTY,
 	TX_OFFICE_LEFT_BONNIE, TX_OFFICE_RIGHT_CHICA,
 };
 
-object_t foxy_scare[FOXY_SCARE_FRAMES];
+struct object foxy_scare[FOXY_SCARE_FRAMES];
 const char *foxy_scare_paths[FOXY_SCARE_FRAMES] = {
 	TX_FOXY_SCARE0, TX_FOXY_SCARE1, TX_FOXY_SCARE2,
 	TX_FOXY_SCARE3, TX_FOXY_SCARE4, TX_FOXY_SCARE5,
 	TX_FOXY_SCARE6, TX_FOXY_SCARE7,
 };
 
-object_t freddy_scare[FREDDY_SCARE_FRAMES];
+struct object freddy_scare[FREDDY_SCARE_FRAMES];
 const char *freddy_scare_paths[FREDDY_SCARE_FRAMES] = {
 	TX_FREDDY_SCARE_ROOM00, TX_FREDDY_SCARE_ROOM01, TX_FREDDY_SCARE_ROOM02,
 	TX_FREDDY_SCARE_ROOM03, TX_FREDDY_SCARE_ROOM04, TX_FREDDY_SCARE_ROOM05,
@@ -115,7 +115,7 @@ void office_draw(void)
 	object_draw(room_views[room_get_state()], office_turn, 0, 0, 0);
 }
 
-static void _office_update_turn_normal(update_parms_t uparms)
+static void _office_update_turn_normal(struct update_params uparms)
 {
 	const int stick_clamped = icutoff(uparms.sticks.stick_x, 10);
 	const float turn_amount = stick_clamped * OFFICE_TURN_SPEED;
@@ -123,7 +123,7 @@ static void _office_update_turn_normal(update_parms_t uparms)
 	office_turn = clampf(office_turn, OFFICE_TURN_MIN, 0);
 }
 
-static void _office_update_turn_smooth(update_parms_t uparms)
+static void _office_update_turn_smooth(struct update_params uparms)
 {
 	const int stick_clamped = icutoff(uparms.sticks.stick_x, 10);
 	const float turn_amount = stick_clamped * OFFICE_TURN_SPEED;
@@ -138,7 +138,7 @@ static void _office_update_turn_smooth(update_parms_t uparms)
 	office_turn = lerpf(office_turn, office_turn_lerp, uparms.dt * 16);
 }
 
-void office_update(update_parms_t uparms)
+void office_update(struct update_params uparms)
 {
 	if (freddy_is_jumpscaring || foxy_is_scaring ||
 			bonnie_is_jumpscaring || chica_is_jumpscaring)

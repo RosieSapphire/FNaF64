@@ -28,21 +28,21 @@ static const char *freddy_face_paths[4] = {
 	TX_FRED_FACE0, TX_FRED_FACE1, TX_FRED_FACE2, TX_FRED_FACE3,
 };
 
-static object_t freddy_face[4];
-static object_t night_text;
-static object_t night_atlas;
+static struct object freddy_face[4];
+static struct object night_text;
+static struct object night_atlas;
 
-static object_t star;
-static object_t selector;
-static object_t title_text;
-static object_t option_text;
-static object_t settings_text;
-static object_t settings_option_text;
+static struct object star;
+static struct object selector;
+static struct object title_text;
+static struct object option_text;
+static struct object settings_text;
+static struct object settings_option_text;
 
-static object_t bind_buttons_text;
-static object_t setting_descs;
-static object_t eeprom_error;
-static object_t newspaper;
+static struct object bind_buttons_text;
+static struct object setting_descs;
+static struct object eeprom_error;
+static struct object newspaper;
 
 static bool eeprom_fail_notice = false;
 
@@ -236,7 +236,7 @@ static void _title_update_settings(joypad_buttons_t down)
 	settings_flags ^= (down.a << selected_setting);
 }
 
-static void _title_update_deleting(update_parms_t uparms)
+static void _title_update_deleting(struct update_params uparms)
 {
 	static float delete_timer = 0.0f;
 	static bool already_deleted = false;
@@ -263,7 +263,7 @@ static void _title_update_deleting(update_parms_t uparms)
 	debugf("Wiped save file to night %d\n", save_data);
 }
 
-enum scene title_update(update_parms_t uparms)
+enum scene title_update(struct update_params uparms)
 {
 	face_timer += uparms.dt * 60 * 0.08f;
 	bool tick;

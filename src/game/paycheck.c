@@ -11,7 +11,7 @@
 static bool is_loaded = false;
 
 static float timer;
-static object_t screens[3];
+static struct object screens[3];
 
 static void paycheck_load(void)
 {
@@ -59,7 +59,7 @@ void paycheck_draw(void)
 	object_draw(screens[SAVE_NIGHT_NUM(save_data) - 6], 0, 0, 0, 0);
 }
 
-enum scene paycheck_update(update_parms_t uparms)
+enum scene paycheck_update(struct update_params uparms)
 {
 	timer += uparms.dt;
 

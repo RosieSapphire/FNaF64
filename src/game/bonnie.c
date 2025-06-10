@@ -55,7 +55,7 @@ static const int new_cam_lut[CAM_COUNT + 2][2] = {
 
 #define BONNIE_SCARE_FRAMES 11
 
-object_t bonnie_scare[BONNIE_SCARE_FRAMES];
+struct object bonnie_scare[BONNIE_SCARE_FRAMES];
 const char *bonnie_scare_paths[BONNIE_SCARE_FRAMES] = {
         TX_BONNIE_SCARE00, TX_BONNIE_SCARE01, TX_BONNIE_SCARE02,
         TX_BONNIE_SCARE03, TX_BONNIE_SCARE04, TX_BONNIE_SCARE05,

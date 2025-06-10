@@ -12,12 +12,12 @@
 #include "game/powerdown.h"
 
 #define FREDDY_SCARE_FRAMES 18
-static object_t room_views[2];
+static struct object room_views[2];
 static const char *room_view_paths[2] = {
 	TX_OFFICE_POWERDOWN0, TX_OFFICE_POWERDOWN1
 };
 
-static object_t freddy_scare[FREDDY_SCARE_FRAMES];
+static struct object freddy_scare[FREDDY_SCARE_FRAMES];
 static const char *freddy_scare_paths[FREDDY_SCARE_FRAMES] = {
 	TX_FREDDY_SCARE_DARK00, TX_FREDDY_SCARE_DARK01, TX_FREDDY_SCARE_DARK02,
 	TX_FREDDY_SCARE_DARK03, TX_FREDDY_SCARE_DARK04, TX_FREDDY_SCARE_DARK05,
@@ -104,7 +104,7 @@ void power_down_draw(void)
 	perspective_end();
 }
 
-enum scene power_down_update(update_parms_t uparms)
+enum scene power_down_update(struct update_params uparms)
 {
 	game_night_timer += uparms.dt;
 	if (game_night_timer >= 6 * HOUR_LEN_SECONDS) {

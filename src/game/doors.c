@@ -15,7 +15,7 @@
 #define FRAMES 15
 
 float door_timers[2];
-object_t frames[FRAMES];
+struct object frames[FRAMES];
 const char *frame_paths[FRAMES] = {
 	TX_DOOR_ANIM00, TX_DOOR_ANIM01, TX_DOOR_ANIM02,
 	TX_DOOR_ANIM03, TX_DOOR_ANIM04, TX_DOOR_ANIM05,

@@ -7,8 +7,8 @@
 #include "game/game_over.h"
 
 static bool is_loaded = false;
-object_t over_screen;
-object_t over_text;
+struct object over_screen;
+struct object over_text;
 static float over_timer = 0.0f;
 
 static void _game_over_load(void)
@@ -53,7 +53,7 @@ void game_over_draw(void)
 	blip_draw();
 }
 
-enum scene game_over_update(update_parms_t uparms)
+enum scene game_over_update(struct update_params uparms)
 {
 	over_timer += uparms.dt;
 

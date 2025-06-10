@@ -59,12 +59,12 @@ static const int which_cam_lut[CAM_COUNT][4] = {
 	{CAM_1B,     -1,     -1,  CAM_6}, // 7
 };
 
-typedef struct {
+struct camera_state {
 	const char *path;
 	int state;
-} camera_state_t;
+};
 
-camera_state_t cam_1a_states[] = {
+struct camera_state cam_1a_states[] = {
 	{TX_CAM_1A_ALL,       FREDDY_BIT | BONNIE_BIT | CHICA_BIT},
 	{TX_CAM_1A_CHIC_FRED, FREDDY_BIT | CHICA_BIT},
 	{TX_CAM_1A_BON_FRED,  FREDDY_BIT | BONNIE_BIT},
@@ -72,7 +72,7 @@ camera_state_t cam_1a_states[] = {
 	{TX_CAM_1A_EMPTY,     0},
 };
 
-camera_state_t cam_1b_states[] = {
+struct camera_state cam_1b_states[] = {
 	{TX_CAM_1B_EMPTY, 0},
 	{TX_CAM_1B_EMPTY, FREDDY_BIT},
 	{TX_CAM_1B_CHIC0, FREDDY_BIT | CHICA_BIT},
@@ -89,25 +89,25 @@ camera_state_t cam_1b_states[] = {
 	{TX_CAM_1B_CHIC1, CHICA_BIT | BONNIE_BIT | ROOM_SPOT_BIT},
 };
 
-camera_state_t cam_2a_states[] = {
+struct camera_state cam_2a_states[] = {
 	{TX_CAM_2A_EMPTY, 0},
 	{TX_CAM_2A_BON,   BONNIE_BIT},
 	{TX_CAM_2A_BON,   BONNIE_BIT | ROOM_SPOT_BIT},
 };
 
-camera_state_t cam_2b_states[] = {
+struct camera_state cam_2b_states[] = {
 	{TX_CAM_2B_EMPTY, 0},
 	{TX_CAM_2B_BON0,  BONNIE_BIT},
 	{TX_CAM_2B_BON0,  BONNIE_BIT | ROOM_SPOT_BIT},
 };
 
-camera_state_t cam_3_states[] = {
+struct camera_state cam_3_states[] = {
 	{TX_CAM_3_EMPTY, 0},
 	{TX_CAM_3_BON,   BONNIE_BIT},
 	{TX_CAM_3_BON,   BONNIE_BIT | ROOM_SPOT_BIT},
 };
 
-static camera_state_t cam_4a_states[] = {
+static struct camera_state cam_4a_states[] = {
 	{TX_CAM_4A_EMPTY, 0},
 	{TX_CAM_4A_CHIC0, CHICA_BIT},
 	{TX_CAM_4A_CHIC1, CHICA_BIT | ROOM_SPOT_BIT},
@@ -116,7 +116,7 @@ static camera_state_t cam_4a_states[] = {
 	{TX_CAM_4A_FRED,  FREDDY_BIT},
 };
 
-static camera_state_t cam_4b_states[] = {
+static struct camera_state cam_4b_states[] = {
 	{TX_CAM_4B_EMPTY, 0},
 	{TX_CAM_4B_CHIC0, CHICA_BIT},
 	{TX_CAM_4B_CHIC0, CHICA_BIT | ROOM_SPOT_BIT},
@@ -125,13 +125,13 @@ static camera_state_t cam_4b_states[] = {
 	{TX_CAM_4B_FRED,  FREDDY_BIT},
 };
 
-static camera_state_t cam_5_states[] = {
+static struct camera_state cam_5_states[] = {
 	{TX_CAM_5_EMPTY, 0},
 	{TX_CAM_5_BON0,  BONNIE_BIT},
 	{TX_CAM_5_BON1,  BONNIE_BIT | ROOM_SPOT_BIT},
 };
 
-static camera_state_t cam_7_states[] = {
+static struct camera_state cam_7_states[] = {
 	{TX_CAM_7_EMPTY, 0},
 	{TX_CAM_7_CHIC0, CHICA_BIT},
 	{TX_CAM_7_CHIC1, CHICA_BIT | ROOM_SPOT_BIT},
@@ -154,7 +154,7 @@ static int cam_state_counts[CAM_COUNT] = {
 	 6, // 7
 };
 
-static camera_state_t *cam_states[CAM_COUNT] = {
+static struct camera_state *cam_states[CAM_COUNT] = {
 	cam_1a_states, cam_1b_states, NULL,
 	cam_2a_states, cam_2b_states, cam_3_states,
 	cam_4a_states, cam_4b_states, cam_5_states,
@@ -183,17 +183,17 @@ bool camera_is_visible = false;
 
 static rspq_block_t *border_block;
 
-static object_t flip_anim[FLIP_FRAMES];
+static struct object flip_anim[FLIP_FRAMES];
 static const char *button_paths[2] = {TX_CAM_BUTTON0, TX_CAM_BUTTON1};
-static object_t buttons[2];
-static object_t map;
-static object_t name_atlas;
-static object_t missing_footage;
+static struct object buttons[2];
+static struct object map;
+static struct object name_atlas;
+static struct object missing_footage;
 
 /* Shitty fix for lagging in cam 2A */
 #define VIEWS_EXTRA 6
-static object_t views[CAM_COUNT];
-static object_t views_extra[VIEWS_EXTRA];
+static struct object views[CAM_COUNT];
+static struct object views_extra[VIEWS_EXTRA];
 
 
 void camera_load(void)
@@ -445,7 +445,7 @@ void camera_ui_draw(void)
 
 }
 
-static void camera_flip_update(const update_parms_t uparms)
+static void camera_flip_update(const struct update_params uparms)
 {
 	int frame = (int)flip_timer;
 	camera_was_using = camera_is_using;
@@ -486,7 +486,7 @@ static void camera_handle_sfx(void)
 	return;
 }
 
-static void camera_update_turn_manual(const update_parms_t uparms)
+static void camera_update_turn_manual(const struct update_params uparms)
 {
 	if (!camera_is_visible)
 		return;
@@ -495,7 +495,7 @@ static void camera_update_turn_manual(const update_parms_t uparms)
 	view_turn = clampf(view_turn, -640, 0);
 }
 
-static void camera_update_turn(const update_parms_t uparms)
+static void camera_update_turn(const struct update_params uparms)
 {
 	if (settings_flags & SET_MANUAL_CAM_TURN_BIT) {
 		camera_update_turn_manual(uparms);
@@ -619,7 +619,7 @@ static void camera_update_button_blink(double dt)
 	button_blink ^= blink;
 }
 
-static void camera_check_switching(const update_parms_t uparms)
+static void camera_check_switching(const struct update_params uparms)
 {
         int i;
 
@@ -701,7 +701,7 @@ static void camera_update_face_glitch(double dt)
 	camera_states[cam_selected] |= ((rand() % 30) + 1) << FACE_GLITCH_SHIFT;
 }
 
-void camera_update(const update_parms_t uparms)
+void camera_update(const struct update_params uparms)
 {
 	camera_flip_update(uparms);
 	camera_was_visible = camera_is_visible;

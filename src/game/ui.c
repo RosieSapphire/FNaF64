@@ -10,13 +10,13 @@
 #include "game/game.h"
 #include "game/ui.h"
 
-static object_t night_text;
-static object_t am;
-static object_t hour_atlas;
-static object_t night_atlas;
-static object_t power_left_text;
-static object_t usage_text;
-static object_t usage_atlas;
+static struct object night_text;
+static struct object am;
+static struct object hour_atlas;
+static struct object night_atlas;
+static struct object power_left_text;
+static struct object usage_text;
+static struct object usage_atlas;
 
 void ui_load(void)
 {

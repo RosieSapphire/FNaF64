@@ -12,8 +12,8 @@
 #include "game/golden_freddy.h"
 
 static float attempt_timer;
-static object_t yellow_bear;
-static object_t yellow_scare;
+static struct object yellow_bear;
+static struct object yellow_scare;
 static float sfx_jumpscare_timer;
 
 int golden_freddy_progress;

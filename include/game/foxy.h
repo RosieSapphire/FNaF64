@@ -12,7 +12,7 @@ extern float foxy_scare_timer;
 extern float foxy_run_timer;
 
 #define FOXY_RUN_FRAMES 13
-extern object_t foxy_run[FOXY_RUN_FRAMES];
+extern struct object foxy_run[FOXY_RUN_FRAMES];
 
 void foxy_load(void);
 void foxy_unload(void);

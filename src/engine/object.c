@@ -4,7 +4,7 @@
 static int loaded = 0;
 static int local_loaded = 0;
 
-void object_load(object_t *o, const char *path)
+void object_load(struct object *o, const char *path)
 {
 	if (o->is_loaded)
 		return;
@@ -15,7 +15,7 @@ void object_load(object_t *o, const char *path)
 	debugf("%d loaded (%s)\n", local_loaded, path);
 }
 
-void objects_load(object_t *o, int num, const char **paths)
+void objects_load(struct object *o, int num, const char **paths)
 {
         int i;
 
@@ -24,7 +24,7 @@ void objects_load(object_t *o, int num, const char **paths)
         }
 }
 
-void object_unload(object_t *o)
+void object_unload(struct object *o)
 {
 	if (!o->is_loaded)
 		return;
@@ -34,7 +34,7 @@ void object_unload(object_t *o)
 	local_loaded = loaded - 8;
 }
 
-void objects_unload(object_t *o, int num)
+void objects_unload(struct object *o, int num)
 {
         int i;
 
@@ -43,7 +43,7 @@ void objects_unload(object_t *o, int num)
         }
 }
 
-void object_draw(object_t o, int px, int py, int ox, int oy)
+void object_draw(struct object o, int px, int py, int ox, int oy)
 {
 	px = vcon(px);
 	py = vcon(py);
@@ -57,7 +57,7 @@ void object_draw(object_t o, int px, int py, int ox, int oy)
 	rdpq_sprite_blit(o.spr, px, py, &parms);
 }
 
-void object_draw_flipped(object_t o, int px, int py, int ox, int oy)
+void object_draw_flipped(struct object o, int px, int py, int ox, int oy)
 {
 	px = vcon(px);
 	py = vcon(py);
@@ -72,7 +72,7 @@ void object_draw_flipped(object_t o, int px, int py, int ox, int oy)
 	rdpq_sprite_blit(o.spr, px, py, &parms);
 }
 
-void object_draw_index_x(object_t o, int px, int py, int w, int i)
+void object_draw_index_x(struct object o, int px, int py, int w, int i)
 {
 	px = vcon(px);
 	py = vcon(py);
@@ -85,7 +85,7 @@ void object_draw_index_x(object_t o, int px, int py, int w, int i)
 	rdpq_sprite_blit(o.spr, px, py, &parms);
 }
 
-void object_draw_index_y(object_t o, int px, int py, int h, int i)
+void object_draw_index_y(struct object o, int px, int py, int h, int i)
 {
 	px = vcon(px);
 	py = vcon(py);

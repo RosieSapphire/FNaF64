@@ -4,4 +4,4 @@
 #include "engine/update.h"
 
 void paycheck_draw(void);
-enum scene paycheck_update(update_parms_t uparms);
+enum scene paycheck_update(struct update_params uparms);

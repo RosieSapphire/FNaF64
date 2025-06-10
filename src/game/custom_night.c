@@ -9,9 +9,9 @@
 #include "game/texture_index.h"
 #include "game/custom_night.h"
 
-static object_t face_icons;
-static object_t buttons;
-static object_t nums;
+static struct object face_icons;
+static struct object buttons;
+static struct object nums;
 static int ai_selected = 0;
 static bool is_loaded = false;
 
@@ -96,7 +96,7 @@ void custom_night_draw(void)
 	_custom_night_ai_num_draw(foxy_ai_level, 829, 479 + 6);
 }
 
-enum scene custom_night_update(update_parms_t uparms)
+enum scene custom_night_update(struct update_params uparms)
 {
 	ai_selected += uparms.pressed.d_right - uparms.pressed.d_left;
 	ai_selected += uparms.pressed.d_down * 2 - uparms.pressed.d_up * 2;

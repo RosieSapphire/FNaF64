@@ -6,4 +6,4 @@
 #include "engine/update.h"
 
 void title_draw(void);
-enum scene title_update(update_parms_t uparms);
+enum scene title_update(struct update_params uparms);

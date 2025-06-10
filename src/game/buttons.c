@@ -11,18 +11,18 @@
 #include "game/texture_index.h"
 #include "game/buttons.h"
 
-typedef struct {
+struct button_state {
 	int state, index;
-} button_state_t;
+};
 
-button_state_t left_states[] = {
+struct button_state left_states[] = {
 	{ 0,                                      0 },
 	{ BUTTON_LEFT_DOOR,                       1 },
 	{ BUTTON_LEFT_LIGHT,                      2 },
 	{ BUTTON_LEFT_LIGHT | BUTTON_LEFT_DOOR,   3 },
 };
 
-button_state_t right_states[] = {
+struct button_state right_states[] = {
 	{ 0,                                      4 },
 	{ BUTTON_RIGHT_DOOR,                      5 },
 	{ BUTTON_RIGHT_LIGHT,                     6 },
@@ -31,7 +31,7 @@ button_state_t right_states[] = {
 
 int button_state = 0;
 
-static int button_state_get_index(button_state_t *states, bool left_door)
+static int button_state_get_index(struct button_state *states, bool left_door)
 {
         int i, bitmask;
 
@@ -45,7 +45,7 @@ static int button_state_get_index(button_state_t *states, bool left_door)
 	return 0;
 }
 
-object_t button[8];
+struct object button[8];
 static const char *button_paths[8] = {
 	TX_BUTTON_LEFT00,
 	TX_BUTTON_LEFT10,
@@ -77,7 +77,7 @@ void buttons_draw(void)
 			1546 + office_turn, 400, 49, 127);
 }
 
-static void button_left_update(update_parms_t uparms)
+static void button_left_update(struct update_params uparms)
 {
 	bool left_door_can_interact =
 		(int)door_timers[0] == 0 || (int)door_timers[0] == 14;
@@ -110,7 +110,7 @@ static void button_left_update(update_parms_t uparms)
 	}
 }
 
-static void button_right_update(update_parms_t uparms)
+static void button_right_update(struct update_params uparms)
 {
 	bool right_door_can_interact =
 		(int)door_timers[1] == 0 || (int)door_timers[1] == 14;
@@ -143,7 +143,7 @@ static void button_right_update(update_parms_t uparms)
 	}
 }
 
-void buttons_update(update_parms_t uparms)
+void buttons_update(struct update_params uparms)
 {
 	if (camera_is_visible)
 		return;

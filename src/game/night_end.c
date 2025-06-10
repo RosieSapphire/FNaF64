@@ -12,7 +12,7 @@
 #include "game/save_data.h"
 #include "game/night_end.h"
 
-static object_t am, six, five;
+static struct object am, six, five;
 static float timer;
 static bool is_loaded = false;
 static bool played_cheer;
@@ -96,7 +96,7 @@ void night_end_draw(void)
 	rdpq_fill_rectangle(0, 0, 320, 240);
 }
 
-enum scene night_end_update(const update_parms_t uparms)
+enum scene night_end_update(const struct update_params uparms)
 {
 	timer += uparms.dt;
 

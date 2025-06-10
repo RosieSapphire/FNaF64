@@ -19,7 +19,7 @@ bool foxy_is_scaring;
 float foxy_scare_timer;
 float foxy_run_timer;
 static int num_door_pounds;
-object_t foxy_run[FOXY_RUN_FRAMES];
+struct object foxy_run[FOXY_RUN_FRAMES];
 
 static float fox_song_timer = 0.0f;
 

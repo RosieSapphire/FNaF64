@@ -12,4 +12,4 @@ extern float office_turn;
 void office_load(void);
 void office_unload(void);
 void office_draw(void);
-void office_update(update_parms_t uparms);
+void office_update(struct update_params uparms);

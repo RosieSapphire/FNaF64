@@ -24,9 +24,11 @@ enum {
 
 int main(void)
 {
-        /* N64 Init */
         int dfs_handle;
+	long ticks_last;
+	enum scene scene;
 
+        /* N64 Init */
 	srand(TICKS_READ());
 	display_init(RESOLUTION_320x240, DEPTH_16_BPP, 3,
 		     GAMMA_NONE, FILTERS_RESAMPLE);
@@ -51,16 +53,17 @@ int main(void)
 	static_load();
 	blip_create();
 
-	enum scene scene = SCENE_TITLE_SCREEN;
-	long ticks_last = get_ticks();
+	scene = SCENE_TITLE_SCREEN;
+	ticks_last = get_ticks();
 
 	while (1) {
 		long ticks_now = get_ticks();
 		long tick_delta = TICKS_DISTANCE(ticks_last, ticks_now);
+
 		ticks_last = ticks_now;
 
 		joypad_poll();
-		const update_parms_t uparms = {
+		const struct update_params uparms = {
 			.dt = (float)tick_delta / (float)TICKS_PER_SECOND,
 			.held = joypad_get_buttons_held(JOYPAD_PORT_1),
 			.pressed = joypad_get_buttons_pressed(JOYPAD_PORT_1),
@@ -73,7 +76,7 @@ int main(void)
 			power_down_draw, custom_night_draw,
 		};
 
-		enum scene (*update_funcs[SCENE_COUNT])(update_parms_t) = {
+		enum scene (*update_funcs[SCENE_COUNT])(struct update_params) = {
 			title_update, which_night_update, game_update,
 			night_end_update, paycheck_update, game_over_update,
 			power_down_update, custom_night_update,

@@ -13,7 +13,7 @@
 #define FAN_FRAME_CNT 3
 
 static float fan_timer;
-static object_t fan_anim[FAN_FRAME_CNT];
+static struct object fan_anim[FAN_FRAME_CNT];
 static const char *fan_anim_paths[FAN_FRAME_CNT] = {
 	TX_FAN0, TX_FAN1, TX_FAN2,
 };

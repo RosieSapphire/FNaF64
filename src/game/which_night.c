@@ -11,7 +11,7 @@
 #include "game/save_data.h"
 #include "game/which_night.h"
 
-object_t which_night_atlas;
+struct object which_night_atlas;
 static float timer;
 static bool is_loaded = false;
 
@@ -69,7 +69,7 @@ void which_night_draw(void)
         blip_draw();
 }
 
-enum scene which_night_update(update_parms_t uparms)
+enum scene which_night_update(struct update_params uparms)
 {
 	timer += uparms.dt * 60;
 

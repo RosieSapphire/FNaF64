@@ -214,7 +214,7 @@ static void _game_update_random_events(float dt)
 	}
 }
 
-enum scene game_update(update_parms_t uparms)
+enum scene game_update(struct update_params uparms)
 {
 	golden_freddy_update(uparms.dt);
 	hallucinations_update(uparms.dt);

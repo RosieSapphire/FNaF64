@@ -8,7 +8,7 @@
 
 #define STATIC_FRAME_CNT 8
 
-static object_t static_frames[STATIC_FRAME_CNT];
+static struct object static_frames[STATIC_FRAME_CNT];
 static const char *static_frame_paths[STATIC_FRAME_CNT] = {
 	TX_STATIC0,
         TX_STATIC1,
