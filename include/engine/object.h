@@ -1,5 +1,7 @@
 #pragma once
 
+/* #define OBJECT_DEBUG_ENABLED */
+
 #include <stdbool.h>
 #include <libdragon.h>
 

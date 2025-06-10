@@ -89,9 +89,6 @@ static void _game_load(void)
 	game_power_timer = 0.0f;
 	game_is_loaded = true;
 
-	// debug_add("Time Since Load", &game_time_since_load, DV_FLOAT);
-	// debug_add("Time", &game_night_timer, DV_FLOAT);
-
 	game_ticks_since_load = get_ticks() - game_ticks_since_load;
 	game_time_since_load = (float)game_ticks_since_load / (float)TICKS_PER_SECOND;
 }
@@ -298,6 +295,9 @@ enum scene game_update(struct update_params uparms)
 		rdpq_call_deferred((void (*)(void *))_game_unload, NULL);
 		return SCENE_TITLE_SCREEN;
 	}
+
+        /* Debug printing */
+        debugf("game_night_timer: %f", game_night_timer);
 
 	return SCENE_MAIN_GAME;
 }

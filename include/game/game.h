@@ -5,6 +5,8 @@
 #include "engine/scene.h"
 #include "engine/update.h"
 
+#define GAME_DEBUG_ENABLED
+
 extern float game_night_timer;
 extern int game_power_usage;
 extern int game_power_left;
