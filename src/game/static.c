@@ -8,45 +8,53 @@
 
 #define STATIC_FRAME_CNT 8
 
-static object_t frames[STATIC_FRAME_CNT];
-static const char *frame_paths[STATIC_FRAME_CNT] = {
-	TX_STATIC0, TX_STATIC1, TX_STATIC2,
-	TX_STATIC3, TX_STATIC4, TX_STATIC5,
-	TX_STATIC6, TX_STATIC7,
+static object_t static_frames[STATIC_FRAME_CNT];
+static const char *static_frame_paths[STATIC_FRAME_CNT] = {
+	TX_STATIC0,
+        TX_STATIC1,
+        TX_STATIC2,
+	TX_STATIC3,
+        TX_STATIC4,
+        TX_STATIC5,
+	TX_STATIC6,
+        TX_STATIC7
 };
 
-static float timer = 0.0f;
-int which_frame = 0;
+static float static_timer = 0.f;
+int static_frame = 0;
 
 void static_load(void)
 {
-	objects_load(frames, STATIC_FRAME_CNT, frame_paths);
+	objects_load(static_frames, STATIC_FRAME_CNT, static_frame_paths);
 }
 
-void static_draw(bool as_overlay)
+void static_draw(const bool as_overlay);
 {
 	rdpq_set_mode_standard();
-	if(as_overlay)
+	if (as_overlay) {
 		rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
-
-	object_draw(frames[which_frame], 0, 0, 0, 0);
+        }
+	object_draw(static_frames[static_frame], 0, 0, 0, 0);
 }
 
-void static_update(double dt)
+void static_update(const float dt)
 {
-	timer += dt * speed_fps(100);
-	bool tick_frame;
-	timer = wrapf(timer, 1.0f, &tick_frame);
-	if(!tick_frame)
-		return;
+        bool tick_frame;
+        int frame_last;
 
-	int frame_last = which_frame;
+	static_timer += dt * speed_fps(100);
+	static_timer = wrapf(static_timer, 1.0f, &tick_frame);
+	if (!tick_frame) {
+		return;
+        }
+
+        frame_last = static_frame;
 	do {
-		which_frame = rand() & 7;
-	} while(frame_last == which_frame);
+		static_frame = rand() & 7;
+	} while (frame_last == static_frame);
 }
 
 void static_unload(void)
 {
-	objects_unload(frames, STATIC_FRAME_CNT);
+	objects_unload(static_frames, STATIC_FRAME_CNT);
 }
