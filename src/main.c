@@ -22,6 +22,28 @@ enum {
         RET_EEPROM_FAILED
 };
 
+static void (*draw_funcs[SCENE_COUNT])(void) = {
+	title_draw,
+        which_night_draw,
+        game_draw,
+	night_end_draw,
+        paycheck_draw,
+        game_over_draw,
+	power_down_draw,
+        custom_night_draw
+};
+
+static enum scene (*update_funcs[SCENE_COUNT])(struct update_params) = {
+	title_update,
+        which_night_update,
+        game_update,
+	night_end_update,
+        paycheck_update,
+        game_over_update,
+	power_down_update,
+        custom_night_update
+};
+
 int main(void)
 {
         int dfs_handle;
@@ -59,47 +81,37 @@ int main(void)
 	while (1) {
 		long ticks_now = get_ticks();
 		long tick_delta = TICKS_DISTANCE(ticks_last, ticks_now);
+                struct update_params uparams;
+		static enum scene scene_last;
+		short *audio_buf;
 
 		ticks_last = ticks_now;
 
 		joypad_poll();
-		const struct update_params uparms = {
-			.dt = (float)tick_delta / (float)TICKS_PER_SECOND,
-			.held = joypad_get_buttons_held(JOYPAD_PORT_1),
-			.pressed = joypad_get_buttons_pressed(JOYPAD_PORT_1),
-			.sticks = joypad_get_inputs(JOYPAD_PORT_1),
-		};
+		uparams.dt = (float)tick_delta / (float)TICKS_PER_SECOND,
+		uparams.held = joypad_get_buttons_held(JOYPAD_PORT_1),
+		uparams.pressed = joypad_get_buttons_pressed(JOYPAD_PORT_1),
+		uparams.sticks = joypad_get_inputs(JOYPAD_PORT_1),
 
-		void (*draw_funcs[SCENE_COUNT])(void) = {
-			title_draw, which_night_draw, game_draw,
-			night_end_draw, paycheck_draw, game_over_draw,
-			power_down_draw, custom_night_draw,
-		};
-
-		enum scene (*update_funcs[SCENE_COUNT])(struct update_params) = {
-			title_update, which_night_update, game_update,
-			night_end_update, paycheck_update, game_over_update,
-			power_down_update, custom_night_update,
-		};
-
-		surface_t *dsp = display_get();
-		rdpq_attach(dsp, NULL);
-		(*draw_funcs[scene])();
+		rdpq_attach(display_get(), NULL);
+		draw_funcs[scene]();
 		rdpq_detach_show();
 
-		static enum scene scene_last = SCENE_MAIN_GAME;
+		scene_last = SCENE_MAIN_GAME;
 		scene_last = scene;
-		scene = (*update_funcs[scene])(uparms);
-		blip_update(uparms.dt);
-		static_update(uparms.dt);
+		scene = update_funcs[scene](uparams);
+		blip_update(uparams.dt);
+		static_update(uparams.dt);
 
-		if (scene_last != scene)
+		if (scene_last ^ scene) {
 			rspq_wait();
+                }
 
-		if (!audio_can_write())
+		if (!audio_can_write()) {
 			continue;
+                }
 
-		short *audio_buf = audio_write_begin();
+	        audio_buf = audio_write_begin();
 		mixer_poll(audio_buf, audio_get_buffer_length());
 		audio_write_end();
 	}
