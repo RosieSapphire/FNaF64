@@ -2,11 +2,24 @@
 
 #include "game/save_data.h"
 
+/*
+ * This is for if you need to override the save data for debugging purposes.
+ * Either that or you're a cheating little fucking cocksucker. >:3 I know what
+ * kind of fucking person you are, Mr. Fart Smella. owo
+ */
+/* #define SAVE_DATA_OVERRIDE (SAVE_BEATEN_BITMASK | 0x7) */
+
 bool save_data_eeprom_failed = false;
 uint8_t save_data = 1;
 
 bool save_data_init(void)
 {
+#ifdef SAVE_DATA_OVERRIDE
+        save_data = SAVE_DATA_OVERRIDE;
+
+        return true;
+#endif
+
 	eepfs_entry_t save_entry;
 
         save_entry.path = "fnaf.dat";
