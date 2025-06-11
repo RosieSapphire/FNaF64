@@ -2,11 +2,8 @@
 #include "engine/util.h"
 
 #include "game/office.h"
+#include "game/game.h"
 #include "game/buttons.h"
-#include "game/freddy.h"
-#include "game/bonnie.h"
-#include "game/chica.h"
-#include "game/foxy.h"
 #include "game/texture_index.h"
 #include "game/doors.h"
 
@@ -38,10 +35,6 @@ void doors_unload(void)
 
 void doors_draw(void)
 {
-	if (foxy_is_scaring || bonnie_is_jumpscaring ||
-			chica_is_jumpscaring || freddy_is_jumpscaring)
-		return;
-
 	rdpq_set_mode_copy(true);
 	object_draw(frames[(int)door_timers[LEFT]], 72 + office_turn, -1, 0, 0);
 	rdpq_set_mode_standard();
