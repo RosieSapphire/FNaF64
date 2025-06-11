@@ -70,10 +70,6 @@ void buttons_unload(void)
 
 void buttons_draw(void)
 {
-        if (game_jumpscare_flags) {
-                return;
-        }
-
 	rdpq_set_mode_copy(true);
 	object_draw(button[button_state_get_index(left_states, 1)],
 			48 + office_turn, 390, 42, 127);
