@@ -45,28 +45,6 @@ const char *freddy_scare_paths[FREDDY_SCARE_FRAMES] = {
 	TX_FREDDY_SCARE_ROOM12, TX_FREDDY_SCARE_ROOM13,
 };
 
-static int room_get_state(void)
-{
-	if (flicker_rand <= 1)
-		return 0;
-
-	if (button_state & BUTTON_LEFT_LIGHT) {
-		if (bonnie_cam == AT_DOOR)
-			return 3;
-
-		return 1;
-	}
-
-	if (button_state & BUTTON_RIGHT_LIGHT) {
-		if (chica_cam == AT_DOOR)
-			return 4;
-
-		return 2;
-	}
-
-	return 0;
-}
-
 void office_load(void)
 {
 	office_turn = OFFICE_TURN_MIN >> 1;
@@ -87,13 +65,13 @@ void office_unload(void)
 
 void office_draw(void)
 {
-        int i;
+        int i, view_cur;
 
 	rdpq_set_mode_copy(false);
 
-	if (foxy_is_scaring) {
+	if (game_jumpscare_flags & JUMPSCARE_FLAG_FOXY) {
 		object_draw(foxy_scare[(int)foxy_scare_timer],
-				office_turn, 0, 0, 0);
+			    office_turn, 0, 0, 0);
 		return;
 	}
 
@@ -104,15 +82,40 @@ void office_draw(void)
 		object_unload(freddy_scare + i);
 	}
 
-	if (freddy_is_jumpscaring) {
+	if (game_jumpscare_flags & JUMPSCARE_FLAG_FREDDY) {
 		int frame = (int)freddy_scare_timer;
 		object_load(freddy_scare + frame, freddy_scare_paths[frame]);
 		object_draw(freddy_scare[(int)freddy_scare_timer],
-				office_turn, 0, 0, 0);
+			    office_turn, 0, 0, 0);
 		return;
 	}
 
-	object_draw(room_views[room_get_state()], office_turn, 0, 0, 0);
+        /* Determine view to show for office */
+        view_cur = 0;
+	if (button_state & BUTTON_LEFT_LIGHT) {
+		if (bonnie_cam == AT_DOOR) {
+                        view_cur = 3;
+                } else {
+                        view_cur = 1;
+                }
+	} else if (button_state & BUTTON_RIGHT_LIGHT) {
+		if (chica_cam == AT_DOOR) {
+                        view_cur = 4;
+                } else {
+                        view_cur = 2;
+                }
+	}
+
+        /*
+        * If we are trying to display a view for the light being
+        * on for either side, but the random flicker value says nah,
+        * then it does a nah.
+        */
+	if (flicker_rand <= 1) {
+                view_cur = 0;
+        }
+
+	object_draw(room_views[view_cur], office_turn, 0, 0, 0);
 }
 
 static void _office_update_turn_normal(struct update_params uparms)
@@ -140,9 +143,9 @@ static void _office_update_turn_smooth(struct update_params uparms)
 
 void office_update(struct update_params uparms)
 {
-	if (freddy_is_jumpscaring || foxy_is_scaring ||
-			bonnie_is_jumpscaring || chica_is_jumpscaring)
+        if (game_jumpscare_flags & JUMPSCARE_FLAG_MASK) {
 		camera_is_using = false;
+        }
 
 
 	if (!camera_is_visible) {
