@@ -3,10 +3,7 @@
 #include "engine/sfx.h"
 
 #include "game/office.h"
-#include "game/freddy.h"
-#include "game/bonnie.h"
-#include "game/chica.h"
-#include "game/foxy.h"
+#include "game/game.h"
 #include "game/texture_index.h"
 #include "game/fan.h"
 
@@ -30,11 +27,6 @@ void fan_load(void)
 
 void fan_draw(void)
 {
-        /* TODO: Change these into bitflags on the game itself possibly. */
-	if (foxy_is_scaring || bonnie_is_jumpscaring ||
-	   chica_is_jumpscaring || freddy_is_jumpscaring)
-		return;
-
 	rdpq_set_mode_copy(false);
 	object_draw(fan_anim[(int)fan_timer], 868 + office_turn, 400, 88, 97);
 }
