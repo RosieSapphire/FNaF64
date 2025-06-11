@@ -1,6 +1,6 @@
 #pragma once
 
-#define TITLE_DEBUG_ENABLED
+/* #define TITLE_DEBUG_ENABLED */
 
 #include <libdragon.h>
 
