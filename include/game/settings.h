@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 extern uint8_t settings_flags;
 
 enum {
