@@ -125,13 +125,13 @@ void game_draw(void)
 	if (!camera_is_visible) {
 		perspective_begin();
 		office_draw();
-		fan_draw();
                 /*
                  * TODO: Put this into a check statement
                  * to make it much clearer.
                  */
 		golden_freddy_draw_in_room();
                 if (!game_jumpscare_flags) {
+		        fan_draw();
 		        doors_draw();
 		        buttons_draw();
                 }
