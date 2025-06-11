@@ -98,8 +98,15 @@ void custom_night_draw(void)
 
 enum scene custom_night_update(struct update_params uparms)
 {
-	ai_selected += uparms.pressed.d_right - uparms.pressed.d_left;
-	ai_selected += uparms.pressed.d_down * 2 - uparms.pressed.d_up * 2;
+        bool press_left, press_right, press_up, press_down;
+
+        press_left = uparms.pressed.d_left + uparms.pressed.c_left;
+        press_right = uparms.pressed.d_right + uparms.pressed.c_right;
+        press_up = uparms.pressed.d_up + uparms.pressed.c_up;
+        press_down = uparms.pressed.d_down + uparms.pressed.c_down;
+
+	ai_selected += press_right - press_left;
+	ai_selected += press_down * 2 - press_up * 2;
 	ai_selected &= 3;
 
 	int *ais[4] = {
