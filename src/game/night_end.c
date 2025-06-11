@@ -12,6 +12,9 @@
 #include "game/save_data.h"
 #include "game/night_end.h"
 
+#define NIGHT_END_TIMER_PLAY_CHEER 6.2f
+#define NIGHT_END_TIMER_EXIT 1.5f
+
 /*
  * TODO: Make it write the save data as soon as the night hits 6 AM instead
  * of waiting for the little animation to finish. That way if something
@@ -25,6 +28,8 @@ static bool played_cheer;
 
 static void night_end_load(void)
 {
+        int night_last;
+
 	if (is_loaded) {
 		return;
         }
@@ -40,7 +45,12 @@ static void night_end_load(void)
 		save_data |= (SAVE_NIGHT_NUM(save_data) == 7) * SAVE_MODE_20_BEATEN_BIT;
         }
 
-	save_data++;
+        night_last = save_data & SAVE_NIGHT_NUM_BITMASK;
+        if ((save_data & SAVE_NIGHT_NUM_BITMASK) < 7) {
+	        save_data++;
+        }
+        debugf("Night Last: %d, Night Cur: %d\n",
+               night_last, save_data & SAVE_NIGHT_NUM_BITMASK);
 	mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.8f, 0.8f);
 	wav64_play(&sfx_chimes, SFX_CH_AMBIENCE);
 
@@ -106,13 +116,13 @@ enum scene night_end_update(const struct update_params uparms)
 {
 	timer += uparms.dt;
 
-	if (timer >= 6.2f && !played_cheer) {
+	if (timer >= NIGHT_END_TIMER_PLAY_CHEER && !played_cheer) {
 		played_cheer = true;
 		mixer_ch_set_vol(SFX_CH_FAN, 0.8f, 0.8f);
 		wav64_play(&sfx_cheering, SFX_CH_FAN);
 	}
 
-	if (timer >= 11.5f) {
+	if (timer >= NIGHT_END_TIMER_EXIT) {
 		if (!save_data_eeprom_failed) {
 			eepfs_write("fnaf.dat", &save_data, 1);
                 }

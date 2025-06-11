@@ -226,6 +226,13 @@ enum scene game_update(struct update_params uparms)
 	hallucinations_update(uparms.dt);
 
 	if (golden_freddy_progress == 4) {
+                /*
+                 * FIXME: It looks like the Golden Freddy update function is
+                 * getting called here, even though it's always unconditionally
+                 * called before this, making GF at his 4th state (speaking of,
+                 * I should really add an enum for this shit) repeat the code
+                 * twice, making it go twice as fast.
+                 */
 		golden_freddy_update(uparms.dt);
 		return SCENE_MAIN_GAME;
 	}

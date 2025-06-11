@@ -56,6 +56,13 @@ void paycheck_draw(void)
 	rdpq_mode_alphacompare(true);
 	rdpq_set_fog_color(RGBA32(0xFF, 0xFF, 0xFF, alpha * 255));
      	rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
+
+        /*
+         * FIXME: With the way the new save system is implemented,
+         * there's a bug where, upon completing night 20/20/20/20, you
+         * get the same paycheck as night 6. However, you still get the
+         * 3rd star, and it's marked on your save file.
+         */
 	object_draw(screens[SAVE_NIGHT_NUM(save_data) - 6], 0, 0, 0, 0);
 }
 
