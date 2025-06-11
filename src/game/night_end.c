@@ -12,6 +12,12 @@
 #include "game/save_data.h"
 #include "game/night_end.h"
 
+/*
+ * TODO: Make it write the save data as soon as the night hits 6 AM instead
+ * of waiting for the little animation to finish. That way if something
+ * happens between the 5-6 AM transition, it won't affect your save file. :D
+ */
+
 static struct object am, six, five;
 static float timer;
 static bool is_loaded = false;
