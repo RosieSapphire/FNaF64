@@ -156,7 +156,10 @@ void title_draw(void)
 	rdpq_mode_alphacompare(true);
 
 	int star_count = 0;
-        /* FIXME: Possibly add the popcount of the bitmasked nights beaten. */
+        /*
+         * FIXME: Possibly add the popcount of the bitmasked nights beaten.
+         * Also, reverse shift this instead of comparing to 0, else {Cringe;}.
+         */
 	star_count += (save_data & SAVE_NIGHT_5_BEATEN_BIT) > 0;
 	star_count += (save_data & SAVE_NIGHT_6_BEATEN_BIT) > 0;
 	star_count += (save_data & SAVE_MODE_20_BEATEN_BIT) > 0;
