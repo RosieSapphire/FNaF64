@@ -30,6 +30,7 @@ float game_night_timer;
 int game_power_left;
 int game_power_usage;
 float game_power_timer;
+uint8_t game_jumpscare_flags;
 static float game_sfx_jumpscare_exit_timer = 40;
 int game_night_skip_correct;
 float game_ticks_since_load;
@@ -85,6 +86,7 @@ static void _game_load(void)
 	game_power_usage = 1;
 	game_power_left = 999;
 	game_power_timer = 0.0f;
+        game_jumpscare_flags = 0;
 	game_is_loaded = true;
 
 	game_ticks_since_load = get_ticks() - game_ticks_since_load;
@@ -124,15 +126,23 @@ void game_draw(void)
 		perspective_begin();
 		office_draw();
 		fan_draw();
+                /*
+                 * TODO: Put this into a check statement
+                 * to make it much clearer.
+                 */
 		golden_freddy_draw_in_room();
-		doors_draw();
-		buttons_draw();
+                if (!game_jumpscare_flags) {
+		        doors_draw();
+		        buttons_draw();
+                }
 
-		if (bonnie_is_jumpscaring)
+		if (game_jumpscare_flags & JUMPSCARE_FLAG_BONNIE) {
 			bonnie_draw_scare();
+                }
 
-		if (chica_is_jumpscaring)
+		if (game_jumpscare_flags & JUMPSCARE_FLAG_CHICA) {
 			chica_draw_scare();
+                }
 
 		perspective_end();
 	} else {
@@ -149,8 +159,9 @@ void game_draw(void)
 	}
 
 	if (settings_flags & SET_SUBTITLES_BIT &&
-			mixer_ch_playing(SFX_CH_PHONECALL)) {
-		subtitles_draw(game_night_timer, SAVE_NIGHT_NUM(save_data), game_time_since_load);
+	    mixer_ch_playing(SFX_CH_PHONECALL)) {
+		subtitles_draw(game_night_timer, SAVE_NIGHT_NUM(save_data),
+                               game_time_since_load);
 	}
 
 	ui_draw();
@@ -275,13 +286,14 @@ enum scene game_update(struct update_params uparms)
 	chica_update(uparms.dt);
 	foxy_update(uparms.dt);
 	freddy_update(uparms.dt);
-	if (bonnie_is_jumpscaring || chica_is_jumpscaring ||
-			foxy_is_scaring || freddy_is_jumpscaring) {
+
+	if (game_jumpscare_flags & JUMPSCARE_FLAG_MASK) {
 		game_sfx_jumpscare_exit_timer -= uparms.dt * 60;
 		if (game_sfx_jumpscare_exit_timer <= 0) {
 			sfx_stop_all_channels();
+                        /* TODO: Possibly `rspq_wait()` here. */
 			rdpq_call_deferred((void (*)(void *))_game_unload,
-					NULL);
+					   NULL);
 			game_sfx_jumpscare_exit_timer = 40;
 			return SCENE_GAME_OVER;
 		}
@@ -295,7 +307,38 @@ enum scene game_update(struct update_params uparms)
 	}
 
 #ifdef GAME_DEBUG_ENABLED
-        debugf("game_night_timer: %f\n", game_night_timer);
+        /*
+	if (game_jumpscare_flags & JUMPSCARE_FLAG_BONNIE) {
+                debugf("BONNIE JUMPSCARE!\n");
+        }
+
+	if (game_jumpscare_flags & JUMPSCARE_FLAG_CHICA) {
+                debugf("CHICA JUMPSCARE!\n");
+        }
+
+	if (game_jumpscare_flags & JUMPSCARE_FLAG_FREDDY) {
+                debugf("FREDDY JUMPSCARE!\n");
+        }
+
+	if (game_jumpscare_flags & JUMPSCARE_FLAG_FOXY) {
+                debugf("FOXY JUMPSCARE!\n");
+        }
+        debugf("B:%d C:%d Fo:%d Fr:%d (0x%X), %x, %x, %x, %x\n",
+               (game_jumpscare_flags & JUMPSCARE_FLAG_BONNIE) <<
+                        JUMPSCARE_FLAG_BONNIE_SHIFT,
+               (game_jumpscare_flags & JUMPSCARE_FLAG_CHICA) <<
+                        JUMPSCARE_FLAG_CHICA_SHIFT,
+               (game_jumpscare_flags & JUMPSCARE_FLAG_FOXY) <<
+                        JUMPSCARE_FLAG_FOXY_SHIFT,
+               (game_jumpscare_flags & JUMPSCARE_FLAG_FREDDY) <<
+                        JUMPSCARE_FLAG_FREDDY_SHIFT,
+               game_jumpscare_flags,
+               JUMPSCARE_FLAG_BONNIE,
+               JUMPSCARE_FLAG_CHICA,
+               JUMPSCARE_FLAG_FOXY,
+               JUMPSCARE_FLAG_FREDDY
+               );
+        */
 #endif
 
 	return SCENE_MAIN_GAME;
