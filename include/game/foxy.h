@@ -7,7 +7,6 @@
 
 extern int foxy_ai_level;
 extern int foxy_progress;
-extern bool foxy_is_scaring;
 extern float foxy_scare_timer;
 extern float foxy_run_timer;
 

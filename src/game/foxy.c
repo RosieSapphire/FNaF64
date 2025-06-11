@@ -15,7 +15,6 @@ static float stun_timer;
 static float no_check_timer;
 static bool use_run_timer;
 int foxy_progress;
-bool foxy_is_scaring;
 float foxy_scare_timer;
 float foxy_run_timer;
 static int num_door_pounds;
@@ -39,7 +38,7 @@ void foxy_load(void)
 	foxy_progress = 0;
 	stun_timer = 0.0f;
 	no_check_timer = 0.0f;
-	foxy_is_scaring = false;
+        game_jumpscare_flags &= ~(JUMPSCARE_FLAG_FOXY);
 	foxy_scare_timer = 0.0f;
 	foxy_run_timer = 0.0f;
 	use_run_timer = false;
@@ -74,7 +73,7 @@ static bool _foxy_update_move_timer(double dt)
 static void _foxy_trigger_sfx_jumpscare(void)
 {
 	camera_is_using = false;
-	foxy_is_scaring = true;
+        game_jumpscare_flags |= JUMPSCARE_FLAG_FOXY;
 	wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
 }
 
@@ -111,7 +110,7 @@ void foxy_update(double dt)
 		wav64_play(&sfx_foxy_hum, SFX_CH_FOXSONG);
 
 	/* Handle jumpscaring */
-	if (foxy_is_scaring) {
+        if (game_jumpscare_flags & JUMPSCARE_FLAG_FOXY) {
 		foxy_scare_timer += speed_fps(25) * dt;
 		foxy_scare_timer = clampf(foxy_scare_timer,
 				0, FOXY_SCARE_FRAMES - 1);
@@ -128,21 +127,26 @@ void foxy_update(double dt)
 		foxy_run_timer += dt * 60;
 		foxy_run_timer = clampf(foxy_run_timer, 0, 100);
 		if (foxy_run_timer == 100) {
-			if (button_state & BUTTON_LEFT_DOOR)
+			if (button_state & BUTTON_LEFT_DOOR) {
 				_foxy_trigger_reset();
-			else
+                        } else {
 				_foxy_trigger_sfx_jumpscare();
+                        }
 		}
 	}
 
-	if (foxy_progress == 3 && !foxy_is_scaring)
+	if (foxy_progress == 3 &&
+            !(game_jumpscare_flags & JUMPSCARE_FLAG_FOXY)) {
 		no_check_timer += dt * 60;
+        }
 
-	if (no_check_timer >= 1500 && !foxy_is_scaring) {
-		if (button_state & BUTTON_LEFT_DOOR)
+        if (no_check_timer >= 1500 &&
+            !(game_jumpscare_flags & JUMPSCARE_FLAG_FOXY)) {
+		if (button_state & BUTTON_LEFT_DOOR) {
 			_foxy_trigger_reset();
-		else
+                } else {
 			_foxy_trigger_sfx_jumpscare();
+                }
 	}
 
 	_foxy_update_stun_timer(dt);

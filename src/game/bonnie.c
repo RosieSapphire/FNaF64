@@ -1,3 +1,13 @@
+/*
+ * FIXME (This goes for Chica too): When the animatronics are already inside
+ * the room and you put up the camera, they should make a moaning noise,
+ * and after I think about 30 seconds, they'll pull the camera down
+ * automatically and you die. I almost think it's scary to lack this
+ * functionality since it completely catches you by surprise if you didn't
+ * already notice, but I'm going for near 100% accuracy, so this is something
+ * I'll have to take care of at some point.
+ */
+
 #include <stdlib.h>
 
 #include "engine/util.h"
@@ -7,6 +17,7 @@
 #include "game/buttons.h"
 #include "game/camera.h"
 #include "game/texture_index.h"
+#include "game/game.h"
 #include "game/bonnie.h"
 
 #define MOVE_TIMER 4.97f
@@ -20,7 +31,6 @@ bool bonnie_scared;
 static float move_timer;
 int bonnie_cam_last;
 int bonnie_cam;
-bool bonnie_is_jumpscaring;
 static float scare_timer;
 
 static const float footstep_vol_lut[CAM_COUNT] = {
@@ -73,7 +83,7 @@ void bonnie_load(void)
 	move_timer = 0.0f;
 	bonnie_cam_last = 0;
 	bonnie_cam = 0;
-	bonnie_is_jumpscaring = false;
+        game_jumpscare_flags &= ~(JUMPSCARE_FLAG_BONNIE);
 	scare_timer = 0.0f;
 
 	objects_load(bonnie_scare, BONNIE_SCARE_FRAMES, bonnie_scare_paths);
@@ -106,7 +116,7 @@ void bonnie_draw_debug(void)
 
 void bonnie_update(double dt)
 {
-	if (bonnie_is_jumpscaring) {
+	if (game_jumpscare_flags & JUMPSCARE_FLAG_BONNIE) {
 		scare_timer += dt * speed_fps(75);
 		scare_timer = wrapf(scare_timer, BONNIE_SCARE_FRAMES, NULL);
 		return;
@@ -114,7 +124,7 @@ void bonnie_update(double dt)
 
 	bool cam_flip_down = (!camera_is_visible && camera_was_visible);
 	if (bonnie_cam == YOURE_FUCKED && cam_flip_down) {
-		bonnie_is_jumpscaring = true;
+                game_jumpscare_flags |= JUMPSCARE_FLAG_BONNIE;
 		wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
 		return;
 	}

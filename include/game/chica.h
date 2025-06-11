@@ -9,7 +9,6 @@ extern int chica_cam_last;
 extern int chica_cam;
 extern float chica_blackout_timer;
 extern bool chica_scared;
-extern bool chica_is_jumpscaring;
 
 void chica_load(void);
 void chica_unload(void);

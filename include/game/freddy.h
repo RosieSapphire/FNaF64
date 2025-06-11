@@ -8,7 +8,6 @@
 extern int freddy_ai_level;
 extern int freddy_cam_last;
 extern int freddy_cam;
-extern bool freddy_is_jumpscaring;
 extern float freddy_scare_timer;
 
 void freddy_load(void);

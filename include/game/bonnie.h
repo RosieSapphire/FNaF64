@@ -9,7 +9,6 @@ extern int bonnie_cam_last;
 extern int bonnie_cam;
 extern float bonnie_blackout_timer;
 extern bool bonnie_scared;
-extern bool bonnie_is_jumpscaring;
 
 void bonnie_load(void);
 void bonnie_unload(void);

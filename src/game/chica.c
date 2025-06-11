@@ -7,6 +7,7 @@
 #include "game/camera.h"
 #include "game/buttons.h"
 #include "game/texture_index.h"
+#include "game/game.h"
 #include "game/chica.h"
 
 #define MOVE_TIMER 4.98f
@@ -20,7 +21,6 @@ bool chica_scared;
 static float move_timer;
 int chica_cam_last;
 int chica_cam;
-bool chica_is_jumpscaring;
 static float scare_timer;
 static float kitchen_noise_timer = 0.0f;
 
@@ -73,7 +73,7 @@ void chica_load(void)
 	move_timer = 0.0f;
 	chica_cam_last = 0;
 	chica_cam = 0;
-	chica_is_jumpscaring = false;
+	game_jumpscare_flags &= ~(JUMPSCARE_FLAG_CHICA);
 	scare_timer = 0.0f;
 
 	objects_load(chica_scare, CHICA_SCARE_FRAMES, chica_scare_paths);
@@ -125,7 +125,7 @@ static void _chica_update_kitchen_volume(void)
 
 void chica_update(double dt)
 {
-	if (chica_is_jumpscaring) {
+        if (game_jumpscare_flags & JUMPSCARE_FLAG_CHICA) {
 		scare_timer += dt * speed_fps(50);
 		scare_timer = wrapf(scare_timer, CHICA_SCARE_FRAMES, NULL);
 		return;
@@ -133,7 +133,7 @@ void chica_update(double dt)
 
 	bool cam_flip_down = (!camera_is_visible && camera_was_visible);
 	if (chica_cam == YOURE_FUCKED && cam_flip_down) {
-		chica_is_jumpscaring = true;
+                game_jumpscare_flags |= JUMPSCARE_FLAG_CHICA;
 		wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
 		return;
 	}

@@ -4,6 +4,7 @@
 #include "engine/object.h"
 #include "engine/sfx.h"
 
+#include "game/game.h"
 #include "game/camera.h"
 #include "game/buttons.h"
 #include "game/bonnie.h"
@@ -18,7 +19,6 @@ static float opportunity_timer;
 static float move_timer;
 int freddy_cam_last;
 int freddy_cam;
-bool freddy_is_jumpscaring;
 static bool ready_to_scare;
 static float ready_scare_timer;
 float freddy_scare_timer;
@@ -59,7 +59,7 @@ void freddy_load(void)
 	move_timer = 0.0f;
 	freddy_cam_last = 0;
 	freddy_cam = 0;
-	freddy_is_jumpscaring = false;
+        game_jumpscare_flags &= ~(JUMPSCARE_FLAG_FREDDY);
 	ready_to_scare = false;
 	ready_scare_timer = 0.0f;
 	freddy_scare_timer = 0.0f;
@@ -104,7 +104,8 @@ void freddy_update(double dt)
 		bool try_scare;
 		ready_scare_timer = wrapf(ready_scare_timer, 1, &try_scare);
 		if (try_scare && ((rand() % 4) == 0)) {
-			freddy_is_jumpscaring = true;
+	                game_jumpscare_flags |= JUMPSCARE_FLAG_FREDDY;
+                        debugf("%d\n", game_jumpscare_flags);
 			ready_to_scare = false;
 			wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
 			return;
@@ -112,7 +113,7 @@ void freddy_update(double dt)
 		return;
 	}
 
-	if (freddy_is_jumpscaring) {
+	if (game_jumpscare_flags & JUMPSCARE_FLAG_FREDDY) {
 		freddy_scare_timer += dt * speed_fps(25);
 		freddy_scare_timer =
 			clampf(freddy_scare_timer, 0, FREDDY_SCARE_FRAMES);
@@ -172,9 +173,8 @@ void freddy_update(double dt)
 	*/
 
 	/* Don't move Freddy while Bonnie and Chica are on stage */
-	if (	((camera_states[CAM_1A] & BONNIE_BIT) ||
-		(camera_states[CAM_1A] & CHICA_BIT)) && 
-		freddy_cam == CAM_1A) {
+	if (((camera_states[CAM_1A] & BONNIE_BIT) ||
+	    (camera_states[CAM_1A] & CHICA_BIT)) && freddy_cam == CAM_1A) {
 		return;
 	}
 
