@@ -34,6 +34,24 @@ MKFONT_FLAGS=--size 8
 
 all: $(GAME).z64
 
+CTFAK.Cli:
+	docker build \
+		--file Dockerfile-ctfak \
+		--progress plain \
+		--target out \
+		--output type=local,dest=. \
+		.
+.PHONY: CTFAK.Cli
+
+dump: CTFAK.Cli
+	docker build \
+		--file Dockerfile-dump \
+		--progress plain \
+		--target out \
+		--output type=local,dest=. \
+		.
+.PHONY: dump
+
 filesystem/%.wav64: assets/%.wav
 	@mkdir -p $(dir $@)
 	@echo "    [AUDIO] $@"
