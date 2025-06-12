@@ -151,10 +151,6 @@ void bonnie_update(double dt)
 	int cam_next = new_cam_lut[bonnie_cam][which_room];
 	if (cam_next == YOURE_FUCKED && (button_state & BUTTON_LEFT_DOOR)) {
 		cam_next = CAM_1B;
-		/* BULLSHIT FIX THIS SHOULDN'T HAVE TO BE HERE! */
-                camera_states[CAM_1B] |= (BONNIE_BIT | ROOM_SPOT_BIT);
-		if (cam_selected == CAM_1B)
-			bonnie_blackout_timer = 10;
         }
 
 	if (cam_next < AT_DOOR) {
@@ -166,22 +162,23 @@ void bonnie_update(double dt)
 
 	wav64_play(&sfx_deep_step, SFX_CH_FOOTSTEPS);
 	bonnie_cam = cam_next;
-	// bonnie_cam = CAM_2B;
 	which_spot = rand() & 1;
 
-	/* I have no fucking clue why I have to do this */
-	if (bonnie_cam_last < AT_DOOR) {
-        	camera_states[bonnie_cam_last] &= ~(BONNIE_BIT | ROOM_SPOT_BIT);
-		if (bonnie_cam < AT_DOOR)
-        		camera_states[bonnie_cam] |=
-				BONNIE_BIT | (ROOM_SPOT_BIT * which_spot);
+        /*
+         * Black out the cameras if Bonnie moves while we're looking
+         * either at where he was or has just moved to.
+         */
+        if ((bonnie_cam_last != bonnie_cam) &&
+            ((bonnie_cam_last == cam_selected) ||
+             (bonnie_cam == cam_selected))) {
         	bonnie_blackout_timer = 10;
 	}
 
 	if (bonnie_cam != AT_DOOR)
 		bonnie_scared = false;
 
-	if (             (bonnie_cam == AT_DOOR && bonnie_cam_last != AT_DOOR) ||
-			(bonnie_cam != AT_DOOR && bonnie_cam_last == AT_DOOR))
+	if ((bonnie_cam == AT_DOOR && bonnie_cam_last != AT_DOOR) ||
+	    (bonnie_cam != AT_DOOR && bonnie_cam_last == AT_DOOR)) {
 		button_state &= ~BUTTON_LEFT_LIGHT;
+        }
 }

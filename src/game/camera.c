@@ -161,11 +161,8 @@ static struct camera_state *cam_states[CAM_COUNT] = {
 	NULL, cam_7_states,
 };
 
-static int camera_states_last[CAM_COUNT] = {0};
-int camera_states[CAM_COUNT] = {
-	FREDDY_BIT | BONNIE_BIT | CHICA_BIT,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-};
+static int camera_states_last[CAM_COUNT] = { 0 };
+int camera_states[CAM_COUNT] = { 0 };
 
 static float flip_timer = 0.0f;
 static float button_blink_timer = 0.0f;
@@ -198,13 +195,6 @@ static struct object views_extra[VIEWS_EXTRA];
 
 void camera_load(void)
 {
-        int i;
-
-	camera_states[0] = (FREDDY_BIT | BONNIE_BIT | CHICA_BIT);
-	for (i = 1; i < CAM_COUNT; ++i) {
-		camera_states[i] = 0;
-        }
-
 	flip_timer = 0.0f;
 	camera_was_using = false;
 	camera_is_using = false;
@@ -665,9 +655,9 @@ static void camera_update_robot_voice(double dt)
 	if (!robot_voice_tick)
 		return;
 
-	bool bonnie_in_cam_and_looking =
+	bool bonnie_in_corner_cam_and_looking =
 		(cam_selected == bonnie_cam && bonnie_cam == CAM_2B);
-	bool chica_in_cam_and_looking =
+	bool chica_in_corner_cam_and_looking =
 		(cam_selected == chica_cam && chica_cam == CAM_4B);
 
 	if (!camera_is_visible || SAVE_NIGHT_NUM(save_data) < 4) {
@@ -675,7 +665,8 @@ static void camera_update_robot_voice(double dt)
 		return;
 	}
 
-	if (bonnie_in_cam_and_looking || chica_in_cam_and_looking) {
+	if (bonnie_in_corner_cam_and_looking ||
+            chica_in_corner_cam_and_looking) {
 		float vol = (float)(1 + (rand() % 5) * 5) / 100.0f;
 		mixer_ch_set_vol(SFX_CH_ROBOTVOICE, vol, vol);
 		return;
@@ -703,6 +694,18 @@ static void camera_update_face_glitch(double dt)
 
 void camera_update(const struct update_params uparms)
 {
+        int i;
+
+        /*
+         * Refresh the camera states based on the
+         * animatronics current positions.
+         */
+        for (i = 0; i < CAM_COUNT; ++i) {
+                camera_states[i] = ((i == bonnie_cam) * BONNIE_BIT) |
+                                   ((i == chica_cam) * CHICA_BIT) |
+                                   ((i == freddy_cam) * FREDDY_BIT);
+        }
+
 	camera_flip_update(uparms);
 	camera_was_visible = camera_is_visible;
 	camera_is_visible = ((int)flip_timer == FLIP_FRAMES);
