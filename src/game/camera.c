@@ -21,6 +21,9 @@
 #define FLIP_FRAMES 11
 #define FLICKER_BIT 8
 
+#define CAM_MANUAL_TURN_SPEED 6.f
+#define CAM_MANUAL_TURN_MIN -640
+
 const int cam_button_pos[CAM_COUNT][2] = {
 	{ 983, 353}, // 1A
 	{ 963, 409}, // 1B
@@ -476,19 +479,15 @@ static void camera_handle_sfx(void)
 	return;
 }
 
-static void camera_update_turn_manual(const struct update_params uparms)
-{
-	if (!camera_is_visible)
-		return;
-
-	view_turn -= uparms.sticks.stick_x * uparms.dt * 6;
-	view_turn = clampf(view_turn, -640, 0);
-}
-
 static void camera_update_turn(const struct update_params uparms)
 {
 	if (settings_flags & SET_MANUAL_CAM_TURN_BIT) {
-		camera_update_turn_manual(uparms);
+                if (camera_is_visible) {
+	                view_turn -= icutoff(uparms.sticks.stick_x, 10) *
+                                     CAM_MANUAL_TURN_SPEED * uparms.dt;
+	                view_turn = clampf(view_turn, CAM_MANUAL_TURN_MIN, 0);
+                }
+
 		return;
 	}
 
