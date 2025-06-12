@@ -1,6 +1,6 @@
 #pragma once
 
-/* #define TITLE_DEBUG_ENABLED */
+// #define TITLE_DEBUG_ENABLED
 
 #include <libdragon.h>
 
@@ -8,4 +8,4 @@
 #include "engine/update.h"
 
 void title_draw(void);
-enum scene title_update(struct update_params uparms);
+enum scene title_update(const struct update_params uparms);
