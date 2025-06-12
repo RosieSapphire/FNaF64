@@ -87,6 +87,10 @@ int main(void)
 		rdpq_detach_show();
 
                 /* Updating */
+                /*
+                 * TODO: Change the update section of code to only
+                 * happen at a designated tickrate of 60.
+                 */
 		joypad_poll();
 		uparams.dt = display_get_delta_time();
 		uparams.held = joypad_get_buttons_held(JOYPAD_PORT_1),
