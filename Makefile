@@ -39,6 +39,7 @@ with-docker:
 	docker build \
 		--file Dockerfile \
 		--progress plain \
+		--platform linux/amd64 \
 		--target out \
 		--output type=local,dest=. \
 		.
