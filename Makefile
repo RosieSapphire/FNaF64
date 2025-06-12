@@ -45,7 +45,7 @@ with-docker:
 .PHONY: with-docker
 
 CTFAK.Cli:
-	[ -d "/CTFAK2.0" ] || git submodule update --init
+	[ -d CTFAK2.0 ] || git submodule update --init
 	docker build \
 		--file Dockerfile-ctfak \
 		--progress plain \
