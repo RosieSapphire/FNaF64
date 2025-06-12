@@ -12,8 +12,16 @@
 #include "game/save_data.h"
 #include "game/night_end.h"
 
+/* Uncomment this if you want to skip the 6AM transition. */
+// #define NIGHT_END_SKIP
+
 #define NIGHT_END_TIMER_PLAY_CHEER 6.2f
-#define NIGHT_END_TIMER_EXIT 1.5f
+
+#ifdef NIGHT_END_SKIP
+#define NIGHT_END_TIMER_EXIT 0.f
+#else
+#define NIGHT_END_TIMER_EXIT 11.5f
+#endif
 
 /*
  * TODO: Make it write the save data as soon as the night hits 6 AM instead
