@@ -1,0 +1,9 @@
+*
+!/assets/*
+!/dump/*
+!/include/*
+!/libdragon/*
+!/refs/*
+!/src/*
+!/copy_assets.sh
+!/Makefile

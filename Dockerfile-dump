@@ -14,6 +14,7 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
     && apt-get install -y --no-install-recommends \
         ca-certificates \
         cabextract \
+        rename \
         unzip \
         wine32:i386 \
         wine64 \
@@ -46,14 +47,17 @@ RUN xvfb-run -a sh -c "\
 FROM workspace AS runner
 
 ARG DUMP_FILE="FiveNightsatFreddys.exe"
+ARG DUMP_NAME="Five Nights at Freddys"
 
 WORKDIR /CTFAK.Cli
 COPY --chown=ubuntu:ubuntu CTFAK.Cli ./
 COPY --chown=ubuntu:ubuntu ${DUMP_FILE} ./
 RUN wine ./CTFAK.Cli.exe \
-    -path "${DUMP_FILE}" \
-    -closeonfinish \
-    -tool "Image Dumper" "Sound Dumper"
+        -path "${DUMP_FILE}" \
+        -closeonfinish \
+        -tool "Image Dumper" "Sound Dumper" \
+    && cd "Dumps/${DUMP_NAME}/Sounds" \
+    && rename 's/ /_/g' *
 
 FROM scratch AS out
 
