@@ -4,10 +4,16 @@
 #include <stdbool.h>
 
 enum {
+        SAVE_NIGHT_5_BEATEN_BIT_SHIFT = 3,
+        SAVE_NIGHT_6_BEATEN_BIT_SHIFT,
+        SAVE_MODE_20_BEATEN_BIT_SHIFT
+};
+
+enum {
         SAVE_NIGHT_NUM_BITMASK  = 0x7,
-        SAVE_NIGHT_5_BEATEN_BIT = (1 << 3),
-        SAVE_NIGHT_6_BEATEN_BIT = (1 << 4),
-        SAVE_MODE_20_BEATEN_BIT = (1 << 5),
+        SAVE_NIGHT_5_BEATEN_BIT = (1 << SAVE_NIGHT_5_BEATEN_BIT_SHIFT),
+        SAVE_NIGHT_6_BEATEN_BIT = (1 << SAVE_NIGHT_6_BEATEN_BIT_SHIFT),
+        SAVE_MODE_20_BEATEN_BIT = (1 << SAVE_MODE_20_BEATEN_BIT_SHIFT),
         SAVE_BEATEN_BITMASK     = SAVE_NIGHT_5_BEATEN_BIT |
                                   SAVE_NIGHT_6_BEATEN_BIT |
                                   SAVE_MODE_20_BEATEN_BIT
