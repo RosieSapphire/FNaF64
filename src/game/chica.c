@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "engine/object.h"
+#include "engine/graphic.h"
 #include "engine/sfx.h"
 #include "engine/util.h"
 
@@ -56,7 +56,7 @@ static const int new_cam_lut[CAM_COUNT + 2][2] = {
 
 #define CHICA_SCARE_FRAMES 8
 
-struct object chica_scare[CHICA_SCARE_FRAMES];
+struct graphic chica_scare[CHICA_SCARE_FRAMES];
 const char *chica_scare_paths[CHICA_SCARE_FRAMES] = {
 	TX_CHICA_SCARE0, TX_CHICA_SCARE1, TX_CHICA_SCARE2,
 	TX_CHICA_SCARE3, TX_CHICA_SCARE4, TX_CHICA_SCARE5,
@@ -76,17 +76,17 @@ void chica_load(void)
 	game_jumpscare_flags &= ~(JUMPSCARE_FLAG_CHICA);
 	scare_timer = 0.0f;
 
-	objects_load(chica_scare, CHICA_SCARE_FRAMES, chica_scare_paths);
+	graphics_load(chica_scare, CHICA_SCARE_FRAMES, chica_scare_paths);
 }
 
 void chica_unload(void)
 {
-	objects_unload(chica_scare, CHICA_SCARE_FRAMES);
+	graphics_unload(chica_scare, CHICA_SCARE_FRAMES);
 }
 
 void chica_draw_scare(void)
 {
-	object_draw(chica_scare[(int)scare_timer], 0, 0, 0, 0);
+	graphic_draw(chica_scare[(int)scare_timer], 0, 0, 0, 0, 0);
 }
 
 void chica_draw_debug(void)

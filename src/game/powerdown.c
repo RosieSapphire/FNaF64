@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "engine/object.h"
+#include "engine/graphic.h"
 #include "engine/util.h"
 #include "engine/sfx.h"
 #include "engine/perspective.h"
@@ -12,12 +12,12 @@
 #include "game/powerdown.h"
 
 #define FREDDY_SCARE_FRAMES 18
-static struct object room_views[2];
+static struct graphic room_views[2];
 static const char *room_view_paths[2] = {
 	TX_OFFICE_POWERDOWN0, TX_OFFICE_POWERDOWN1
 };
 
-static struct object freddy_scare[FREDDY_SCARE_FRAMES];
+static struct graphic freddy_scare[FREDDY_SCARE_FRAMES];
 static const char *freddy_scare_paths[FREDDY_SCARE_FRAMES] = {
 	TX_FREDDY_SCARE_DARK00, TX_FREDDY_SCARE_DARK01, TX_FREDDY_SCARE_DARK02,
 	TX_FREDDY_SCARE_DARK03, TX_FREDDY_SCARE_DARK04, TX_FREDDY_SCARE_DARK05,
@@ -60,7 +60,7 @@ static void _power_down_load(void)
 	shut_down_flicker_timer = 0.0f;
 	shut_down_timer = 0.0f;
 	shut_down_flicker = 0;
-	objects_load(room_views, 2, room_view_paths);
+	graphics_load(room_views, 2, room_view_paths);
 	mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.6f, 0.6f);
 	wav64_play(&sfx_power_down, SFX_CH_AMBIENCE);
 
@@ -72,8 +72,8 @@ static void _power_down_unload(void)
 	if (!is_loaded)
 		return;
 
-	objects_unload(room_views, 2);
-	objects_unload(freddy_scare, FREDDY_SCARE_FRAMES);
+	graphics_unload(room_views, 2);
+	graphics_unload(freddy_scare, FREDDY_SCARE_FRAMES);
 
 	is_loaded = false;
 }
@@ -95,12 +95,13 @@ void power_down_draw(void)
 			rdpq_set_mode_copy(false);
 			int frame = (freddy_scare_anim_timer / 40.0f) *
 				FREDDY_SCARE_FRAMES;
-			object_draw(freddy_scare[frame], 0, 0, 0, 0);
+			graphic_draw(freddy_scare[frame], 0, 0,
+                                     0, 0, GFX_FLIP_NONE);
 		}
 		return;
 	}
 
-	object_draw(room_views[state], office_turn, 0, 0, 0);
+	graphic_draw(room_views[state], office_turn, 0, 0, 0, GFX_FLIP_NONE);
 	perspective_end();
 }
 
@@ -166,7 +167,7 @@ enum scene power_down_update(struct update_params uparms)
 			freddy_state = 3;
 			shut_down_flicker = 0;
 			debugf("Load freddy frames\n");
-			objects_load(freddy_scare, FREDDY_SCARE_FRAMES,
+			graphics_load(freddy_scare, FREDDY_SCARE_FRAMES,
 					freddy_scare_paths);
 		}
 

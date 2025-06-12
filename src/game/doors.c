@@ -1,4 +1,4 @@
-#include "engine/object.h"
+#include "engine/graphic.h"
 #include "engine/util.h"
 
 #include "game/office.h"
@@ -12,7 +12,7 @@
 #define FRAMES 15
 
 float door_timers[2];
-struct object frames[FRAMES];
+struct graphic frames[FRAMES];
 const char *frame_paths[FRAMES] = {
 	TX_DOOR_ANIM00, TX_DOOR_ANIM01, TX_DOOR_ANIM02,
 	TX_DOOR_ANIM03, TX_DOOR_ANIM04, TX_DOOR_ANIM05,
@@ -23,24 +23,25 @@ const char *frame_paths[FRAMES] = {
 
 void doors_load(void)
 {
-	objects_load(frames, FRAMES, frame_paths);
+	graphics_load(frames, FRAMES, frame_paths);
 	door_timers[0] = 0;
 	door_timers[1] = 0;
 }
 
 void doors_unload(void)
 {
-	objects_unload(frames, FRAMES);
+	graphics_unload(frames, FRAMES);
 }
 
 void doors_draw(void)
 {
 	rdpq_set_mode_copy(true);
-	object_draw(frames[(int)door_timers[LEFT]], 72 + office_turn, -1, 0, 0);
+	graphic_draw(frames[(int)door_timers[LEFT]],
+                     72 + office_turn, -1, 0, 0, 0);
 	rdpq_set_mode_standard();
 	rdpq_mode_alphacompare(true);
-	object_draw_flipped(frames[(int)door_timers[RIGHT]],
-			1270 + office_turn, -2, 0, 0);
+	graphic_draw(frames[(int)door_timers[RIGHT]],
+		     1270 + office_turn, -2, 0, 0, GFX_FLIP_X);
 }
 
 void doors_update(double dt)

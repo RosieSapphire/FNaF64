@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "engine/object.h"
+#include "engine/graphic.h"
 #include "engine/util.h"
 
 #include "game/texture_index.h"
@@ -8,7 +8,7 @@
 
 #define STATIC_FRAME_CNT 8
 
-static struct object static_frames[STATIC_FRAME_CNT];
+static struct graphic static_frames[STATIC_FRAME_CNT];
 static const char *static_frame_paths[STATIC_FRAME_CNT] = {
 	TX_STATIC0,
         TX_STATIC1,
@@ -25,7 +25,7 @@ static int static_frame = 0;
 
 void static_load(void)
 {
-	objects_load(static_frames, STATIC_FRAME_CNT, static_frame_paths);
+	graphics_load(static_frames, STATIC_FRAME_CNT, static_frame_paths);
 }
 
 void static_draw(const bool as_overlay)
@@ -34,7 +34,7 @@ void static_draw(const bool as_overlay)
 	if (as_overlay) {
 		rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
         }
-	object_draw(static_frames[static_frame], 0, 0, 0, 0);
+	graphic_draw(static_frames[static_frame], 0, 0, 0, 0, GFX_FLIP_NONE);
 }
 
 void static_update(const float dt)
@@ -56,5 +56,5 @@ void static_update(const float dt)
 
 void static_unload(void)
 {
-	objects_unload(static_frames, STATIC_FRAME_CNT);
+	graphics_unload(static_frames, STATIC_FRAME_CNT);
 }

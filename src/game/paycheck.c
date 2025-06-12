@@ -1,6 +1,6 @@
 #include <stdbool.h>
 
-#include "engine/object.h"
+#include "engine/graphic.h"
 #include "engine/sfx.h"
 
 #include "game/game.h"
@@ -11,7 +11,7 @@
 static bool is_loaded = false;
 
 static float timer;
-static struct object screens[3];
+static struct graphic screens[3];
 
 static void paycheck_load(void)
 {
@@ -19,9 +19,9 @@ static void paycheck_load(void)
 		return;
 
 	timer = 0.0f;
-	object_load(screens + 0, TX_PAYCHECK1);
-	object_load(screens + 1, TX_PAYCHECK2);
-	object_load(screens + 2, TX_PINK_SLIP);
+	graphic_load(screens + 0, TX_PAYCHECK1);
+	graphic_load(screens + 1, TX_PAYCHECK2);
+	graphic_load(screens + 2, TX_PINK_SLIP);
 	mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.8f, 0.8f);
 	wav64_play(&sfx_music_box, SFX_CH_AMBIENCE);
 
@@ -33,7 +33,7 @@ static void paycheck_unload(void)
 	if (!is_loaded)
 		return;
 	
-	objects_unload(screens, 3);
+	graphics_unload(screens, 3);
 
 	is_loaded = false;
 }
@@ -63,7 +63,8 @@ void paycheck_draw(void)
          * get the same paycheck as night 6. However, you still get the
          * 3rd star, and it's marked on your save file.
          */
-	object_draw(screens[SAVE_NIGHT_NUM(save_data) - 6], 0, 0, 0, 0);
+	graphic_draw(screens[SAVE_NIGHT_NUM(save_data) - 6],
+                     0, 0, 0, 0, GFX_FLIP_NONE);
 }
 
 enum scene paycheck_update(struct update_params uparms)

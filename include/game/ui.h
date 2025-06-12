@@ -1,6 +1,6 @@
 #pragma once
 
-#include "engine/object.h"
+#include "engine/graphic.h"
 
 void ui_load(void);
 void ui_unload(void);

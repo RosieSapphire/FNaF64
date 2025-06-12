@@ -11,7 +11,7 @@
 #include <stdlib.h>
 
 #include "engine/util.h"
-#include "engine/object.h"
+#include "engine/graphic.h"
 #include "engine/sfx.h"
 
 #include "game/buttons.h"
@@ -65,7 +65,7 @@ static const int new_cam_lut[CAM_COUNT + 2][2] = {
 
 #define BONNIE_SCARE_FRAMES 11
 
-struct object bonnie_scare[BONNIE_SCARE_FRAMES];
+struct graphic bonnie_scare[BONNIE_SCARE_FRAMES];
 const char *bonnie_scare_paths[BONNIE_SCARE_FRAMES] = {
         TX_BONNIE_SCARE00, TX_BONNIE_SCARE01, TX_BONNIE_SCARE02,
         TX_BONNIE_SCARE03, TX_BONNIE_SCARE04, TX_BONNIE_SCARE05,
@@ -86,17 +86,17 @@ void bonnie_load(void)
         game_jumpscare_flags &= ~(JUMPSCARE_FLAG_BONNIE);
 	scare_timer = 0.0f;
 
-	objects_load(bonnie_scare, BONNIE_SCARE_FRAMES, bonnie_scare_paths);
+	graphics_load(bonnie_scare, BONNIE_SCARE_FRAMES, bonnie_scare_paths);
 }
 
 void bonnie_unload(void)
 {
-	objects_unload(bonnie_scare, BONNIE_SCARE_FRAMES);
+	graphics_unload(bonnie_scare, BONNIE_SCARE_FRAMES);
 }
 
 void bonnie_draw_scare(void)
 {
-	object_draw(bonnie_scare[(int)scare_timer], 0, 0, 0, 0);
+	graphic_draw(bonnie_scare[(int)scare_timer], 0, 0, 0, 0, 0);
 }
 
 void bonnie_draw_debug(void)

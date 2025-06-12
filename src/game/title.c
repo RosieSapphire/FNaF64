@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "engine/object.h"
+#include "engine/graphic.h"
 #include "engine/util.h"
 #include "engine/sfx.h"
 
@@ -59,37 +59,37 @@ static float   title_new_game_timer;
 static float   title_save_file_delete_timer;
 static uint8_t title_flags;
 
-static struct object title_gfx_freddy_face[TITLE_GFX_FREDDY_FACE_CNT];
-static struct object title_gfx_night_text;
-static struct object title_gfx_night_atlas;
-static struct object title_gfx_star;
-static struct object title_gfx_selector;
-static struct object title_gfx_fnaf_text;
-static struct object title_gfx_opt_text;
-static struct object title_gfx_settings_text;
-static struct object title_gfx_settings_opt_text;
-static struct object title_gfx_bind_btn_text;
-static struct object title_gfx_settings_descs;
-static struct object title_gfx_eeprom_err;
-static struct object title_gfx_newspaper;
+static struct graphic title_gfx_freddy_face[TITLE_GFX_FREDDY_FACE_CNT];
+static struct graphic title_gfx_night_text;
+static struct graphic title_gfx_night_atlas;
+static struct graphic title_gfx_star;
+static struct graphic title_gfx_selector;
+static struct graphic title_gfx_fnaf_text;
+static struct graphic title_gfx_opt_text;
+static struct graphic title_gfx_settings_text;
+static struct graphic title_gfx_settings_opt_text;
+static struct graphic title_gfx_bind_btn_text;
+static struct graphic title_gfx_settings_descs;
+static struct graphic title_gfx_eeprom_err;
+static struct graphic title_gfx_newspaper;
 
 static void title_load(void)
 {
         /* Graphics */
-	objects_load(title_gfx_freddy_face, TITLE_GFX_FREDDY_FACE_CNT,
+	graphics_load(title_gfx_freddy_face, TITLE_GFX_FREDDY_FACE_CNT,
                      title_gfx_freddy_face_paths);
-	object_load(&title_gfx_night_text, TX_NIGHT_TEXT);
-	object_load(&title_gfx_night_atlas, TX_NIGHT_NUM_ATLAS);
-	object_load(&title_gfx_star, TX_STAR);
-	object_load(&title_gfx_selector, TX_SELECTOR);
-	object_load(&title_gfx_fnaf_text, TX_TITLE_TEXT);
-	object_load(&title_gfx_opt_text, TX_TITLE_OPTIONS);
-	object_load(&title_gfx_settings_text, TX_SETTINGS_TEXT);
-	object_load(&title_gfx_settings_opt_text, TX_SETTINGS_OPTS);
-	object_load(&title_gfx_bind_btn_text, TX_BIND_BUTTONS_TEXT);
-	object_load(&title_gfx_settings_descs, TX_SETTINGS_DESCS);
-	object_load(&title_gfx_eeprom_err, TX_EEPROM_ERROR);
-	object_load(&title_gfx_newspaper, TX_NEWSPAPER);
+	graphic_load(&title_gfx_night_text, TX_NIGHT_TEXT);
+	graphic_load(&title_gfx_night_atlas, TX_NIGHT_NUM_ATLAS);
+	graphic_load(&title_gfx_star, TX_STAR);
+	graphic_load(&title_gfx_selector, TX_SELECTOR);
+	graphic_load(&title_gfx_fnaf_text, TX_TITLE_TEXT);
+	graphic_load(&title_gfx_opt_text, TX_TITLE_OPTIONS);
+	graphic_load(&title_gfx_settings_text, TX_SETTINGS_TEXT);
+	graphic_load(&title_gfx_settings_opt_text, TX_SETTINGS_OPTS);
+	graphic_load(&title_gfx_bind_btn_text, TX_BIND_BUTTONS_TEXT);
+	graphic_load(&title_gfx_settings_descs, TX_SETTINGS_DESCS);
+	graphic_load(&title_gfx_eeprom_err, TX_EEPROM_ERROR);
+	graphic_load(&title_gfx_newspaper, TX_NEWSPAPER);
 
 	blip_trigger(true);
 	wav64_play(&sfx_static, SFX_CH_STATIC);
@@ -109,19 +109,19 @@ static void title_load(void)
 
 static void title_unload(void)
 {
-	object_unload(&title_gfx_eeprom_err);
-	object_unload(&title_gfx_settings_descs);
-	object_unload(&title_gfx_bind_btn_text);
-	object_unload(&title_gfx_settings_opt_text);
-	object_unload(&title_gfx_settings_text);
-	object_unload(&title_gfx_newspaper);
-	object_unload(&title_gfx_night_atlas);
-	object_unload(&title_gfx_night_text);
-	object_unload(&title_gfx_opt_text);
-	object_unload(&title_gfx_fnaf_text);
-	object_unload(&title_gfx_selector);
-	object_unload(&title_gfx_star);
-	objects_unload(title_gfx_freddy_face, TITLE_GFX_FREDDY_FACE_CNT);
+	graphic_unload(&title_gfx_eeprom_err);
+	graphic_unload(&title_gfx_settings_descs);
+	graphic_unload(&title_gfx_bind_btn_text);
+	graphic_unload(&title_gfx_settings_opt_text);
+	graphic_unload(&title_gfx_settings_text);
+	graphic_unload(&title_gfx_newspaper);
+	graphic_unload(&title_gfx_night_atlas);
+	graphic_unload(&title_gfx_night_text);
+	graphic_unload(&title_gfx_opt_text);
+	graphic_unload(&title_gfx_fnaf_text);
+	graphic_unload(&title_gfx_selector);
+	graphic_unload(&title_gfx_star);
+	graphics_unload(title_gfx_freddy_face, TITLE_GFX_FREDDY_FACE_CNT);
 
         title_flags &= ~(TITLE_FLAG_IS_LOADED);
 }
@@ -149,7 +149,8 @@ void title_draw(void)
 	freddy_face_cur = (title_face_state < TITLE_GFX_FREDDY_FACE_CNT) *
                           title_face_state;
 	rdpq_set_mode_copy(false);
-	object_draw(title_gfx_freddy_face[freddy_face_cur], 0, 0, 0, 0);
+	graphic_draw(title_gfx_freddy_face[freddy_face_cur],
+                     0, 0, 0, 0, GFX_FLIP_NONE);
 	static_draw(true);
 
         /* Draw settings menu if it's open and skip the rest. */
@@ -160,13 +161,16 @@ void title_draw(void)
 
 	        rdpq_set_mode_standard();
 	        rdpq_mode_alphacompare(true);
-	        object_draw(title_gfx_settings_text, 64, 64, 0, 0);
-	        object_draw(title_gfx_settings_opt_text, 128, 256, 0, 0);
+	        graphic_draw(title_gfx_settings_text, 64,
+                             64, 0, 0, GFX_FLIP_NONE);
+	        graphic_draw(title_gfx_settings_opt_text,
+                             128, 256, 0, 0, GFX_FLIP_NONE);
 
-	        object_draw(title_gfx_selector, 40,
-                            sett_opt_cur_y_pos[title_opt_cur_setting], 0, 0);
-	        object_draw_index_y(title_gfx_settings_descs, 132,
-                                    162, 20, title_opt_cur_setting);
+	        graphic_draw(title_gfx_selector, 40,
+                             sett_opt_cur_y_pos[title_opt_cur_setting],
+                             0, 0, GFX_FLIP_NONE);
+	        graphic_draw_index_y(title_gfx_settings_descs, 132, 162, 20,
+                                     title_opt_cur_setting, GFX_FLIP_NONE);
 
                 /*
                  * Draw the little boxes indicating
@@ -200,20 +204,24 @@ void title_draw(void)
                     SAVE_MODE_20_BEATEN_BIT_SHIFT);
 	title_opt_available = CLAMP(star_cnt, 0, 2) + 2;
 	for (i = 0; i < star_cnt; ++i) {
-		object_draw(title_gfx_star, 93 + 77 * i, 350, 28, 27);
+		graphic_draw(title_gfx_star, 93 + 77 * i,
+                             350, 28, 27, GFX_FLIP_NONE);
         }
 
-	object_draw_index_y(title_gfx_opt_text, 118, 420,
-                            22 * title_opt_available, 0);
-	object_draw(title_gfx_fnaf_text, 70, 68, 0, 0);
-	object_draw(title_gfx_bind_btn_text, 558, 45, 0, 0);
-	object_draw(title_gfx_selector, 40, 429 + title_opt_cur * 66, 0, 0);
+	graphic_draw_index_y(title_gfx_opt_text, 118, 420,
+                            22 * title_opt_available, 0, GFX_FLIP_NONE);
+	graphic_draw(title_gfx_fnaf_text, 70, 68, 0, 0, GFX_FLIP_NONE);
+	graphic_draw(title_gfx_bind_btn_text, 558, 45, 0, 0, GFX_FLIP_NONE);
+	graphic_draw(title_gfx_selector, 40,
+                     429 + title_opt_cur * 66, 0, 0, GFX_FLIP_NONE);
 
         /* Draw night number if we're hovering over Continue. */
 	if (title_opt_cur == TITLE_OPT_CONTINUE) {
-		object_draw(title_gfx_night_text, 444, 509, 0, 0);
-		object_draw_index_y(title_gfx_night_atlas, 512, 509, 6,
-                                    CLAMP(SAVE_NIGHT_NUM(save_data), 1, 5));
+		graphic_draw(title_gfx_night_text, 444, 509,
+                             0, 0, GFX_FLIP_NONE);
+		graphic_draw_index_y(title_gfx_night_atlas, 512, 509, 6,
+                                     CLAMP(SAVE_NIGHT_NUM(save_data), 1, 5),
+                                     GFX_FLIP_NONE);
 	}
 
 	blip_draw();
@@ -228,7 +236,8 @@ void title_draw(void)
 
 		rdpq_set_mode_standard();
 		rdpq_mode_alphacompare(true);
-		object_draw(title_gfx_eeprom_err, 96, 168, 0, 0);
+		graphic_draw(title_gfx_eeprom_err, 96, 168,
+                             0, 0, GFX_FLIP_NONE);
 	}
 
 	if (!(title_flags & TITLE_FLAG_NEW_GAME_START)) {
@@ -251,7 +260,7 @@ title_draw_newspaper:
 	rdpq_mode_alphacompare(true);
 	rdpq_set_fog_color(RGBA32(0xFF, 0xFF, 0xFF, newspaper_alpha * 255));
      	rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
-	object_draw(title_gfx_newspaper, 0, 0, 0, 0);
+	graphic_draw(title_gfx_newspaper, 0, 0, 0, 0, GFX_FLIP_NONE);
 }
 
 enum scene title_update(const struct update_params uparms)

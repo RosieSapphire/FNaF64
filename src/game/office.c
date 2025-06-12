@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "engine/object.h"
+#include "engine/graphic.h"
 #include "engine/util.h"
 #include "engine/sfx.h"
 
@@ -23,20 +23,20 @@ static float office_turn_lerp;
 float flicker_rand_timer;
 int flicker_rand;
 
-static struct object room_views[ROOM_VIEW_CNT];
+static struct graphic room_views[ROOM_VIEW_CNT];
 static const char *room_view_paths[ROOM_VIEW_CNT] = {
 	TX_OFFICE_NORMAL, TX_OFFICE_LEFT_EMPTY, TX_OFFICE_RIGHT_EMPTY,
 	TX_OFFICE_LEFT_BONNIE, TX_OFFICE_RIGHT_CHICA,
 };
 
-struct object foxy_scare[FOXY_SCARE_FRAMES];
+struct graphic foxy_scare[FOXY_SCARE_FRAMES];
 const char *foxy_scare_paths[FOXY_SCARE_FRAMES] = {
 	TX_FOXY_SCARE0, TX_FOXY_SCARE1, TX_FOXY_SCARE2,
 	TX_FOXY_SCARE3, TX_FOXY_SCARE4, TX_FOXY_SCARE5,
 	TX_FOXY_SCARE6, TX_FOXY_SCARE7,
 };
 
-struct object freddy_scare[FREDDY_SCARE_FRAMES];
+struct graphic freddy_scare[FREDDY_SCARE_FRAMES];
 const char *freddy_scare_paths[FREDDY_SCARE_FRAMES] = {
 	TX_FREDDY_SCARE_ROOM00, TX_FREDDY_SCARE_ROOM01, TX_FREDDY_SCARE_ROOM02,
 	TX_FREDDY_SCARE_ROOM03, TX_FREDDY_SCARE_ROOM04, TX_FREDDY_SCARE_ROOM05,
@@ -52,15 +52,15 @@ void office_load(void)
 	flicker_rand_timer = 0.0f;
 	flicker_rand = 0;
 
-	objects_load(room_views, ROOM_VIEW_CNT, room_view_paths);
-	objects_load(foxy_scare, FOXY_SCARE_FRAMES, foxy_scare_paths);
+	graphics_load(room_views, ROOM_VIEW_CNT, room_view_paths);
+	graphics_load(foxy_scare, FOXY_SCARE_FRAMES, foxy_scare_paths);
 	wav64_play(&sfx_light, SFX_CH_LIGHT);
 }
 
 void office_unload(void)
 {
-	objects_unload(room_views, ROOM_VIEW_CNT);
-	objects_unload(foxy_scare, FOXY_SCARE_FRAMES);
+	graphics_unload(room_views, ROOM_VIEW_CNT);
+	graphics_unload(foxy_scare, FOXY_SCARE_FRAMES);
 }
 
 void office_draw(void)
@@ -70,23 +70,24 @@ void office_draw(void)
 	rdpq_set_mode_copy(false);
 
 	if (game_jumpscare_flags & JUMPSCARE_FLAG_FOXY) {
-		object_draw(foxy_scare[(int)foxy_scare_timer],
-			    office_turn, 0, 0, 0);
+		graphic_draw(foxy_scare[(int)foxy_scare_timer],
+			    office_turn, 0, 0, 0, GFX_FLIP_NONE);
 		return;
 	}
 
 	for (i = 0; i < FREDDY_SCARE_FRAMES; ++i) {
-		if ((int)freddy_scare_timer == i)
+		if ((int)freddy_scare_timer == i) {
 			continue;
+                }
 
-		object_unload(freddy_scare + i);
+		graphic_unload(freddy_scare + i);
 	}
 
 	if (game_jumpscare_flags & JUMPSCARE_FLAG_FREDDY) {
 		int frame = (int)freddy_scare_timer;
-		object_load(freddy_scare + frame, freddy_scare_paths[frame]);
-		object_draw(freddy_scare[(int)freddy_scare_timer],
-			    office_turn, 0, 0, 0);
+		graphic_load(freddy_scare + frame, freddy_scare_paths[frame]);
+		graphic_draw(freddy_scare[(int)freddy_scare_timer],
+			    office_turn, 0, 0, 0, GFX_FLIP_NONE);
 		return;
 	}
 
@@ -115,7 +116,7 @@ void office_draw(void)
                 view_cur = 0;
         }
 
-	object_draw(room_views[view_cur], office_turn, 0, 0, 0);
+	graphic_draw(room_views[view_cur], office_turn, 0, 0, 0, GFX_FLIP_NONE);
 }
 
 static void _office_update_turn_normal(struct update_params uparms)

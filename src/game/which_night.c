@@ -1,4 +1,4 @@
-#include "engine/object.h"
+#include "engine/graphic.h"
 #include "engine/util.h"
 
 #include "game/blip.h"
@@ -11,7 +11,7 @@
 #include "game/save_data.h"
 #include "game/which_night.h"
 
-struct object which_night_atlas;
+struct graphic which_night_atlas;
 static float timer;
 static bool is_loaded = false;
 
@@ -29,7 +29,7 @@ static void _which_night_load(void)
 	if (is_loaded)
 		return;
 	timer = 0.0f;
-	object_load(&which_night_atlas, TX_WHICH_NIGHT_ATLAS);
+	graphic_load(&which_night_atlas, TX_WHICH_NIGHT_ATLAS);
 	is_loaded = true;
 	blip_trigger(true);
 
@@ -46,7 +46,7 @@ static void _which_night_unload(void)
 {
 	if (!is_loaded)
 		return;
-	object_unload(&which_night_atlas);
+	graphic_unload(&which_night_atlas);
 	is_loaded = false;
 }
 
@@ -57,8 +57,9 @@ void which_night_draw(void)
 	rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
 	rdpq_fill_rectangle(0, 0, 320, 240);
 	rdpq_set_mode_standard();
-	object_draw_index_y(which_night_atlas, 372, 270, 11, 0);
-	object_draw_index_y(which_night_atlas, 373, 336, 11, SAVE_NIGHT_NUM(save_data));
+	graphic_draw_index_y(which_night_atlas, 372, 270, 11, 0, GFX_FLIP_NONE);
+	graphic_draw_index_y(which_night_atlas, 373, 336, 11,
+                             SAVE_NIGHT_NUM(save_data), GFX_FLIP_NONE);
 
 	float fade = CLAMP((timer - 70) / 60.0f, 0, 1);
 	rdpq_set_prim_color(RGBA32(0x0, 0x0, 0x0, fade * 255));

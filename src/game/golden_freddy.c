@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "engine/object.h"
+#include "engine/graphic.h"
 #include "engine/util.h"
 #include "engine/sfx.h"
 
@@ -12,8 +12,8 @@
 #include "game/golden_freddy.h"
 
 static float attempt_timer;
-static struct object yellow_bear;
-static struct object yellow_scare;
+static struct graphic yellow_bear;
+static struct graphic yellow_scare;
 static float sfx_jumpscare_timer;
 
 int golden_freddy_progress;
@@ -21,8 +21,8 @@ int golden_freddy_progress;
 void golden_freddy_load(void)
 {
 	attempt_timer = 0;
-	object_load(&yellow_bear, TX_GOLDEN_FREDDY_SIT);
-	object_load(&yellow_scare, TX_GOLDEN_FREDDY_SCARE);
+	graphic_load(&yellow_bear, TX_GOLDEN_FREDDY_SIT);
+	graphic_load(&yellow_scare, TX_GOLDEN_FREDDY_SCARE);
 	sfx_jumpscare_timer = 0.0f;
 	golden_freddy_progress = 0;
 }
@@ -33,13 +33,14 @@ void golden_freddy_draw_in_room(void)
 		return;
 
 	rdpq_set_mode_copy(true);
-	object_draw(yellow_bear, 660 + office_turn, 478, 270, 260);
+	graphic_draw(yellow_bear, 660 + office_turn,
+                     478, 270, 260, GFX_FLIP_NONE);
 }
 
 void golden_freddy_draw_scare(void)
 {
 	rdpq_set_mode_copy(true);
-	object_draw(yellow_scare, 0, 0, 0, 0);
+	graphic_draw(yellow_scare, 0, 0, 0, 0, GFX_FLIP_NONE);
 }
 
 void golden_freddy_update(double dt)
@@ -98,6 +99,6 @@ void golden_freddy_update(double dt)
 
 void golden_freddy_unload(void)
 {
-	object_unload(&yellow_scare);
-	object_unload(&yellow_bear);
+	graphic_unload(&yellow_scare);
+	graphic_unload(&yellow_bear);
 }

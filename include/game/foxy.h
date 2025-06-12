@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
-#include "engine/object.h"
+#include "engine/graphic.h"
 
 #define FOXY_SCARE_FRAMES 8
 
@@ -11,7 +11,7 @@ extern float foxy_scare_timer;
 extern float foxy_run_timer;
 
 #define FOXY_RUN_FRAMES 13
-extern struct object foxy_run[FOXY_RUN_FRAMES];
+extern struct graphic foxy_run[FOXY_RUN_FRAMES];
 
 void foxy_load(void);
 void foxy_unload(void);

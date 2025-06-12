@@ -1,5 +1,5 @@
 #include "engine/sfx.h"
-#include "engine/object.h"
+#include "engine/graphic.h"
 #include "engine/util.h"
 
 #include "game/game.h"
@@ -29,7 +29,7 @@
  * happens between the 5-6 AM transition, it won't affect your save file. :D
  */
 
-static struct object am, six, five;
+static struct graphic am, six, five;
 static float timer;
 static bool is_loaded = false;
 static bool played_cheer;
@@ -62,9 +62,9 @@ static void night_end_load(void)
 	mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.8f, 0.8f);
 	wav64_play(&sfx_chimes, SFX_CH_AMBIENCE);
 
-	object_load(&am, TX_END_AM);
-	object_load(&six, TX_END_SIX);
-	object_load(&five, TX_END_FIVE);
+	graphic_load(&am, TX_END_AM);
+	graphic_load(&six, TX_END_SIX);
+	graphic_load(&five, TX_END_FIVE);
 
 	played_cheer = false;
 	is_loaded = true;
@@ -76,9 +76,9 @@ static void night_end_unload(void)
 		return;
         }
 
-	object_unload(&six);
-	object_unload(&five);
-	object_unload(&am);
+	graphic_unload(&six);
+	graphic_unload(&five);
+	graphic_unload(&am);
 	is_loaded = false;
 }
 
@@ -97,9 +97,11 @@ void night_end_draw(void)
 	int six_end = 298;
 	float t = CLAMP((timer - 1) * 0.2f, 0, 1);
 
-	object_draw(six, 390, lerpf(six_start, six_end, t), -5, 0);
-	object_draw(five, 390, lerpf(five_start, five_end, t), -5, 0);
-	object_draw(am, 486, 296, -5, 0);
+	graphic_draw(six, 390, lerpf(six_start, six_end, t),
+                     -5, 0, GFX_FLIP_NONE);
+	graphic_draw(five, 390, lerpf(five_start, five_end, t),
+                     -5, 0, GFX_FLIP_NONE);
+	graphic_draw(am, 486, 296, -5, 0, GFX_FLIP_NONE);
 
 	rdpq_set_mode_fill(RGBA32(0x0, 0x0, 0x0, 0xFF));
 	rdpq_fill_rectangle(vcon(339), vcon(168),

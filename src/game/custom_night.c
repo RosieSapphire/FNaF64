@@ -1,4 +1,4 @@
-#include "engine/object.h"
+#include "engine/graphic.h"
 #include "engine/sfx.h"
 #include "engine/util.h"
 
@@ -9,9 +9,9 @@
 #include "game/texture_index.h"
 #include "game/custom_night.h"
 
-static struct object face_icons;
-static struct object buttons;
-static struct object nums;
+static struct graphic face_icons;
+static struct graphic buttons;
+static struct graphic nums;
 static int ai_selected = 0;
 static bool is_loaded = false;
 
@@ -28,9 +28,9 @@ static void _custom_night_load(void)
 		return;
 
 	ai_selected = 0;
-	object_load(&face_icons, TX_FACE_ATLAS);
-	object_load(&buttons, TX_AI_BUTTONS);
-	object_load(&nums, TX_AI_NUM_ATLAS);
+	graphic_load(&face_icons, TX_FACE_ATLAS);
+	graphic_load(&buttons, TX_AI_BUTTONS);
+	graphic_load(&nums, TX_AI_NUM_ATLAS);
 
 	is_loaded = true;
 }
@@ -40,9 +40,9 @@ static void _custom_night_unload(void)
 	if (!is_loaded)
 		return;
 
-	object_unload(&face_icons);
-	object_unload(&buttons);
-	object_unload(&nums);
+	graphic_unload(&face_icons);
+	graphic_unload(&buttons);
+	graphic_unload(&nums);
 
 	is_loaded = false;
 }
@@ -54,7 +54,8 @@ static void _custom_night_ai_num_draw(int val, int x, int y)
 	ones = val % 10;
 	tens = val / 10;
 	for (i = 0; i < 1 + (tens > 0); ++i) {
-		object_draw_index_x(nums, x - 36 * i, y, 12, i ? tens : ones);
+		graphic_draw_index_x(nums, x - 36 * i, y,
+                                     12, i ? tens : ones, 0);
         }
 }
 
@@ -69,8 +70,8 @@ void custom_night_draw(void)
 
 	rdpq_set_mode_standard();
 	for (i = 0; i < 4; ++i) {
-		object_draw_index_y(face_icons, face_pos[i][0],
-				    face_pos[i][1], 67, i);
+		graphic_draw_index_y(face_icons, face_pos[i][0],
+				     face_pos[i][1], 67, i, GFX_FLIP_NONE);
         }
 
 	int bparms[8][4] = {
@@ -85,9 +86,11 @@ void custom_night_draw(void)
 	};
 
 	for (i = 0; i < 8; ++i)
-		object_draw_index_x(buttons, bparms[i][0],
-				bparms[i][1], bparms[i][2],
-				bparms[i][3] + (2 * (ai_selected == (i >> 1))));
+		graphic_draw_index_x(buttons, bparms[i][0],
+				     bparms[i][1], bparms[i][2],
+				     bparms[i][3] +
+                                     (2 * (ai_selected == (i >> 1))),
+                                     GFX_FLIP_NONE);
 
 	rdpq_mode_alphacompare(true);
 	_custom_night_ai_num_draw(freddy_ai_level, 145, 225 + 6);

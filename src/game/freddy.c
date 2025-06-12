@@ -1,7 +1,7 @@
 #include <stdlib.h>
 
 #include "engine/util.h"
-#include "engine/object.h"
+#include "engine/graphic.h"
 #include "engine/sfx.h"
 
 #include "game/game.h"

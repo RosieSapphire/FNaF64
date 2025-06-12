@@ -1,6 +1,6 @@
 #include <stdlib.h>
 
-#include "engine/object.h"
+#include "engine/graphic.h"
 #include "engine/util.h"
 #include "engine/sfx.h"
 
@@ -9,7 +9,7 @@
 
 #define NUM_HALLUC 4
 
-static struct object visuals[NUM_HALLUC];
+static struct graphic visuals[NUM_HALLUC];
 static const char *visual_paths[NUM_HALLUC] = {
 	TX_HALLUCINATION0, TX_HALLUCINATION1,
 	TX_HALLUCINATION2, TX_HALLUCINATION3,
@@ -25,7 +25,7 @@ static float timeout;
 
 void hallucinations_load(void)
 {
-	objects_load(visuals, NUM_HALLUC, visual_paths);
+	graphics_load(visuals, NUM_HALLUC, visual_paths);
 	is_running = false;
 	visible_val = 0;
 	which_visual = 0;
@@ -47,7 +47,7 @@ void hallucinations_draw(void)
 	if (!is_running || visible_val != 1)
 		return;
 
-	object_draw(visuals[which_visual], 0, 0, 0, 0);
+	graphic_draw(visuals[which_visual], 0, 0, 0, 0, 0);
 }
 
 void hallucinations_update(double dt)
@@ -87,5 +87,5 @@ void hallucinations_trigger(void)
 
 void hallucinations_unload(void)
 {
-	objects_unload(visuals, NUM_HALLUC);
+	graphics_unload(visuals, NUM_HALLUC);
 }

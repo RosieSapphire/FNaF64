@@ -1,4 +1,4 @@
-#include "engine/object.h"
+#include "engine/graphic.h"
 #include "engine/sfx.h"
 
 #include "game/office.h"
@@ -45,7 +45,7 @@ static int button_state_get_index(struct button_state *states, bool left_door)
 	return 0;
 }
 
-struct object button[8];
+struct graphic button[8];
 static const char *button_paths[8] = {
 	TX_BUTTON_LEFT00,
 	TX_BUTTON_LEFT10,
@@ -60,21 +60,21 @@ static const char *button_paths[8] = {
 void buttons_load(void)
 {
 	button_state = 0;
-	objects_load(button, 8, button_paths);
+	graphics_load(button, 8, button_paths);
 }
 
 void buttons_unload(void)
 {
-	objects_unload(button, 8);
+	graphics_unload(button, 8);
 }
 
 void buttons_draw(void)
 {
 	rdpq_set_mode_copy(true);
-	object_draw(button[button_state_get_index(left_states, 1)],
-			48 + office_turn, 390, 42, 127);
-	object_draw(button[button_state_get_index(right_states, 0)],
-			1546 + office_turn, 400, 49, 127);
+	graphic_draw(button[button_state_get_index(left_states, 1)],
+			48 + office_turn, 390, 42, 127, 0);
+	graphic_draw(button[button_state_get_index(right_states, 0)],
+			1546 + office_turn, 400, 49, 127, 0);
 }
 
 static void button_left_update(struct update_params uparms)

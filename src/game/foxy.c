@@ -18,7 +18,7 @@ int foxy_progress;
 float foxy_scare_timer;
 float foxy_run_timer;
 static int num_door_pounds;
-struct object foxy_run[FOXY_RUN_FRAMES];
+struct graphic foxy_run[FOXY_RUN_FRAMES];
 
 static float fox_song_timer = 0.0f;
 
@@ -43,12 +43,12 @@ void foxy_load(void)
 	foxy_run_timer = 0.0f;
 	use_run_timer = false;
 	num_door_pounds = 0;
-	objects_load(foxy_run, FOXY_RUN_FRAMES, foxy_run_paths);
+	graphics_load(foxy_run, FOXY_RUN_FRAMES, foxy_run_paths);
 }
 
 void foxy_unload(void)
 {
-	objects_unload(foxy_run, FOXY_RUN_FRAMES);
+	graphics_unload(foxy_run, FOXY_RUN_FRAMES);
 }
 
 static void _foxy_update_stun_timer(double dt)
