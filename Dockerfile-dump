@@ -27,6 +27,7 @@ WORKDIR /home/ubuntu
 
 ENV WINEARCH=win64
 ENV WINEPREFIX=/home/ubuntu/.wine64
+ENV WINEDEBUG=-all
 
 ADD --chown=ubuntu:ubuntu \
     https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.36/dotnet-runtime-6.0.36-win-x64.exe \
@@ -39,6 +40,7 @@ ADD --chown=ubuntu:ubuntu \
 # Install .NET 6.0 and ASP.NET Core 6.0
 RUN xvfb-run -a sh -c "\
         wineboot --init \
+        && winetricks nocrashdialog \
         && winetricks -q dotnet6 \
         && wine dotnet-runtime-6.0.36-x64.exe /quiet /norestart \
         && wine aspnetcore-runtime-6.0.36-x64.exe /norestart /quiet \
