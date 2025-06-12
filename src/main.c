@@ -97,7 +97,6 @@ int main(void)
 		uparams.pressed = joypad_get_buttons_pressed(JOYPAD_PORT_1),
 		uparams.sticks = joypad_get_inputs(JOYPAD_PORT_1),
 
-		scene_last = SCENE_MAIN_GAME;
 		scene_last = scene;
 		scene = update_funcs[scene](uparams);
 		blip_update(uparams.dt);
