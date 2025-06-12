@@ -7,7 +7,7 @@
  * Either that or you're a cheating little fucking cocksucker. >:3 I know what
  * kind of fucking person you are, Mr. Fart Smella. owo
  */
-/* #define SAVE_DATA_OVERRIDE (SAVE_BEATEN_BITMASK | 0x7) */
+// #define SAVE_DATA_OVERRIDE (SAVE_BEATEN_BITMASK | 0x7)
 
 bool save_data_eeprom_failed = false;
 uint8_t save_data = 1;
