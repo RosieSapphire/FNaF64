@@ -21,7 +21,7 @@ static const char *static_frame_paths[STATIC_FRAME_CNT] = {
 };
 
 static float static_timer = 0.f;
-int static_frame = 0;
+static int static_frame = 0;
 
 void static_load(void)
 {
