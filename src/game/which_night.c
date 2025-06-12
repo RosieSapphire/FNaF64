@@ -60,7 +60,7 @@ void which_night_draw(void)
 	object_draw_index_y(which_night_atlas, 372, 270, 11, 0);
 	object_draw_index_y(which_night_atlas, 373, 336, 11, SAVE_NIGHT_NUM(save_data));
 
-	float fade = clampf((timer - 70) / 60.0f, 0, 1);
+	float fade = CLAMP((timer - 70) / 60.0f, 0, 1);
 	rdpq_set_prim_color(RGBA32(0x0, 0x0, 0x0, fade * 255));
 	rdpq_mode_combiner(RDPQ_COMBINER_FLAT);
 	rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);

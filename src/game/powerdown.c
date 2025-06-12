@@ -198,7 +198,7 @@ enum scene power_down_update(struct update_params uparms)
 	}
 
 	office_turn -= uparms.dt * uparms.sticks.stick_x * OFFICE_TURN_SPEED;
-	office_turn = clampf(office_turn, OFFICE_TURN_MIN, 0);
+	office_turn = CLAMP(office_turn, OFFICE_TURN_MIN, 0);
 
 	if (fabsf(office_turn + 193) < 32 &&
 			(uparms.pressed.a || uparms.pressed.b))

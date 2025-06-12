@@ -56,6 +56,6 @@ void doors_update(double dt)
 	else
 		door_timers[RIGHT] -= dt * door_speed;
 
-	door_timers[LEFT] = clampf(door_timers[LEFT], 0, FRAMES - 1);
-	door_timers[RIGHT] = clampf(door_timers[RIGHT], 0, FRAMES - 1);
+	door_timers[LEFT] = CLAMP(door_timers[LEFT], 0, FRAMES - 1);
+	door_timers[RIGHT] = CLAMP(door_timers[RIGHT], 0, FRAMES - 1);
 }

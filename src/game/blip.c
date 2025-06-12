@@ -70,7 +70,7 @@ void blip_draw(void)
 void blip_update(const float dt)
 {
 	timer += speed_fps(70) * dt;
-	timer = clampf(timer, 0, BLIP_FRAME_CNT);
+	timer = CLAMP(timer, 0, BLIP_FRAME_CNT);
 }
 
 void blip_trigger(const bool is_visual)

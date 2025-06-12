@@ -59,7 +59,7 @@ static void _foxy_update_stun_timer(double dt)
 	}
  
 	stun_timer -= dt * 60;
-	stun_timer = clampf(stun_timer, 0, 1005);
+	stun_timer = CLAMP(stun_timer, 0, 1005);
 }
 
 static bool _foxy_update_move_timer(double dt)
@@ -112,7 +112,7 @@ void foxy_update(double dt)
 	/* Handle jumpscaring */
         if (game_jumpscare_flags & JUMPSCARE_FLAG_FOXY) {
 		foxy_scare_timer += speed_fps(25) * dt;
-		foxy_scare_timer = clampf(foxy_scare_timer,
+		foxy_scare_timer = CLAMP(foxy_scare_timer,
 				0, FOXY_SCARE_FRAMES - 1);
 		return;
 	}
@@ -125,7 +125,7 @@ void foxy_update(double dt)
 
 	if (use_run_timer) {
 		foxy_run_timer += dt * 60;
-		foxy_run_timer = clampf(foxy_run_timer, 0, 100);
+		foxy_run_timer = CLAMP(foxy_run_timer, 0, 100);
 		if (foxy_run_timer == 100) {
 			if (button_state & BUTTON_LEFT_DOOR) {
 				_foxy_trigger_reset();

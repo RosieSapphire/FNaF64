@@ -324,7 +324,7 @@ void camera_view_draw(void)
 	case CAM_2A:
 		if (foxy_run_timer > 0 && foxy_run_timer < 35) {
 			int frame = (foxy_run_timer / 35.0f) * FOXY_RUN_FRAMES;
-			frame = clampf(frame, 0, FOXY_RUN_FRAMES - 1);
+			frame = CLAMP(frame, 0, FOXY_RUN_FRAMES - 1);
 			object_draw(foxy_run[frame], view_turn, 0, 0, 0);
 			perspective_end();
 			return;
@@ -448,7 +448,7 @@ static void camera_flip_update(const struct update_params uparms)
 	camera_is_using ^= button_down && flip_anim_stopped;
 
 	flip_timer += (camera_is_using * 2 - 1) * uparms.dt * speed_fps(50);
-	flip_timer = clampf(flip_timer, 0, FLIP_FRAMES);
+	flip_timer = CLAMP(flip_timer, 0, FLIP_FRAMES);
 	frame = (int)flip_timer;
 }
 
@@ -485,7 +485,7 @@ static void camera_update_turn(const struct update_params uparms)
                 if (camera_is_visible) {
 	                view_turn -= icutoff(uparms.sticks.stick_x, 10) *
                                      CAM_MANUAL_TURN_SPEED * uparms.dt;
-	                view_turn = clampf(view_turn, CAM_MANUAL_TURN_MIN, 0);
+	                view_turn = CLAMP(view_turn, CAM_MANUAL_TURN_MIN, 0);
                 }
 
 		return;
@@ -540,7 +540,7 @@ static void camera_update_turn(const struct update_params uparms)
 static void camera_update_glitch_timer(double dt)
 {
 	camera_glitch_timer -= dt * 60;
-	camera_glitch_timer = clampf(camera_glitch_timer, 0, 300);
+	camera_glitch_timer = CLAMP(camera_glitch_timer, 0, 300);
 
 	static bool has_sfx_blipped = false;
 	bool bonnie_glitch = (bonnie_cam == cam_selected ||

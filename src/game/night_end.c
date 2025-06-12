@@ -95,7 +95,7 @@ void night_end_draw(void)
 	int five_end = 298 - 110;
 	int six_start = 298 + 110;
 	int six_end = 298;
-	float t = clampf((timer - 1) * 0.2f, 0, 1);
+	float t = CLAMP((timer - 1) * 0.2f, 0, 1);
 
 	object_draw(six, 390, lerpf(six_start, six_end, t), -5, 0);
 	object_draw(five, 390, lerpf(five_start, five_end, t), -5, 0);
@@ -109,9 +109,9 @@ void night_end_draw(void)
 
 	float fade;
 	if (timer < 9)
- 		fade = clampf(1.0f - timer, 0, 1);
+ 		fade = CLAMP(1.0f - timer, 0, 1);
 	else
- 		fade = clampf(timer - 10.5f, 0, 1);
+ 		fade = CLAMP(timer - 10.5f, 0, 1);
 
 	rdpq_set_mode_standard();
 	rdpq_set_prim_color(RGBA32(0x0, 0x0, 0x0, fade * 255));

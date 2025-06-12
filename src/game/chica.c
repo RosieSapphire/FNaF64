@@ -179,7 +179,7 @@ void chica_update(double dt)
 		which_room = rand() & 1;
 
 	chica_blackout_timer -= dt * 60;
-	chica_blackout_timer = clampf(chica_blackout_timer, 0, 10);
+	chica_blackout_timer = CLAMP(chica_blackout_timer, 0, 10);
 
 	move_timer += dt;
 	bool try_move;

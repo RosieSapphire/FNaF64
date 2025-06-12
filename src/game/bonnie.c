@@ -136,7 +136,7 @@ void bonnie_update(double dt)
 		which_room = rand() & 1;
 
 	bonnie_blackout_timer -= dt * 60;
-	bonnie_blackout_timer = clampf(bonnie_blackout_timer, 0, 10);
+	bonnie_blackout_timer = CLAMP(bonnie_blackout_timer, 0, 10);
 
 	move_timer += dt;
 	bool try_move;

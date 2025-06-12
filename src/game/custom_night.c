@@ -133,7 +133,7 @@ enum scene custom_night_update(struct update_params uparms)
 
 	**(ais + ai_selected) += uparms.pressed.a;
 	**(ais + ai_selected) -= uparms.pressed.b;
-	**(ais + ai_selected) = clampf(**(ais + ai_selected), 0, 20);
+	**(ais + ai_selected) = CLAMP(**(ais + ai_selected), 0, 20);
 	
 	if (uparms.pressed.start) {
 		if (freddy_ai_level == 1 && bonnie_ai_level == 9 &&

@@ -123,7 +123,7 @@ static void _office_update_turn_normal(struct update_params uparms)
 	const int stick_clamped = icutoff(uparms.sticks.stick_x, 10);
 	const float turn_amount = stick_clamped * OFFICE_TURN_SPEED;
 	office_turn -= turn_amount * uparms.dt;
-	office_turn = clampf(office_turn, OFFICE_TURN_MIN, 0);
+	office_turn = CLAMP(office_turn, OFFICE_TURN_MIN, 0);
 }
 
 static void _office_update_turn_smooth(struct update_params uparms)
@@ -131,7 +131,7 @@ static void _office_update_turn_smooth(struct update_params uparms)
 	const int stick_clamped = icutoff(uparms.sticks.stick_x, 10);
 	const float turn_amount = stick_clamped * OFFICE_TURN_SPEED;
 	office_turn_lerp -= turn_amount * uparms.dt;
-	office_turn_lerp = clampf(office_turn_lerp, OFFICE_TURN_MIN, 0);
+	office_turn_lerp = CLAMP(office_turn_lerp, OFFICE_TURN_MIN, 0);
 
 	if (fabsf(office_turn_lerp - office_turn) < 0.001f) {
 		office_turn = office_turn_lerp;

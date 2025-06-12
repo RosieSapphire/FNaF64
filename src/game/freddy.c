@@ -116,7 +116,7 @@ void freddy_update(double dt)
 	if (game_jumpscare_flags & JUMPSCARE_FLAG_FREDDY) {
 		freddy_scare_timer += dt * speed_fps(25);
 		freddy_scare_timer =
-			clampf(freddy_scare_timer, 0, FREDDY_SCARE_FRAMES);
+			CLAMP(freddy_scare_timer, 0, FREDDY_SCARE_FRAMES);
 		return;
 	}
 

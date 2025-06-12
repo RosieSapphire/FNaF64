@@ -270,10 +270,10 @@ enum scene game_update(struct update_params uparms)
 		foxy_ai_level++;
 	}
 
-	bonnie_ai_level = clampf(bonnie_ai_level, 0, 20);
-	chica_ai_level = clampf(chica_ai_level, 0, 20);
-	foxy_ai_level = clampf(foxy_ai_level, 0, 20);
-	freddy_ai_level = clampf(freddy_ai_level, 0, 20);
+	bonnie_ai_level = CLAMP(bonnie_ai_level, 0, 20);
+	chica_ai_level = CLAMP(chica_ai_level, 0, 20);
+	foxy_ai_level = CLAMP(foxy_ai_level, 0, 20);
+	freddy_ai_level = CLAMP(freddy_ai_level, 0, 20);
 
 	hour_last = hour;
 

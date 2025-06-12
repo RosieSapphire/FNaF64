@@ -5,15 +5,6 @@
 
 #define DRAW_SCALE 0.3333f
 
-float clampf(float x, float min, float max)
-{
-	if (x > max)
-		return max;
-	if (x < min)
-		return min;
-	return x;
-}
-
 float wrapf(float x, float max, bool *has_wrapped)
 {
 	bool wrapped = false;

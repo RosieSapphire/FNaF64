@@ -49,7 +49,7 @@ void ui_draw(void)
 	object_draw(am, 879, 30, 0, 0);
 	object_draw(night_text, 828, 71, 0, 0);
         /* TODO: Replace with CLAMP */
-	int hour = (int)clampf(game_night_timer / HOUR_LEN_SECONDS, 0, 6);
+	int hour = (int)CLAMP(game_night_timer / HOUR_LEN_SECONDS, 0, 6);
 
 	if (hour > 0)
 		object_draw_index_y(hour_atlas, 843, 30, 9, hour);
@@ -63,7 +63,7 @@ void ui_draw(void)
 	object_draw(usage_text, 74, 674, 36, 7);
 
 	for (i = 0; i < game_power_usage; ++i) {
-		int ind = clampf(i - 1, 0, 69);
+		int ind = CLAMP(i - 1, 0, 69);
 		object_draw_index_x(usage_atlas, 120 + i * 21, 657, 6, ind);
 	}
 
@@ -80,7 +80,7 @@ void ui_update(double dt)
 	game_power_timer = wrapf(game_power_timer, 1, &game_power_tick);
 	if (game_power_tick)
 		game_power_left -= game_power_usage;
-	game_power_left = clampf(game_power_left, 0, 999);
+	game_power_left = CLAMP(game_power_left, 0, 999);
 
 	game_power_usage = 1;
 	game_power_usage += camera_is_visible;
