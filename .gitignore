@@ -10,3 +10,7 @@ assets/*.wav
 assets/*.png
 filesystem/
 tmp/
+/CTFAK.Cli/
+/dump/
+/FiveNightsatFreddys.exe
+.DS_Store

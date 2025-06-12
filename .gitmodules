@@ -1,0 +1,7 @@
+[submodule "libdragon"]
+	path = libdragon
+	url = https://github.com/DragonMinded/libdragon
+	branch = unstable
+[submodule "CTFAK2.0"]
+	path = CTFAK2.0
+	url = https://github.com/meeq/CTFAK2.0

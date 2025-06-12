@@ -34,6 +34,42 @@ MKFONT_FLAGS=--size 8
 
 all: $(GAME).z64
 
+with-docker:
+	@[ -d dump ] || $(MAKE) dump
+	docker build \
+		--file Dockerfile \
+		--progress plain \
+		--target out \
+		--output type=local,dest=. \
+		.
+.PHONY: with-docker
+
+CTFAK.Cli:
+	@[ -d CTFAK2.0 ] || git submodule update --init
+	docker build \
+		--file Dockerfile-ctfak \
+		--progress plain \
+		--platform linux/amd64 \
+		--target out \
+		--output type=local,dest=. \
+		.
+.PHONY: CTFAK.Cli
+
+dump:
+	@[ -d CTFAK.Cli ] || $(MAKE) CTFAK.Cli
+	@[ -f "FiveNightsatFreddys.exe" ] || (\
+		echo "ERROR: FiveNightsatFreddys.exe must be in the project directory!" && \
+		exit 1 \
+	)
+	docker build \
+		--file Dockerfile-dump \
+		--progress plain \
+		--platform linux/amd64 \
+		--target out \
+		--output type=local,dest=. \
+		.
+.PHONY: dump
+
 filesystem/%.wav64: assets/%.wav
 	@mkdir -p $(dir $@)
 	@echo "    [AUDIO] $@"
