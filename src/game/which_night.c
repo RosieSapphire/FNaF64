@@ -27,8 +27,7 @@ static const int which_night_ai_lut[6][4] = {
 	{10, 12,  6,  4},
 };
 
-struct graphic which_night_gfx_atlas;
-
+static struct graphic which_night_gfx_atlas;
 static float which_night_timer;
 static bool  which_night_is_loaded = false;
 
@@ -42,14 +41,16 @@ static void which_night_load(void)
 	blip_trigger(true);
 	which_night_is_loaded = true;
 
+        /* Variables */
+	which_night_timer = 0.f;
+
         /* If we're doing custom night, don't change the AI. */
         night_cur = SAVE_NIGHT_NUM(save_data);
 	if (night_cur == 7) {
 		return;
         }
 
-        /* Variables */
-	which_night_timer = 0.f;
+        /* AI Change based on night. */
 	bonnie_ai_level   = which_night_ai_lut[night_cur - 1][0];
 	chica_ai_level    = which_night_ai_lut[night_cur - 1][1];
 	foxy_ai_level     = which_night_ai_lut[night_cur - 1][2];
