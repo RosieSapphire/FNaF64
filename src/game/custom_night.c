@@ -6,14 +6,16 @@
 #include "game/bonnie.h"
 #include "game/chica.h"
 #include "game/foxy.h"
+#include "game/golden_freddy.h"
 #include "game/texture_index.h"
 #include "game/custom_night.h"
 
 static struct graphic face_icons;
 static struct graphic buttons;
 static struct graphic nums;
-static int ai_selected = 0;
-static bool is_loaded = false;
+static int            ai_selected             = 0;
+static bool           is_loaded               = false;
+static bool           was_that_the_bite_of_87 = false;
 
 static const int face_pos[4][2] = {
 	{259, 150},
@@ -65,6 +67,11 @@ void custom_night_draw(void)
         
 	_custom_night_load();
 
+        if (was_that_the_bite_of_87) {
+                golden_freddy_draw_scare();
+                return;
+        }
+
 	rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
 	rdpq_fill_rectangle(0, 0, 320, 240);
 
@@ -103,6 +110,18 @@ enum scene custom_night_update(struct update_params uparms)
 {
         bool press_left, press_right, press_up, press_down;
 
+        if (was_that_the_bite_of_87) {
+                golden_freddy_update(uparms.dt);
+                if (golden_freddy_progress == 6) {
+                        /* Crash the fucking game. */
+                        uint8_t *crash;
+
+                        crash = NULL;
+                        *crash = 69;
+                }
+                return SCENE_CUSTOM_NIGHT;
+        }
+
         press_left = uparms.pressed.d_left + uparms.pressed.c_left;
         press_right = uparms.pressed.d_right + uparms.pressed.c_right;
         press_up = uparms.pressed.d_up + uparms.pressed.c_up;
@@ -140,9 +159,14 @@ enum scene custom_night_update(struct update_params uparms)
 	
 	if (uparms.pressed.start) {
 		if (freddy_ai_level == 1 && bonnie_ai_level == 9 &&
-				chica_ai_level == 8 && foxy_ai_level == 7)
-			assertf(0, "Insert Golden Freddy sfx_jumpscare here.\n");
-
+		    chica_ai_level == 8 && foxy_ai_level == 7) {
+                        was_that_the_bite_of_87 = true;
+	                mixer_ch_set_vol(SFX_CH_JUMPSCARE, .8f, .8f);
+                        wav64_play(&sfx_jumpscare_low, SFX_CH_JUMPSCARE);
+                        golden_freddy_load();
+                        golden_freddy_progress = 4;
+                        return SCENE_CUSTOM_NIGHT;
+                }
 		sfx_stop_all_channels();
 		rdpq_call_deferred((void (*)(void *))_custom_night_unload,
 				NULL);
