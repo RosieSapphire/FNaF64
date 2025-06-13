@@ -340,10 +340,7 @@ void game_draw(void)
 	        	graphic_draw(game_gfx_foxy_scare[(int)game_scare_timer_foxy],
 	        		     game_office_turn, 0, 0, 0, GFX_FLIP_NONE);
                 } else {
-                        /*
-                         * FIXME: I think this is causing the Freddy
-                         * office jumpscare to lag.
-                         */
+                        /* FIXME: Freddy's room jumpscare's fucking broken. */
                         for (i = 0; i < FREDDY_SCARE_FRAME_CNT; ++i) {
                                 if ((int)game_scare_timer_freddy == i) {
                                         continue;
@@ -546,21 +543,20 @@ enum scene game_update(struct update_params uparms)
 	golden_freddy_update(uparms.dt);
 	hallucinations_update(uparms.dt);
 
-	if (golden_freddy_progress == 4) {
-                /*
-                 * FIXME: It looks like the Golden Freddy update function is
-                 * getting called here, even though it's always unconditionally
-                 * called before this, making GF at his 4th state (speaking of,
-                 * I should really add an enum for this shit) repeat the code
-                 * twice, making it go twice as fast.
-                 */
-		golden_freddy_update(uparms.dt);
-		return SCENE_MAIN_GAME;
+        /* Golden Freddy crashes the fucking game. */
+	if (golden_freddy_progress == 6) {
+		uint8_t *itsme;
+
+                itsme = NULL;
+		*itsme = 69;
 	}
 
-	if (golden_freddy_progress == 6) {
-		uint32_t *sorry = NULL;
-		*sorry = 69;
+        /*
+         * You are actively being jumpscared by
+         * Golden Freddy, and are powerless to do anything.
+         */
+	if (golden_freddy_progress == 4) {
+		return SCENE_MAIN_GAME;
 	}
 
 	if (!camera_is_visible && uparms.pressed.c_up &&
