@@ -27,14 +27,13 @@ void golden_freddy_load(void)
 	golden_freddy_progress = 0;
 }
 
-void golden_freddy_draw_in_room(void)
+void golden_freddy_draw_in_room(const float office_turn)
 {
-	if (golden_freddy_progress != 3)
-		return;
-
-	rdpq_set_mode_copy(true);
-	graphic_draw(yellow_bear, 660 + office_turn,
-                     478, 270, 260, GFX_FLIP_NONE);
+	if (golden_freddy_progress == 3) {
+	        rdpq_set_mode_copy(true);
+	        graphic_draw(yellow_bear, 660 + office_turn,
+                             478, 270, 260, GFX_FLIP_NONE);
+        }
 }
 
 void golden_freddy_draw_scare(void)

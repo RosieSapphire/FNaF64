@@ -18,6 +18,10 @@ static const int which_night_ai_lut[6][4] = {
 	{ 0,  0,  0,  0},
 	{ 3,  1,  1,  0},
 	{ 0,  5,  2,  1},
+        /*
+         * FIXME: On night 4, Freddy is supposed to have a random 50%
+         * chance of his AI either being 1 or 2.
+         */
 	{ 2,  4,  6,  2},
 	{ 5,  7,  5,  3},
 	{10, 12,  6,  4},
@@ -26,7 +30,7 @@ static const int which_night_ai_lut[6][4] = {
 struct graphic which_night_gfx_atlas;
 
 static float which_night_timer;
-static bool which_night_is_loaded = false;
+static bool  which_night_is_loaded = false;
 
 static void which_night_load(void)
 {

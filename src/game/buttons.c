@@ -1,3 +1,4 @@
+/*
 #include "engine/graphic.h"
 #include "engine/sfx.h"
 
@@ -17,16 +18,16 @@ struct button_state {
 
 struct button_state left_states[] = {
 	{ 0,                                      0 },
-	{ BUTTON_LEFT_DOOR,                       1 },
-	{ BUTTON_LEFT_LIGHT,                      2 },
-	{ BUTTON_LEFT_LIGHT | BUTTON_LEFT_DOOR,   3 },
+	{ GAME_DOOR_BTN_LEFT_DOOR,                       1 },
+	{ GAME_DOOR_BTN_LEFT_LIGHT,                      2 },
+	{ GAME_DOOR_BTN_LEFT_LIGHT | GAME_DOOR_BTN_LEFT_DOOR,   3 },
 };
 
 struct button_state right_states[] = {
 	{ 0,                                      4 },
-	{ BUTTON_RIGHT_DOOR,                      5 },
-	{ BUTTON_RIGHT_LIGHT,                     6 },
-	{ BUTTON_RIGHT_LIGHT | BUTTON_RIGHT_DOOR, 7 },
+	{ GAME_DOOR_BTN_RIGHT_DOOR,                      5 },
+	{ GAME_DOOR_BTN_RIGHT_LIGHT,                     6 },
+	{ GAME_DOOR_BTN_RIGHT_LIGHT | GAME_DOOR_BTN_RIGHT_DOOR, 7 },
 };
 
 int button_state = 0;
@@ -35,8 +36,8 @@ static int button_state_get_index(struct button_state *states, bool left_door)
 {
         int i, bitmask;
 
-	bitmask = left_door ? (BUTTON_LEFT_DOOR | BUTTON_LEFT_LIGHT) : 
-                              (BUTTON_RIGHT_DOOR | BUTTON_RIGHT_LIGHT);
+	bitmask = left_door ? (GAME_DOOR_BTN_LEFT_DOOR | GAME_DOOR_BTN_LEFT_LIGHT) : 
+                              (GAME_DOOR_BTN_RIGHT_DOOR | GAME_DOOR_BTN_RIGHT_LIGHT);
 	for (i = 0; i < 4; ++i) {
 		if (states[i].state == (button_state & bitmask))
 			return states[i].index;
@@ -83,7 +84,7 @@ static void button_left_update(struct update_params uparms)
 		(int)door_timers[0] == 0 || (int)door_timers[0] == 14;
 	if (office_turn <= -68) {
 		if (settings_flags & SET_LIGHT_HOLD_BIT)
-			button_state &= ~(BUTTON_LEFT_LIGHT);
+			button_state &= ~(GAME_DOOR_BTN_LEFT_LIGHT);
 		return;
 	}
 
@@ -94,19 +95,19 @@ static void button_left_update(struct update_params uparms)
 	}
 
 	if (uparms.pressed.b && left_door_can_interact) {
-		button_state ^= BUTTON_LEFT_DOOR;
+		button_state ^= GAME_DOOR_BTN_LEFT_DOOR;
 		wav64_play(&sfx_door, SFX_CH_DOOR);
 	}
 
 	if (settings_flags & SET_LIGHT_HOLD_BIT) {
-		button_state &= ~(BUTTON_LEFT_LIGHT);
-		button_state |= BUTTON_LEFT_LIGHT * uparms.held.a;
+		button_state &= ~(GAME_DOOR_BTN_LEFT_LIGHT);
+		button_state |= GAME_DOOR_BTN_LEFT_LIGHT * uparms.held.a;
 		return;
 	}
 
 	if (uparms.pressed.a) {
-		button_state ^= BUTTON_LEFT_LIGHT;
-		button_state &= ~BUTTON_RIGHT_LIGHT;
+		button_state ^= GAME_DOOR_BTN_LEFT_LIGHT;
+		button_state &= ~GAME_DOOR_BTN_RIGHT_LIGHT;
 	}
 }
 
@@ -116,7 +117,7 @@ static void button_right_update(struct update_params uparms)
 		(int)door_timers[1] == 0 || (int)door_timers[1] == 14;
 	if (office_turn >= -554) {
 		if (settings_flags & SET_LIGHT_HOLD_BIT)
-			button_state &= ~(BUTTON_RIGHT_LIGHT);
+			button_state &= ~(GAME_DOOR_BTN_RIGHT_LIGHT);
 		return;
 	}
 
@@ -127,19 +128,19 @@ static void button_right_update(struct update_params uparms)
 	}
 
 	if (uparms.pressed.b && right_door_can_interact) {
-		button_state ^= BUTTON_RIGHT_DOOR;
+		button_state ^= GAME_DOOR_BTN_RIGHT_DOOR;
 		wav64_play(&sfx_door, SFX_CH_DOOR);
 	}
 
 	if (settings_flags & SET_LIGHT_HOLD_BIT) {
-		button_state &= ~(BUTTON_RIGHT_LIGHT);
-		button_state |= BUTTON_RIGHT_LIGHT * uparms.held.a;
+		button_state &= ~(GAME_DOOR_BTN_RIGHT_LIGHT);
+		button_state |= GAME_DOOR_BTN_RIGHT_LIGHT * uparms.held.a;
 		return;
 	}
 
 	if (uparms.pressed.a) {
-		button_state ^= BUTTON_RIGHT_LIGHT;
-		button_state &= ~BUTTON_LEFT_LIGHT;
+		button_state ^= GAME_DOOR_BTN_RIGHT_LIGHT;
+		button_state &= ~GAME_DOOR_BTN_LEFT_LIGHT;
 	}
 }
 
@@ -151,3 +152,4 @@ void buttons_update(struct update_params uparms)
 	button_left_update(uparms);
 	button_right_update(uparms);
 }
+*/

@@ -95,7 +95,7 @@ static void _freddy_handle_music_box(void)
 	mixer_ch_set_vol(SFX_CH_MUSICBOX, vol, vol);
 }
 
-void freddy_update(double dt)
+void freddy_update(const int button_state, const float dt)
 {
 	_freddy_handle_music_box();
 
@@ -116,7 +116,7 @@ void freddy_update(double dt)
 	if (game_jumpscare_flags & JUMPSCARE_FLAG_FREDDY) {
 		freddy_scare_timer += dt * speed_fps(25);
 		freddy_scare_timer =
-			CLAMP(freddy_scare_timer, 0, FREDDY_SCARE_FRAMES);
+			CLAMP(freddy_scare_timer, 0, FREDDY_SCARE_FRAME_CNT);
 		return;
 	}
 
@@ -180,7 +180,7 @@ void freddy_update(double dt)
 
 	freddy_cam_last = freddy_cam;
 	int cam_next = new_cam_lut[freddy_cam];
-	bool right_door_closed = button_state & BUTTON_RIGHT_DOOR;
+	bool right_door_closed = button_state & GAME_DOOR_BTN_RIGHT_DOOR;
 	if (freddy_cam == CAM_4B && camera_is_visible)
 		if (right_door_closed)
 			cam_next = CAM_4A;

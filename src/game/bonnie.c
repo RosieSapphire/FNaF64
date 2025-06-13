@@ -114,7 +114,7 @@ void bonnie_draw_debug(void)
 	rdpq_fill_rectangle(x0, y0, x1, y1);
 }
 
-void bonnie_update(double dt)
+void bonnie_update(int *button_state_ptr, const float dt)
 {
 	if (game_jumpscare_flags & JUMPSCARE_FLAG_BONNIE) {
 		scare_timer += dt * speed_fps(75);
@@ -149,7 +149,7 @@ void bonnie_update(double dt)
 
 	bonnie_cam_last = bonnie_cam;
 	int cam_next = new_cam_lut[bonnie_cam][which_room];
-	if (cam_next == YOURE_FUCKED && (button_state & BUTTON_LEFT_DOOR)) {
+	if (cam_next == YOURE_FUCKED && (*button_state_ptr & GAME_DOOR_BTN_LEFT_DOOR)) {
 		cam_next = CAM_1B;
         }
 
@@ -179,6 +179,6 @@ void bonnie_update(double dt)
 
 	if ((bonnie_cam == AT_DOOR && bonnie_cam_last != AT_DOOR) ||
 	    (bonnie_cam != AT_DOOR && bonnie_cam_last == AT_DOOR)) {
-		button_state &= ~BUTTON_LEFT_LIGHT;
+		*button_state_ptr &= ~GAME_DOOR_BTN_LEFT_LIGHT;
         }
 }

@@ -15,7 +15,6 @@ static float stun_timer;
 static float no_check_timer;
 static bool use_run_timer;
 int foxy_progress;
-float foxy_scare_timer;
 float foxy_run_timer;
 static int num_door_pounds;
 struct graphic foxy_run[FOXY_RUN_FRAMES];
@@ -39,7 +38,7 @@ void foxy_load(void)
 	stun_timer = 0.0f;
 	no_check_timer = 0.0f;
         game_jumpscare_flags &= ~(JUMPSCARE_FLAG_FOXY);
-	foxy_scare_timer = 0.0f;
+	game_scare_timer_foxy = 0.0f;
 	foxy_run_timer = 0.0f;
 	use_run_timer = false;
 	num_door_pounds = 0;
@@ -96,7 +95,7 @@ static void _foxy_trigger_reset(void)
 	game_power_left -= power_deduct;
 }
 
-void foxy_update(double dt)
+void foxy_update(const int button_state, const float dt)
 {
 	/* Checking for humming */
 	bool is_looking_at = camera_is_visible && cam_selected == CAM_1C;
@@ -111,9 +110,9 @@ void foxy_update(double dt)
 
 	/* Handle jumpscaring */
         if (game_jumpscare_flags & JUMPSCARE_FLAG_FOXY) {
-		foxy_scare_timer += speed_fps(25) * dt;
-		foxy_scare_timer = CLAMP(foxy_scare_timer,
-				0, FOXY_SCARE_FRAMES - 1);
+		game_scare_timer_foxy += speed_fps(25) * dt;
+		game_scare_timer_foxy = CLAMP(game_scare_timer_foxy,
+				0, FOXY_SCARE_FRAME_CNT - 1);
 		return;
 	}
 
@@ -127,7 +126,7 @@ void foxy_update(double dt)
 		foxy_run_timer += dt * 60;
 		foxy_run_timer = CLAMP(foxy_run_timer, 0, 100);
 		if (foxy_run_timer == 100) {
-			if (button_state & BUTTON_LEFT_DOOR) {
+			if (button_state & GAME_DOOR_BTN_LEFT_DOOR) {
 				_foxy_trigger_reset();
                         } else {
 				_foxy_trigger_sfx_jumpscare();
@@ -142,7 +141,7 @@ void foxy_update(double dt)
 
         if (no_check_timer >= 1500 &&
             !(game_jumpscare_flags & JUMPSCARE_FLAG_FOXY)) {
-		if (button_state & BUTTON_LEFT_DOOR) {
+		if (button_state & GAME_DOOR_BTN_LEFT_DOOR) {
 			_foxy_trigger_reset();
                 } else {
 			_foxy_trigger_sfx_jumpscare();

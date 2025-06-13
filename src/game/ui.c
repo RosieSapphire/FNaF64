@@ -80,7 +80,7 @@ void ui_draw(void)
         }
 }
 
-void ui_update(double dt)
+void ui_update(const int button_state, const float dt)
 {
 	game_power_timer += dt;
 	bool game_power_tick;
@@ -91,8 +91,8 @@ void ui_update(double dt)
 
 	game_power_usage = 1;
 	game_power_usage += camera_is_visible;
-	game_power_usage += (button_state & BUTTON_LEFT_DOOR) > 0;
-	game_power_usage += (button_state & BUTTON_RIGHT_DOOR) > 0;
-	game_power_usage += (button_state & BUTTON_LEFT_LIGHT) > 0;
-	game_power_usage += (button_state & BUTTON_RIGHT_LIGHT) > 0;
+	game_power_usage += (button_state & GAME_DOOR_BTN_LEFT_DOOR) > 0;
+	game_power_usage += (button_state & GAME_DOOR_BTN_RIGHT_DOOR) > 0;
+	game_power_usage += (button_state & GAME_DOOR_BTN_LEFT_LIGHT) > 0;
+	game_power_usage += (button_state & GAME_DOOR_BTN_RIGHT_LIGHT) > 0;
 }

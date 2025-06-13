@@ -14,4 +14,4 @@ void chica_load(void);
 void chica_unload(void);
 void chica_draw_scare(void);
 void chica_draw_debug(void);
-void chica_update(double dt);
+void chica_update(int *button_state_ptr, const float dt);

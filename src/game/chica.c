@@ -123,7 +123,7 @@ static void _chica_update_kitchen_volume(void)
 	
 }
 
-void chica_update(double dt)
+void chica_update(int *button_state_ptr, const float dt)
 {
         if (game_jumpscare_flags & JUMPSCARE_FLAG_CHICA) {
 		scare_timer += dt * speed_fps(50);
@@ -192,7 +192,7 @@ void chica_update(double dt)
 
 	chica_cam_last = chica_cam;
 	int cam_next = new_cam_lut[chica_cam][which_room];
-	if (cam_next == YOURE_FUCKED && (button_state & BUTTON_RIGHT_DOOR)) {
+	if (cam_next == YOURE_FUCKED && (*button_state_ptr & GAME_DOOR_BTN_RIGHT_DOOR)) {
 		cam_next = CAM_4A;
 		/* BULLSHIT FIX THIS SHOULDN'T HAVE TO BE HERE! */
                 camera_states[CAM_4A] |= (CHICA_BIT | ROOM_SPOT_BIT);
@@ -224,5 +224,5 @@ void chica_update(double dt)
 
 	if (             (chica_cam == AT_DOOR && chica_cam_last != AT_DOOR) ||
 			(chica_cam != AT_DOOR && chica_cam_last == AT_DOOR))
-		button_state &= ~BUTTON_RIGHT_LIGHT;
+		*button_state_ptr &= ~GAME_DOOR_BTN_RIGHT_LIGHT;
 }

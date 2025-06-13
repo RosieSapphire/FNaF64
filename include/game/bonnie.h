@@ -14,4 +14,4 @@ void bonnie_load(void);
 void bonnie_unload(void);
 void bonnie_draw_scare(void);
 void bonnie_draw_debug(void);
-void bonnie_update(double dt);
+void bonnie_update(int *button_state_ptr, const float dt);

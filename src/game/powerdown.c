@@ -101,7 +101,7 @@ void power_down_draw(void)
 		return;
 	}
 
-	graphic_draw(room_views[state], office_turn, 0, 0, 0, GFX_FLIP_NONE);
+	graphic_draw(room_views[state], game_office_turn, 0, 0, 0, GFX_FLIP_NONE);
 	perspective_end();
 }
 
@@ -198,10 +198,10 @@ enum scene power_down_update(struct update_params uparms)
 		break;
 	}
 
-	office_turn -= uparms.dt * uparms.sticks.stick_x * OFFICE_TURN_SPEED;
-	office_turn = CLAMP(office_turn, OFFICE_TURN_MIN, 0);
+	game_office_turn -= uparms.dt * uparms.sticks.stick_x * OFFICE_TURN_SPEED;
+	game_office_turn = CLAMP(game_office_turn, OFFICE_TURN_MIN, 0);
 
-	if (fabsf(office_turn + 193) < 32 &&
+	if (fabsf(game_office_turn + 193) < 32 &&
 			(uparms.pressed.a || uparms.pressed.b))
 		wav64_play(&sfx_boop, SFX_CH_BLIP);
 

@@ -460,33 +460,6 @@ static void camera_flip_update(const struct update_params uparms)
 	frame = (int)flip_timer;
 }
 
-static void camera_handle_sfx(void)
-{
-	if (camera_is_visible)
-		mixer_ch_set_vol(SFX_CH_FAN, 0.1f, 0.1f);
-	else
-		mixer_ch_set_vol(SFX_CH_FAN, 0.25f, 0.25f);
-
-	if (!camera_was_visible && camera_is_visible) {
-		blip_trigger(true);
-		button_state &= ~(BUTTON_LEFT_LIGHT | BUTTON_RIGHT_LIGHT);
-	}
-	
-	if (camera_is_using == camera_was_using)
-		return;
-
-	if (camera_is_using) {
-		wav64_play(&sfx_cam_up, SFX_CH_BLIP);
-		wav64_play(&sfx_cam_scan, SFX_CH_CAMERA);
-		return;
-	}
-
-	wav64_play(&sfx_cam_down, SFX_CH_BLIP);
-	mixer_ch_stop(SFX_CH_CAMERA);
-
-	return;
-}
-
 static void camera_update_turn(const struct update_params uparms)
 {
 	if (settings_flags & SET_MANUAL_CAM_TURN_BIT) {
@@ -699,7 +672,7 @@ static void camera_update_face_glitch(double dt)
 	camera_states[cam_selected] |= ((rand() % 30) + 1) << FACE_GLITCH_SHIFT;
 }
 
-void camera_update(const struct update_params uparms)
+void camera_update(int *button_state_ptr, const struct update_params uparms)
 {
         int i;
 
@@ -720,7 +693,28 @@ void camera_update(const struct update_params uparms)
 	if (!camera_is_visible)
 		_camera_views_unload(false);
 
-	camera_handle_sfx();
+        /* Handle SFX */
+	if (camera_is_visible) {
+		mixer_ch_set_vol(SFX_CH_FAN, 0.1f, 0.1f);
+        } else {
+		mixer_ch_set_vol(SFX_CH_FAN, 0.25f, 0.25f);
+        }
+
+	if (!camera_was_visible && camera_is_visible) {
+		blip_trigger(true);
+		*button_state_ptr &= ~(GAME_DOOR_BTN_LEFT_LIGHT | GAME_DOOR_BTN_RIGHT_LIGHT);
+	}
+	
+	if (camera_is_using ^ camera_was_using) {
+	        if (!camera_is_using) {
+	                wav64_play(&sfx_cam_down, SFX_CH_BLIP);
+	                mixer_ch_stop(SFX_CH_CAMERA);
+	        }
+
+	        wav64_play(&sfx_cam_up, SFX_CH_BLIP);
+	        wav64_play(&sfx_cam_scan, SFX_CH_CAMERA);
+        }
+
 	camera_update_glitch_timer(uparms.dt);
 	camera_update_turn(uparms);
 
