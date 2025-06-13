@@ -348,9 +348,9 @@ void camera_view_draw(void)
 		return;
 
 	case CAM_2B:
-		if ((golden_freddy_progress != 1 && 
-				golden_freddy_progress != 2) ||
-				bonnie_cam == CAM_2B) {
+		if ((golden_freddy_state != 1 && 
+		     golden_freddy_state != 2) ||
+		    bonnie_cam == CAM_2B) {
 			break;
 		}
 
@@ -594,8 +594,8 @@ static void camera_check_switching(const struct update_params uparms)
         int i;
 
 	if (cam_selected == CAM_2B &&
-			(golden_freddy_progress == 1 ||
-			 golden_freddy_progress == 2))
+			(golden_freddy_state == 1 ||
+			 golden_freddy_state == 2))
 		return;
 
 	int dirs[4] = {

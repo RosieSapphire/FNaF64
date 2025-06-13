@@ -323,7 +323,7 @@ void game_draw(void)
 	        game_load();
         }
 
-	if (golden_freddy_progress == 4) {
+	if (golden_freddy_state == GOLDEN_FREDDY_STATE_JUMPSCARING) {
 		golden_freddy_draw_scare();
 		return;
 	}
@@ -543,19 +543,11 @@ enum scene game_update(struct update_params uparms)
 	golden_freddy_update(uparms.dt);
 	hallucinations_update(uparms.dt);
 
-        /* Golden Freddy crashes the fucking game. */
-	if (golden_freddy_progress == 6) {
-		uint8_t *itsme;
-
-                itsme = NULL;
-		*itsme = 69;
-	}
-
         /*
          * You are actively being jumpscared by
          * Golden Freddy, and are powerless to do anything.
          */
-	if (golden_freddy_progress == 4) {
+	if (golden_freddy_state == GOLDEN_FREDDY_STATE_JUMPSCARING) {
 		return SCENE_MAIN_GAME;
 	}
 
