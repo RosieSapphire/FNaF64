@@ -19,18 +19,17 @@ RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
         texinfo \
         wget
 
-ENV N64_INST=/n64_toolchain
-RUN mkdir $N64_INST /libdragon \
-    && chown ubuntu:ubuntu $N64_INST /libdragon
-WORKDIR $N64_INST
-USER ubuntu:ubuntu
+ENV N64_INST=/opt/libdragon
 
-COPY --chown=ubuntu:ubuntu ./libdragon/tools/build-toolchain.sh ./
-RUN export BUILD_PATH=$N64_INST/tmp \
-    && mkdir $BUILD_PATH \
-    && cd $BUILD_PATH \
-    && $N64_INST/build-toolchain.sh \
-    && rm -rf $BUILD_PATH
+ADD https://github.com/DragonMinded/libdragon/releases/download/toolchain-continuous-prerelease/gcc-toolchain-mips64-x86_64.deb \
+    /gcc-toolchain-mips64-x86_64.deb
+
+RUN apt install --assume-yes /gcc-toolchain-mips64-x86_64.deb \
+    && rm /gcc-toolchain-mips64-x86_64.deb \
+    && chown -R ubuntu:ubuntu $N64_INST
+
+RUN mkdir /libdragon && chown ubuntu:ubuntu /libdragon
+USER ubuntu:ubuntu
 
 WORKDIR /libdragon
 ARG LIBDRAGON_BUILD_DIR=/home/ubuntu/libdragon-build
