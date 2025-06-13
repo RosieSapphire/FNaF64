@@ -3,7 +3,7 @@
 set -e
 
 if [ ! -f FiveNightsatFreddys.exe ]; then
-    echo "ERROR: FiveNightsatFreddys.exe nmust be in the project directory!"
+    echo "ERROR: FiveNightsatFreddys.exe must be in the project directory!"
     exit 1
 fi
 
