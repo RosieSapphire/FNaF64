@@ -54,7 +54,7 @@ void golden_freddy_update(double dt)
                 golden_freddy_attempt_timer =
                         wrapf(golden_freddy_attempt_timer + dt,
                               1.0f, &attempt);
-                if (attempt && (rand() % 10) == 1) {
+                if (attempt && (rand() % 100000) == 1) {
                         golden_freddy_state = GOLDEN_FREDDY_STATE_IN_CAM2B;
                 }
 
