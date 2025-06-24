@@ -211,11 +211,9 @@ void chica_update(int *button_state_ptr, const float dt)
 	which_spot = rand() & 1;
 
 	/* I have no fucking clue why I have to do this */
-	if (chica_cam_last < AT_DOOR) {
-        	camera_states[chica_cam_last] &= ~(CHICA_BIT | ROOM_SPOT_BIT);
-		if (chica_cam < AT_DOOR)
-        		camera_states[chica_cam] |=
-				CHICA_BIT | (ROOM_SPOT_BIT * which_spot);
+        if ((chica_cam_last != chica_cam) &&
+            ((chica_cam_last == cam_selected) ||
+             (chica_cam == cam_selected))) {
         	chica_blackout_timer = 10;
 	}
 
