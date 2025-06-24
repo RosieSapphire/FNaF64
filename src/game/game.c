@@ -144,10 +144,11 @@ int   game_office_flicker_rand;
 float game_door_anim_timers[GAME_DOOR_CNT];
 bool  game_shotgun_is_unlocked;
 float game_shotgun_reload_timer;
-static bool game_shotgun_play_sfx;
-static float game_shotgun_screen_shake_mag;
+static bool    game_shotgun_play_sfx;
+static float   game_shotgun_screen_shake_mag;
 static uint8_t game_shotgun_broke_door_flags;
-static float game_shotgun_killed_all_timer;
+static float   game_shotgun_killed_all_timer;
+static bool    game_show_exit_prompt;
 
 float        game_night_timer;
 int          game_power_usage;
@@ -161,6 +162,7 @@ static struct graphic game_gfx_foxy_scare[FOXY_SCARE_FRAME_CNT];
 static struct graphic game_freddy_scare[FREDDY_SCARE_FRAME_CNT];
 static struct graphic game_gfx_door_btns[GAME_DOOR_BUTTON_GFX_CNT];
 static struct graphic game_gfx_shotgun_anim[GAME_SHOTGUN_ANIM_FRAME_CNT];
+static sprite_t *game_gfx_exit_prompt;
 
 /* DOOR BUTTON START */
 
@@ -341,6 +343,9 @@ static void game_load(void)
 	freddy_load();
 	golden_freddy_load();
 	hallucinations_load();
+
+        /* Exit Prompt */
+        game_gfx_exit_prompt = sprite_load(TX_EXIT_PROMPT);
 	
         night_cur = SAVE_NIGHT_NUM(save_data);
         if (night_cur <= 5) {
@@ -366,10 +371,15 @@ static void game_load(void)
         game_shotgun_screen_shake_mag  = 0.f;
         game_shotgun_broke_door_flags  = 0;
         game_shotgun_killed_all_timer  = 0.f;
+
+        game_show_exit_prompt = false;
 }
 
 static void game_unload(void)
 {
+        /* Exit Prompt */
+        sprite_free(game_gfx_exit_prompt);
+
 	hallucinations_unload();
 	golden_freddy_unload();
 	freddy_unload();
@@ -626,6 +636,18 @@ void game_draw(void)
 	ui_draw();
 	camera_flip_draw();
 	hallucinations_draw();
+
+        if (game_show_exit_prompt) {
+	        rdpq_set_mode_standard();
+	        rdpq_set_prim_color(RGBA32(0x0, 0x0, 0x0, 0xA0));
+	        rdpq_mode_combiner(RDPQ_COMBINER_FLAT);
+	        rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
+	        rdpq_fill_rectangle(0, 0, 320, 240);
+
+	        rdpq_set_mode_standard();
+                rdpq_mode_alphacompare(1);
+                rdpq_sprite_blit(game_gfx_exit_prompt, 78, 70, NULL);
+        }
 }
 
 static void _game_handle_cheat_code(joypad_buttons_t down)
@@ -681,6 +703,20 @@ static void _game_update_random_events(float dt)
 
 enum scene game_update(struct update_params uparms)
 {
+        if (game_show_exit_prompt) {
+                if (uparms.pressed.start) {
+		        sfx_stop_all_channels();
+                        game_unload();
+		        return SCENE_TITLE_SCREEN;
+                }
+
+                if (uparms.pressed.b || uparms.pressed.a) {
+                        game_show_exit_prompt = false;
+                }
+
+                return SCENE_MAIN_GAME;
+        }
+
 	golden_freddy_update(uparms.dt);
 	hallucinations_update(uparms.dt);
 
@@ -861,10 +897,8 @@ enum scene game_update(struct update_params uparms)
                 game_sfx_jumpscare_exit_timer = 40.f;
         }
 	
-	if (uparms.pressed.start) {
-		sfx_stop_all_channels();
-                game_unload();
-		return SCENE_TITLE_SCREEN;
+	if (uparms.pressed.start && !game_show_exit_prompt) {
+                game_show_exit_prompt = true;
 	}
 
 	return SCENE_MAIN_GAME;

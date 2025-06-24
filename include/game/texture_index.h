@@ -284,3 +284,6 @@
 #define TX_SHOTGUN_07          TX_ROM_CUSTOM("shotgun_07.ci4.sprite")
 #define TX_SHOTGUN_08          TX_ROM_CUSTOM("shotgun_08.ci4.sprite")
 #define TX_SHOTGUN_09          TX_ROM_CUSTOM("shotgun_09.ci4.sprite")
+
+/* Exit Prompt */
+#define TX_EXIT_PROMPT         TX_ROM_CUSTOM("exit_prompt.ci8.sprite")
