@@ -2,6 +2,9 @@
 
 set -e
 
+CTFAK_RUNNER_IMAGE=${CTFAK_RUNNER_IMAGE:-ghcr.io/meeq/fnaf64-ctfak:1}
+LIBDRAGON_WORKSPACE_IMAGE=${LIBDRAGON_WORKSPACE_IMAGE:-ghcr.io/meeq/fnaf64-libdragon:1}
+
 if [ ! -f FiveNightsatFreddys.exe ]; then
     echo "ERROR: FiveNightsatFreddys.exe must be in the project directory!"
     exit 1
@@ -20,6 +23,7 @@ if [ ! -d dump ]; then
     # Dump the game assets
     docker build \
         --file Dockerfile-ctfak \
+        --build-arg "RUNNER_DEPS_IMAGE=$CTFAK_RUNNER_IMAGE" \
         --progress plain \
         --platform linux/amd64 \
         --target runner-out \
@@ -30,8 +34,8 @@ fi
 # Build the ROM
 docker build \
     --file Dockerfile \
+    --build-arg "WORKSPACE_IMAGE=$LIBDRAGON_WORKSPACE_IMAGE" \
     --progress plain \
-    --platform linux/amd64 \
     --target out \
     --output type=local,dest=. \
     .

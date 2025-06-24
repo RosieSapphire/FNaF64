@@ -34,14 +34,17 @@ AUDIOCONV_FLAGS=--wav-compress 1
 MKSPRITE_FLAGS=-c 1
 MKFONT_FLAGS=--size 8
 
+CTFAK_RUNNER_IMAGE=ghcr.io/meeq/fnaf64-ctfak:1
+LIBDRAGON_WORKSPACE_IMAGE=ghcr.io/meeq/fnaf64-libdragon:1
+
 all: $(GAME).z64
 
 with-docker:
 	@[ -d dump ] || $(MAKE) dump
 	docker build \
 		--file Dockerfile \
+		--build-arg "WORKSPACE_IMAGE=$(LIBDRAGON_WORKSPACE_IMAGE)"
 		--progress plain \
-		--platform linux/amd64 \
 		--target out \
 		--output type=local,dest=. \
 		.
@@ -59,19 +62,36 @@ CTFAK.Cli:
 .PHONY: CTFAK.Cli
 
 dump:
-	@[ -d CTFAK.Cli ] || $(MAKE) CTFAK.Cli
+	@[ -d CTFAK2.0 ] || git submodule update --init
 	@[ -f "FiveNightsatFreddys.exe" ] || (\
 		echo "ERROR: FiveNightsatFreddys.exe must be in the project directory!" && \
 		exit 1 \
 	)
 	docker build \
 		--file Dockerfile-ctfak \
+		--build-arg "RUNNER_DEPS_IMAGE=$(CTFAK_RUNNER_IMAGE)" \
 		--progress plain \
 		--platform linux/amd64 \
 		--target runner-out \
 		--output type=local,dest=. \
 		.
 .PHONY: dump
+
+push-docker-images:
+	docker buildx build \
+		--platform linux/amd64 \
+		--file Dockerfile-ctfak \
+		--target runner-deps-install \
+		--tag $(CTFAK_RUNNER_IMAGE) \
+		--push \
+		.
+	docker buildx build \
+		--platform linux/amd64,linux/arm64 \
+		--target workspace \
+		--tag $(LIBDRAGON_WORKSPACE_IMAGE) \
+		--push \
+		.
+.PHONY: push-docker-images
 
 filesystem/%.wav64: assets/%.wav
 	@mkdir -p $(dir $@)

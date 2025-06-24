@@ -6,6 +6,9 @@ ARG RUNNER_DEPS_IMAGE=runner-deps-install
 
 FROM ${BASE_IMAGE} AS builder-deps-install
 
+LABEL org.opencontainers.image.source=https://github.com/meeq/FNaF64
+LABEL org.opencontainers.image.description="Docker image for building CTFAK2.0 to dump assets from Five Nights at Freddy's"
+
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 
 RUN export DEBIAN_FRONTEND=noninteractive \
@@ -49,6 +52,9 @@ FROM scratch AS builder-out
 COPY --from=builder /CTFAK2.0/Interface/CTFAK.Cli/bin/Release/net6.0-windows/win-x64 /CTFAK.Cli
 
 FROM ${BASE_IMAGE} AS runner-deps-install
+
+LABEL org.opencontainers.image.source=https://github.com/meeq/FNaF64
+LABEL org.opencontainers.image.description="Docker image for running CTFAK2.0 to dump assets from Five Nights at Freddy's"
 
 # Install dependencies
 RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
