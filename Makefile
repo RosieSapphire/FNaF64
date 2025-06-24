@@ -34,8 +34,8 @@ AUDIOCONV_FLAGS=--wav-compress 1
 MKSPRITE_FLAGS=-c 1
 MKFONT_FLAGS=--size 8
 
-CTFAK_RUNNER_IMAGE=ghcr.io/meeq/fnaf64-ctfak:1
-LIBDRAGON_WORKSPACE_IMAGE=ghcr.io/meeq/fnaf64-libdragon:1
+CTFAK_RUNNER_IMAGE ?= ghcr.io/meeq/fnaf64-ctfak:1
+LIBDRAGON_WORKSPACE_IMAGE ?= ghcr.io/meeq/fnaf64-libdragon:1
 
 all: $(GAME).z64
 
