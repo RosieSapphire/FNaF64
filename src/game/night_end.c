@@ -29,7 +29,7 @@
  * happens between the 5-6 AM transition, it won't affect your save file. :D
  */
 
-static struct graphic am, six, five;
+static struct graphic am, six, five, damn_shell;
 static float timer;
 static bool is_loaded = false;
 static bool played_cheer;
@@ -65,6 +65,9 @@ static void night_end_load(void)
 	graphic_load(&am, TX_END_AM);
 	graphic_load(&six, TX_END_SIX);
 	graphic_load(&five, TX_END_FIVE);
+        if (game_won_by_murder) {
+	        graphic_load(&damn_shell, TX_END_DAMN);
+        }
 
 	played_cheer = false;
 	is_loaded = true;
@@ -74,6 +77,10 @@ static void night_end_unload(void)
 {
 	if (!is_loaded) {
 		return;
+        }
+
+        if (game_won_by_murder) {
+	        graphic_unload(&damn_shell);
         }
 
 	graphic_unload(&six);
@@ -97,7 +104,8 @@ void night_end_draw(void)
 	int six_end = 298;
 	float t = CLAMP((timer - 1) * 0.2f, 0, 1);
 
-	graphic_draw(six, 390, lerpf(six_start, six_end, t),
+	graphic_draw(game_won_by_murder ? damn_shell : six,
+                     390, lerpf(six_start, six_end, t),
                      -5, 0, GFX_FLIP_NONE);
 	graphic_draw(five, 390, lerpf(five_start, five_end, t),
                      -5, 0, GFX_FLIP_NONE);
@@ -105,9 +113,9 @@ void night_end_draw(void)
 
 	rdpq_set_mode_fill(RGBA32(0x0, 0x0, 0x0, 0xFF));
 	rdpq_fill_rectangle(vcon(339), vcon(168),
-			vcon(339) + vcon(159), vcon(168) + vcon(120));
+			vcon(339) + vcon(400), vcon(168) + vcon(120));
 	rdpq_fill_rectangle(vcon(339), vcon(384),
-			vcon(339) + vcon(159), vcon(384) + vcon(120));
+			vcon(339) + vcon(400), vcon(384) + vcon(120));
 
 	float fade;
 	if (timer < 9)
@@ -129,7 +137,11 @@ enum scene night_end_update(const struct update_params uparms)
 	if (timer >= NIGHT_END_TIMER_PLAY_CHEER && !played_cheer) {
 		played_cheer = true;
 		mixer_ch_set_vol(SFX_CH_FAN, 0.8f, 0.8f);
-		wav64_play(&sfx_cheering, SFX_CH_FAN);
+                if (!game_won_by_murder) {
+		        wav64_play(&sfx_cheering, SFX_CH_FAN);
+                } else {
+		        wav64_play(&sfx_daaamn, SFX_CH_FAN);
+                }
 	}
 
 	if (timer >= NIGHT_END_TIMER_EXIT) {

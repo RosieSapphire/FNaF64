@@ -8,6 +8,8 @@
 
 extern int foxy_ai_level;
 extern int foxy_progress;
+extern float foxy_no_check_timer;
+extern bool foxy_use_run_timer;
 extern float foxy_run_timer;
 
 extern struct graphic foxy_run[FOXY_RUN_FRAMES];

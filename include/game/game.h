@@ -33,11 +33,6 @@ extern int   game_office_flicker_rand;
 extern float game_door_anim_timers[GAME_DOOR_CNT];
 /* MOVE TO C END */
 
-#define GAME_DOOR_LEFT    0
-#define GAME_DOOR_RIGHT   1
-#define GAME_DOOR_ANIM_FRAME_CNT 15
-
-
 enum {
         JUMPSCARE_FLAG_BONNIE_SHIFT,
         JUMPSCARE_FLAG_CHICA_SHIFT,
@@ -54,11 +49,14 @@ enum {
                                 JUMPSCARE_FLAG_FOXY | JUMPSCARE_FLAG_FREDDY
 };
 
-extern float game_night_timer;
-extern int game_power_usage;
-extern int game_power_left;
-extern float game_power_timer;
+extern float   game_night_timer;
+extern int     game_power_usage;
+extern int     game_power_left;
+extern float   game_power_timer;
 extern uint8_t game_jumpscare_flags;
+extern bool    game_shotgun_is_unlocked;
+extern float   game_shotgun_reload_timer;
+extern bool    game_won_by_murder;
 
 void game_draw(void);
 enum scene game_update(struct update_params uparms);

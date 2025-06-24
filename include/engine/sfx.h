@@ -28,6 +28,7 @@ extern wav64_t sfx_power_down;
 extern wav64_t sfx_music_box;
 extern wav64_t sfx_chimes;
 extern wav64_t sfx_cheering;
+extern wav64_t sfx_daaamn;
 extern wav64_t sfx_phone_call_1;
 extern wav64_t sfx_phone_call_2;
 extern wav64_t sfx_phone_call_3;
@@ -44,6 +45,8 @@ extern wav64_t sfx_cam_glitch_4;
 extern wav64_t sfx_foxy_hum;
 extern wav64_t sfx_circus_music;
 extern wav64_t sfx_girl_giggle;
+extern wav64_t sfx_shotgun_blast;
+extern wav64_t sfx_shotgun_reload;
 
 enum sfx_channels {
 	SFX_CH_AMBIENCE,
@@ -62,6 +65,8 @@ enum sfx_channels {
 	SFX_CH_ROBOTVOICE,
 	SFX_CH_MUSICBOX,
 	SFX_CH_FOXSONG,
+        SFX_CH_SHOTTY1,
+        SFX_CH_SHOTTY2,
 	SFX_CH_CNT
 };
 

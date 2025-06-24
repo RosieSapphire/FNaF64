@@ -25,10 +25,35 @@
 #include "game/texture_index.h"
 #include "game/game.h"
 
-#define GAME_DOOR_ANIM_POS_X 72
-#define GAME_DOOR_ANIM_POS_Y -1
-#define GAME_DOOR_BUTTON_GFX_CNT 8
+#define GAME_DOOR_ANIM_POS_X           72
+#define GAME_DOOR_ANIM_POS_Y           -1
+#define GAME_DOOR_BUTTON_GFX_CNT       8
+#define GAME_DOOR_LEFT                 0
+#define GAME_DOOR_RIGHT                1
+#define GAME_DOOR_ANIM_FRAME_CNT       15
+#define GAME_DOOR_LEFT_INTERACT_DIST  -68
+#define GAME_DOOR_RIGHT_INTERACT_DIST -554
+
 #define GAME_FAN_FRAME_CNT 3
+
+#define GAME_SHOTGUN_ANIM_FRAME_CNT        10
+#define GAME_SHOTGUN_RELOAD_TIMER          .8f
+#define GAME_SHOTGUN_FRAME_PLAY_RELOAD_SFX 3
+#define GAME_SHOTGUN_MAX_ABS_THETA         8.f
+#define GAME_SHOTGUN_SCREEN_SHAKE_MAG_MAX  48
+#define GAME_SHOTGUN_SCREEN_SHAKE_SPD      32.f
+
+enum {
+        GAME_SHOTGUN_BROKE_DOOR_LEFT_SHIFT,
+        GAME_SHOTGUN_BROKE_DOOR_RIGHT_SHIFT
+};
+
+enum {
+        GAME_SHOTGUN_BROKE_DOOR_LEFT =
+                (1 << GAME_SHOTGUN_BROKE_DOOR_LEFT_SHIFT),
+        GAME_SHOTGUN_BROKE_DOOR_RIGHT =
+                (1 << GAME_SHOTGUN_BROKE_DOOR_RIGHT_SHIFT)
+};
 
 #define GAME_OFFICE_VIEW_CNT 5
 
@@ -80,6 +105,19 @@ static const char *game_gfx_door_btn_paths[GAME_DOOR_BUTTON_GFX_CNT] = {
 	TX_BUTTON_RIGHT11,
 };
 
+static const char *game_gfx_shotgun_anim_paths[GAME_SHOTGUN_ANIM_FRAME_CNT] = {
+	TX_SHOTGUN_00,
+	TX_SHOTGUN_01,
+	TX_SHOTGUN_02,
+	TX_SHOTGUN_03,
+	TX_SHOTGUN_04,
+	TX_SHOTGUN_05,
+	TX_SHOTGUN_06,
+	TX_SHOTGUN_07,
+	TX_SHOTGUN_08,
+	TX_SHOTGUN_09
+};
+
 static bool game_is_loaded = false;
 
 static float game_sfx_jumpscare_exit_timer = 40;
@@ -87,6 +125,7 @@ static float game_circus_timer;
 static int   game_night_skip_correct;
 static float game_ticks_since_load;
 static float game_time_since_load;
+static int   game_door_btn_states_cur = 0;
 /*
 static float game_office_turn;
 static float game_office_turn_lerp;
@@ -103,19 +142,25 @@ float game_scare_timer_freddy;
 float game_office_flicker_rand_timer;
 int   game_office_flicker_rand;
 float game_door_anim_timers[GAME_DOOR_CNT];
-
-static int   game_door_btn_states_cur = 0;
+bool  game_shotgun_is_unlocked;
+float game_shotgun_reload_timer;
+static bool game_shotgun_play_sfx;
+static float game_shotgun_screen_shake_mag;
+static uint8_t game_shotgun_broke_door_flags;
+static float game_shotgun_killed_all_timer;
 
 float        game_night_timer;
 int          game_power_usage;
 int          game_power_left;
 float        game_power_timer;
 uint8_t      game_jumpscare_flags;
+bool         game_won_by_murder;
 
 static struct graphic game_gfx_office_views[GAME_OFFICE_VIEW_CNT];
 static struct graphic game_gfx_foxy_scare[FOXY_SCARE_FRAME_CNT];
 static struct graphic game_freddy_scare[FREDDY_SCARE_FRAME_CNT];
 static struct graphic game_gfx_door_btns[GAME_DOOR_BUTTON_GFX_CNT];
+static struct graphic game_gfx_shotgun_anim[GAME_SHOTGUN_ANIM_FRAME_CNT];
 
 /* DOOR BUTTON START */
 
@@ -134,22 +179,31 @@ void buttons_unload(void)
 static void button_left_update(struct update_params uparms)
 {
 	bool left_door_can_interact =
-		(int)game_door_anim_timers[0] == 0 || (int)game_door_anim_timers[0] == 14;
-	if (game_office_turn <= -68) {
-		if (settings_flags & SET_LIGHT_HOLD_BIT)
+		((int)game_door_anim_timers[0] == 0 ||
+                 (int)game_door_anim_timers[0] == 14);
+        bool is_broken = (game_shotgun_broke_door_flags & GAME_SHOTGUN_BROKE_DOOR_LEFT);
+
+	if (game_office_turn <= GAME_DOOR_LEFT_INTERACT_DIST) {
+		if (settings_flags & SET_LIGHT_HOLD_BIT) {
 			game_door_btn_states_cur &= ~(GAME_DOOR_BTN_LEFT_LIGHT);
+                }
 		return;
 	}
 
 	if (bonnie_cam == YOURE_FUCKED) {
-		if (uparms.pressed.b || uparms.pressed.a)
+		if (uparms.pressed.b || uparms.pressed.a) {
 			wav64_play(&sfx_error, SFX_CH_BLIP);
+                }
 		return;
 	}
 
 	if (uparms.pressed.b && left_door_can_interact) {
-		game_door_btn_states_cur ^= GAME_DOOR_BTN_LEFT_DOOR;
-		wav64_play(&sfx_door, SFX_CH_DOOR);
+                if (is_broken) {
+		        wav64_play(&sfx_error, SFX_CH_BLIP);
+                } else {
+		        game_door_btn_states_cur ^= GAME_DOOR_BTN_LEFT_DOOR;
+		        wav64_play(&sfx_door, SFX_CH_DOOR);
+                }
 	}
 
 	if (settings_flags & SET_LIGHT_HOLD_BIT) {
@@ -167,8 +221,12 @@ static void button_left_update(struct update_params uparms)
 static void button_right_update(struct update_params uparms)
 {
 	bool right_door_can_interact =
-		(int)game_door_anim_timers[1] == 0 || (int)game_door_anim_timers[1] == 14;
-	if (game_office_turn >= -554) {
+		((int)game_door_anim_timers[1] == 0 ||
+                 (int)game_door_anim_timers[1] == 14);
+        bool is_broken = (game_shotgun_broke_door_flags &
+                          GAME_SHOTGUN_BROKE_DOOR_RIGHT);
+
+	if (game_office_turn >= GAME_DOOR_RIGHT_INTERACT_DIST) {
 		if (settings_flags & SET_LIGHT_HOLD_BIT)
 			game_door_btn_states_cur &= ~(GAME_DOOR_BTN_RIGHT_LIGHT);
 		return;
@@ -181,8 +239,12 @@ static void button_right_update(struct update_params uparms)
 	}
 
 	if (uparms.pressed.b && right_door_can_interact) {
-		game_door_btn_states_cur ^= GAME_DOOR_BTN_RIGHT_DOOR;
-		wav64_play(&sfx_door, SFX_CH_DOOR);
+                if (is_broken) {
+		        wav64_play(&sfx_error, SFX_CH_BLIP);
+                } else {
+		        game_door_btn_states_cur ^= GAME_DOOR_BTN_RIGHT_DOOR;
+		        wav64_play(&sfx_door, SFX_CH_DOOR);
+                }
 	}
 
 	if (settings_flags & SET_LIGHT_HOLD_BIT) {
@@ -266,6 +328,10 @@ static void game_load(void)
 	game_door_anim_timers[0] = 0;
 	game_door_anim_timers[1] = 0;
 
+        /* Shotgun */
+	graphics_load(game_gfx_shotgun_anim, GAME_SHOTGUN_ANIM_FRAME_CNT,
+                      game_gfx_shotgun_anim_paths);
+
 	buttons_load();
 	camera_load();
 	ui_load();
@@ -281,15 +347,25 @@ static void game_load(void)
 	        wav64_play(sfx_phone_calls[night_cur - 1], SFX_CH_PHONECALL);
         }
 
-	game_night_timer = 0.0f;
-	game_power_usage = 1;
-	game_power_left = 999;
-	game_power_timer = 0.0f;
+	game_night_timer     = 0.0f;
+	game_power_usage     = 1;
+	game_power_left      = 999;
+	game_power_timer     = 0.0f;
         game_jumpscare_flags = 0;
-	game_is_loaded = true;
+        game_won_by_murder   = false;
+	game_is_loaded       = true;
 
 	game_ticks_since_load = get_ticks() - game_ticks_since_load;
-	game_time_since_load = (float)game_ticks_since_load / (float)TICKS_PER_SECOND;
+	game_time_since_load  = (float)game_ticks_since_load /
+                                (float)TICKS_PER_SECOND;
+
+        /* TODO: Make this really hard to obtain. :3 */
+        game_shotgun_is_unlocked       = false;
+        game_shotgun_reload_timer      = 0.f;
+        game_shotgun_play_sfx          = false;
+        game_shotgun_screen_shake_mag  = 0.f;
+        game_shotgun_broke_door_flags  = 0;
+        game_shotgun_killed_all_timer  = 0.f;
 }
 
 static void game_unload(void)
@@ -303,6 +379,9 @@ static void game_unload(void)
 	ui_unload();
 	camera_unload();
 	buttons_unload();
+
+        /* Shotgun */
+	graphics_unload(game_gfx_shotgun_anim, GAME_SHOTGUN_ANIM_FRAME_CNT);
 
         /* Doors */
 	graphics_unload(game_gfx_anim_doors, GAME_DOOR_ANIM_FRAME_CNT);
@@ -319,6 +398,8 @@ static void game_unload(void)
 
 void game_draw(void)
 {
+        float shotgun_shake_offset;
+
         if (!game_is_loaded) {
 	        game_load();
         }
@@ -331,14 +412,21 @@ void game_draw(void)
 	if (!camera_is_visible) {
                 int i, office_view_cur;
 
+                shotgun_shake_offset =
+                        sinf((GAME_SHOTGUN_RELOAD_TIMER -
+                             game_shotgun_reload_timer) * M_PI *
+                             GAME_SHOTGUN_SCREEN_SHAKE_SPD) *
+                        game_shotgun_screen_shake_mag;
 		perspective_begin();
 
                 /* Office */
 	        rdpq_set_mode_copy(false);
 
 	        if (game_jumpscare_flags & JUMPSCARE_FLAG_FOXY) {
-	        	graphic_draw(game_gfx_foxy_scare[(int)game_scare_timer_foxy],
-	        		     game_office_turn, 0, 0, 0, GFX_FLIP_NONE);
+	        	graphic_draw(game_gfx_foxy_scare[
+                                     (int)game_scare_timer_foxy],
+	        		     game_office_turn + shotgun_shake_offset,
+                                     0, 0, 0, GFX_FLIP_NONE);
                 } else {
                         /* FIXME: Freddy's room jumpscare's fucking broken. */
                         for (i = 0; i < FREDDY_SCARE_FRAME_CNT; ++i) {
@@ -355,7 +443,8 @@ void game_draw(void)
                                              game_freddy_scare_paths[frame]);
                                 graphic_draw(game_freddy_scare[
                                              (int)game_scare_timer_freddy],
-                                             game_office_turn, 0, 0,
+                                             game_office_turn +
+                                             shotgun_shake_offset, 0, 0,
                                              0, GFX_FLIP_NONE);
                         } else {
                                 /* Determine view to show for office */
@@ -384,9 +473,11 @@ void game_draw(void)
                                         office_view_cur = 0;
                                 }
 
-                                graphic_draw(game_gfx_office_views[office_view_cur],
-                                             game_office_turn, 0, 0, 0,
-                                             GFX_FLIP_NONE);
+                                graphic_draw(game_gfx_office_views[
+                                             office_view_cur],
+                                             game_office_turn +
+                                             shotgun_shake_offset,
+                                             0, 0, 0, GFX_FLIP_NONE);
                         }
                 }
 
@@ -394,22 +485,26 @@ void game_draw(void)
                  * TODO: Put this into a check statement
                  * to make it much clearer.
                  */
-		golden_freddy_draw_in_room(game_office_turn);
+		golden_freddy_draw_in_room(game_office_turn +
+                                           shotgun_shake_offset);
 
                 if (!game_jumpscare_flags) {
                         int door_frame_left, door_frame_right;
 
                         /* Fan */
 	                rdpq_set_mode_copy(false);
-	                graphic_draw(game_gfx_fan_anim[(int)game_fan_anim_timer],
-                                     868 + game_office_turn, 400, 88, 97, 0);
+	                graphic_draw(game_gfx_fan_anim[
+                                     (int)game_fan_anim_timer],
+                                     868 + game_office_turn +
+                                     shotgun_shake_offset, 400, 88, 97, 0);
 
                         /* Door Left */
 	                rdpq_set_mode_copy(true);
                         door_frame_left =
                                 (int)(game_door_anim_timers[GAME_DOOR_LEFT]);
 	                graphic_draw(game_gfx_anim_doors[door_frame_left],
-                                     GAME_DOOR_ANIM_POS_X + game_office_turn,
+                                     GAME_DOOR_ANIM_POS_X + game_office_turn +
+                                     shotgun_shake_offset,
                                      GAME_DOOR_ANIM_POS_Y,
                                      0, 0, GFX_FLIP_NONE);
 
@@ -420,7 +515,8 @@ void game_draw(void)
                         door_frame_right =
                                 (int)(game_door_anim_timers[GAME_DOOR_RIGHT]);
 	                graphic_draw(game_gfx_anim_doors[door_frame_right],
-	                	     1270 + game_office_turn, -2,
+	                	     1270 + game_office_turn +
+                                     shotgun_shake_offset, -2,
                                      0, 0, GFX_FLIP_X);
 
                         /* Door Buttons */
@@ -448,9 +544,9 @@ void game_draw(void)
 	                }
 
 	                rdpq_set_mode_copy(true);
-	                graphic_draw(game_gfx_door_btns[left_index], 48 + game_office_turn,
+	                graphic_draw(game_gfx_door_btns[left_index], 48 + game_office_turn + shotgun_shake_offset,
                                      390, 42, 127, 0);
-	                graphic_draw(game_gfx_door_btns[right_index], 1546 + game_office_turn,
+	                graphic_draw(game_gfx_door_btns[right_index], 1546 + game_office_turn + shotgun_shake_offset,
                                      400, 49, 127, 0);
                 }
 
@@ -469,6 +565,51 @@ void game_draw(void)
 		camera_ui_draw();
 		blip_draw();
 	}
+
+        /* Shotgun */
+        if (game_shotgun_is_unlocked && !camera_is_visible) {
+                float shotty_n11, shotty_01, shotty_offset_x,
+                      shotty_offset_y, shotty_theta;
+                int shotty_frame_cur;
+                rdpq_blitparms_t params;
+
+                shotty_n11       = -((game_office_turn + 320.f) / 320.f);
+                shotty_01        = (shotty_n11 + 1.f) * .5f;
+                shotty_offset_x  = shotty_n11 * 64.f;
+                shotty_offset_y  = sinf(M_PI * shotty_01) * -8.f;
+                shotty_theta     = TO_RADIANS(shotty_n11 *
+                                              -GAME_SHOTGUN_MAX_ABS_THETA);
+                shotty_frame_cur = (int)((game_shotgun_reload_timer /
+                                          GAME_SHOTGUN_RELOAD_TIMER) *
+                                         (GAME_SHOTGUN_ANIM_FRAME_CNT - 1));
+                if (shotty_frame_cur > 0) {
+                        shotty_frame_cur = (GAME_SHOTGUN_ANIM_FRAME_CNT - 1) -
+                                           shotty_frame_cur;
+                }
+
+                params.tile      = TILE0;
+                params.s0        = 0;
+                params.t0        = 0;
+                params.width     = 0;
+                params.height    = 0;
+                params.flip_x    = false;
+                params.flip_y    = false;
+                params.cx        = 83;
+                params.cy        = 77;
+                params.scale_x   = 2.f;
+                params.scale_y   = 2.f;
+                params.theta     = shotty_theta;
+                params.filtering = true;
+                params.nx        = 0;
+                params.ny        = 0;
+
+                rdpq_set_mode_standard();
+                rdpq_mode_alphacompare(1);
+                rdpq_mode_filter(FILTER_MEDIAN);
+                rdpq_sprite_blit(game_gfx_shotgun_anim[shotty_frame_cur].spr,
+                                 160 + shotty_offset_x,
+                                 240 + shotty_offset_y, &params);
+        }
 
 	if (settings_flags & SET_ROBOT_CHEAT_BIT) {
 		bonnie_draw_debug();
@@ -543,6 +684,13 @@ enum scene game_update(struct update_params uparms)
 	golden_freddy_update(uparms.dt);
 	hallucinations_update(uparms.dt);
 
+        if (game_shotgun_killed_all_timer) {
+                game_shotgun_killed_all_timer -= uparms.dt;
+                if (game_shotgun_killed_all_timer <= 0.f) {
+                        game_night_timer = 6 * HOUR_LEN_SECONDS;
+                }
+        }
+
         /*
          * You are actively being jumpscared by
          * Golden Freddy, and are powerless to do anything.
@@ -593,6 +741,86 @@ enum scene game_update(struct update_params uparms)
 
 	office_update(game_door_btn_states_cur, uparms);
 
+        /* Shotgun */
+        if (game_shotgun_is_unlocked) {
+                int reload_frame_old, reload_frame_cur;
+
+                reload_frame_old = (int)((game_shotgun_reload_timer /
+                                          GAME_SHOTGUN_RELOAD_TIMER) *
+                                         (GAME_SHOTGUN_ANIM_FRAME_CNT - 1));
+                game_shotgun_reload_timer =
+                        CLAMP(game_shotgun_reload_timer - uparms.dt,
+                              0.f, GAME_SHOTGUN_RELOAD_TIMER);
+                game_shotgun_screen_shake_mag =
+                        game_shotgun_reload_timer / GAME_SHOTGUN_RELOAD_TIMER;
+                game_shotgun_screen_shake_mag *= game_shotgun_screen_shake_mag *
+                                                 game_shotgun_screen_shake_mag;
+                game_shotgun_screen_shake_mag *=
+                        GAME_SHOTGUN_SCREEN_SHAKE_MAG_MAX;
+                reload_frame_cur = (int)((game_shotgun_reload_timer /
+                                          GAME_SHOTGUN_RELOAD_TIMER) *
+                                         (GAME_SHOTGUN_ANIM_FRAME_CNT - 1));
+
+                if (uparms.pressed.z && game_shotgun_reload_timer <= 0.f &&
+                    !camera_is_visible) {
+                        wav64_play(&sfx_shotgun_blast, SFX_CH_SHOTTY1);
+                        game_shotgun_reload_timer = GAME_SHOTGUN_RELOAD_TIMER;
+
+                        if (game_office_turn >= GAME_DOOR_LEFT_INTERACT_DIST) {
+                                if (game_door_btn_states_cur &
+                                    GAME_DOOR_BTN_LEFT_DOOR) {
+                                        game_door_btn_states_cur &=
+                                                ~(GAME_DOOR_BTN_LEFT_DOOR);
+                                        game_shotgun_broke_door_flags |=
+                                                GAME_SHOTGUN_BROKE_DOOR_LEFT;
+                                } else if (bonnie_cam == AT_DOOR) {
+                                        bonnie_ai_level = 0;
+                                        bonnie_cam = -1;
+                                } else if (game_jumpscare_flags &
+                                           JUMPSCARE_FLAG_FOXY) {
+                                        game_jumpscare_flags &=
+                                                ~(JUMPSCARE_FLAG_FOXY);
+                                        foxy_ai_level = 0;
+                                        foxy_progress = 0;
+                                        foxy_run_timer = 0.f;
+                                        foxy_no_check_timer = 0.f;
+                                        foxy_use_run_timer = false;
+                                        mixer_ch_stop(SFX_CH_JUMPSCARE);
+                                }
+                        } else if (game_office_turn <=
+                                   GAME_DOOR_RIGHT_INTERACT_DIST) {
+                                if (game_door_btn_states_cur &
+                                    GAME_DOOR_BTN_RIGHT_DOOR) {
+                                        game_door_btn_states_cur &=
+                                                ~(GAME_DOOR_BTN_RIGHT_DOOR);
+                                        game_shotgun_broke_door_flags |=
+                                                GAME_SHOTGUN_BROKE_DOOR_RIGHT;
+                                } else if (freddy_cam == CAM_4B) {
+                                        freddy_ai_level = 0;
+                                        freddy_cam = -1;
+                                } else if (chica_cam == AT_DOOR) {
+                                        chica_ai_level = 0;
+                                        chica_cam = -1;
+                                }
+                        }
+
+                        /*
+                         * If we just killed all the animatronics,
+                         * start a small grace timer before ending the night.
+                         */
+                        if (freddy_ai_level == 0 && bonnie_ai_level == 0 &&
+                            chica_ai_level == 0 && foxy_ai_level == 0) {
+                                game_shotgun_killed_all_timer = 3.f;
+                                game_won_by_murder = true;
+                        }
+                }
+
+                if (reload_frame_old > GAME_SHOTGUN_FRAME_PLAY_RELOAD_SFX &&
+                    reload_frame_cur <= GAME_SHOTGUN_FRAME_PLAY_RELOAD_SFX) {
+                        wav64_play(&sfx_shotgun_reload, SFX_CH_SHOTTY2);
+                }
+        }
+
         /* Fan */
 	game_fan_anim_timer = wrapf(game_fan_anim_timer + uparms.dt * speed_fps(99), GAME_FAN_FRAME_CNT, NULL);
 
@@ -629,48 +857,15 @@ enum scene game_update(struct update_params uparms)
 			game_sfx_jumpscare_exit_timer = 40;
 			return SCENE_GAME_OVER;
 		}
-	}
+	} else {
+                game_sfx_jumpscare_exit_timer = 40.f;
+        }
 	
 	if (uparms.pressed.start) {
 		sfx_stop_all_channels();
                 game_unload();
 		return SCENE_TITLE_SCREEN;
 	}
-
-#ifdef GAME_DEBUG_ENABLED
-        /*
-	if (game_jumpscare_flags & JUMPSCARE_FLAG_BONNIE) {
-                debugf("BONNIE JUMPSCARE!\n");
-        }
-
-	if (game_jumpscare_flags & JUMPSCARE_FLAG_CHICA) {
-                debugf("CHICA JUMPSCARE!\n");
-        }
-
-	if (game_jumpscare_flags & JUMPSCARE_FLAG_FREDDY) {
-                debugf("FREDDY JUMPSCARE!\n");
-        }
-
-	if (game_jumpscare_flags & JUMPSCARE_FLAG_FOXY) {
-                debugf("FOXY JUMPSCARE!\n");
-        }
-        debugf("B:%d C:%d Fo:%d Fr:%d (0x%X), %x, %x, %x, %x\n",
-               (game_jumpscare_flags & JUMPSCARE_FLAG_BONNIE) <<
-                        JUMPSCARE_FLAG_BONNIE_SHIFT,
-               (game_jumpscare_flags & JUMPSCARE_FLAG_CHICA) <<
-                        JUMPSCARE_FLAG_CHICA_SHIFT,
-               (game_jumpscare_flags & JUMPSCARE_FLAG_FOXY) <<
-                        JUMPSCARE_FLAG_FOXY_SHIFT,
-               (game_jumpscare_flags & JUMPSCARE_FLAG_FREDDY) <<
-                        JUMPSCARE_FLAG_FREDDY_SHIFT,
-               game_jumpscare_flags,
-               JUMPSCARE_FLAG_BONNIE,
-               JUMPSCARE_FLAG_CHICA,
-               JUMPSCARE_FLAG_FOXY,
-               JUMPSCARE_FLAG_FREDDY
-               );
-        */
-#endif
 
 	return SCENE_MAIN_GAME;
 }

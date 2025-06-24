@@ -12,15 +12,17 @@ include $(N64_INST)/include/n64.mk
 
 src := $(wildcard src/*.c src/*/*.c)
 
-ASSETS_WAV    := $(wildcard assets/*.wav)
-ASSETS_CUSTOM := $(wildcard assets/custom/*.png)
-ASSETS_CI4    := $(wildcard assets/ci4/*.png)
-ASSETS_CI8    := $(wildcard assets/ci8/*.png)
-ASSETS_I4     := $(wildcard assets/i4/*.png)
-ASSETS_IA4    := $(wildcard assets/ia4/*.png)
-ASSETS_TTF    := $(wildcard assets/custom/*.ttf)
+ASSETS_WAV      := $(wildcard assets/*.wav)
+ASSETS_WAV_CUST := $(wildcard assets/custom/*.wav)
+ASSETS_CUSTOM   := $(wildcard assets/custom/*.png)
+ASSETS_CI4      := $(wildcard assets/ci4/*.png)
+ASSETS_CI8      := $(wildcard assets/ci8/*.png)
+ASSETS_I4       := $(wildcard assets/i4/*.png)
+ASSETS_IA4      := $(wildcard assets/ia4/*.png)
+ASSETS_TTF      := $(wildcard assets/custom/*.ttf)
 
 assets_conv = $(addprefix filesystem/,$(notdir $(ASSETS_WAV:%.wav=%.wav64))) \
+              $(addprefix filesystem/custom/,$(notdir $(ASSETS_WAV_CUST:%.wav=%.wav64))) \
               $(addprefix filesystem/custom/,$(notdir $(ASSETS_CUSTOM:%.png=%.sprite))) \
               $(addprefix filesystem/ci4/,$(notdir $(ASSETS_CI4:%.png=%.sprite))) \
               $(addprefix filesystem/ci8/,$(notdir $(ASSETS_CI8:%.png=%.sprite))) \
@@ -75,6 +77,11 @@ filesystem/%.wav64: assets/%.wav
 	@mkdir -p $(dir $@)
 	@echo "    [AUDIO] $@"
 	@$(N64_AUDIOCONV) $(AUDIOCONV_FLAGS) -o filesystem $<
+
+filesystem/custom/%.wav64: assets/custom/%.wav
+	@mkdir -p $(dir $@)
+	@echo "    [AUDIO] $@"
+	@$(N64_AUDIOCONV) $(AUDIOCONV_FLAGS) -o filesystem/custom $<
 
 filesystem/custom/%.sprite: assets/custom/%.png
 	@mkdir -p $(dir $@)

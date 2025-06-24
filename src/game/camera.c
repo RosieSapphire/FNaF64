@@ -451,7 +451,8 @@ static void camera_flip_update(const struct update_params uparms)
 	int frame = (int)flip_timer;
 	camera_was_using = camera_is_using;
 	const bool button_down =
-		(uparms.pressed.r || uparms.pressed.l || uparms.pressed.z);
+		(uparms.pressed.r || uparms.pressed.l ||
+                 (uparms.pressed.z && !game_shotgun_is_unlocked));
 	const bool flip_anim_stopped = (frame == 0 || frame == FLIP_FRAMES);
 	camera_is_using ^= button_down && flip_anim_stopped;
 

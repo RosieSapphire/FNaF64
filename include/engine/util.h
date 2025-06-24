@@ -2,6 +2,8 @@
 
 #include <stdbool.h>
 
+#define TO_RADIANS(X) (X * 0.01745329252f)
+
 #define MIN(A, B) (((A) < (B)) ? (A) : (B))
 #define MAX(A, B) (((A) > (B)) ? (A) : (B))
 #define CLAMP(X, MIN_VAL, MAX_VAL) (MAX((MIN(X, MAX_VAL)), (MIN_VAL)))

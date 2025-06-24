@@ -12,9 +12,9 @@
 int foxy_ai_level = 0;
 static float move_timer;
 static float stun_timer;
-static float no_check_timer;
-static bool use_run_timer;
 int foxy_progress;
+float foxy_no_check_timer;
+bool foxy_use_run_timer;
 float foxy_run_timer;
 static int num_door_pounds;
 struct graphic foxy_run[FOXY_RUN_FRAMES];
@@ -36,11 +36,11 @@ void foxy_load(void)
 	move_timer = 0.0f;
 	foxy_progress = 0;
 	stun_timer = 0.0f;
-	no_check_timer = 0.0f;
+	foxy_no_check_timer = 0.0f;
         game_jumpscare_flags &= ~(JUMPSCARE_FLAG_FOXY);
 	game_scare_timer_foxy = 0.0f;
 	foxy_run_timer = 0.0f;
-	use_run_timer = false;
+	foxy_use_run_timer = false;
 	num_door_pounds = 0;
 	graphics_load(foxy_run, FOXY_RUN_FRAMES, foxy_run_paths);
 }
@@ -80,10 +80,10 @@ static void _foxy_trigger_reset(void)
 {
 	wav64_play(&sfx_banging, SFX_CH_JUMPSCARE);
 	foxy_progress = rand() & 1;
-	no_check_timer = 0;
+	foxy_no_check_timer = 0;
 	foxy_run_timer = 0;
 	move_timer = 0;
-	use_run_timer = false;
+	foxy_use_run_timer = false;
 	num_door_pounds++;
 
 	int power_deduct = 10 + (50 * num_door_pounds);
@@ -114,15 +114,17 @@ void foxy_update(const int button_state, const float dt)
 		game_scare_timer_foxy = CLAMP(game_scare_timer_foxy,
 				0, FOXY_SCARE_FRAME_CNT - 1);
 		return;
-	}
+	} else {
+                game_scare_timer_foxy = 0.f;
+        }
 
 	if (cam_selected == CAM_2A && camera_is_visible &&
-	   foxy_progress == 3 && !use_run_timer) {
-		use_run_timer = true;
+	   foxy_progress == 3 && !foxy_use_run_timer) {
+		foxy_use_run_timer = true;
 		wav64_play(&sfx_foxy_running, SFX_CH_JUMPSCARE);
 	}
 
-	if (use_run_timer) {
+	if (foxy_use_run_timer) {
 		foxy_run_timer += dt * 60;
 		foxy_run_timer = CLAMP(foxy_run_timer, 0, 100);
 		if (foxy_run_timer == 100) {
@@ -136,10 +138,10 @@ void foxy_update(const int button_state, const float dt)
 
 	if (foxy_progress == 3 &&
             !(game_jumpscare_flags & JUMPSCARE_FLAG_FOXY)) {
-		no_check_timer += dt * 60;
+		foxy_no_check_timer += dt * 60;
         }
 
-        if (no_check_timer >= 1500 &&
+        if (foxy_no_check_timer >= 1500 &&
             !(game_jumpscare_flags & JUMPSCARE_FLAG_FOXY)) {
 		if (button_state & GAME_DOOR_BTN_LEFT_DOOR) {
 			_foxy_trigger_reset();

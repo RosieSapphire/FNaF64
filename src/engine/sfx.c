@@ -26,6 +26,7 @@ wav64_t sfx_power_down;
 wav64_t sfx_music_box;
 wav64_t sfx_chimes;
 wav64_t sfx_cheering;
+wav64_t sfx_daaamn;
 wav64_t sfx_phone_call_1;
 wav64_t sfx_phone_call_2;
 wav64_t sfx_phone_call_3;
@@ -42,6 +43,8 @@ wav64_t sfx_cam_glitch_4;
 wav64_t sfx_foxy_hum;
 wav64_t sfx_circus_music;
 wav64_t sfx_girl_giggle;
+wav64_t sfx_shotgun_blast;
+wav64_t sfx_shotgun_reload;
 
 void sfx_load(void)
 {
@@ -100,6 +103,7 @@ void sfx_load(void)
 	wav64_open(&sfx_music_box, "rom:/music_box.wav64");
 	wav64_open(&sfx_chimes, "rom:/chimes_2.wav64");
 	wav64_open(&sfx_cheering, "rom:/CROWD_SMALL_CHIL_EC049202.wav64");
+	wav64_open(&sfx_daaamn, "rom:/custom/damn.wav64");
 
 	mixer_ch_set_vol(SFX_CH_PHONECALL, 0.8f, 0.8f);
 	wav64_open(&sfx_phone_call_1, "rom:/voiceover1c.wav64");
@@ -125,6 +129,12 @@ void sfx_load(void)
 
 	wav64_open(&sfx_circus_music, "rom:/circus.wav64");
 	wav64_open(&sfx_girl_giggle, "rom:/Laugh_Giggle_Girl_1.wav64");
+
+        mixer_ch_set_vol(SFX_CH_SHOTTY1, .8f, .8f);
+        wav64_open(&sfx_shotgun_blast, "rom:/custom/shotgun_blast.wav64");
+
+        mixer_ch_set_vol(SFX_CH_SHOTTY2, .8f, .8f);
+        wav64_open(&sfx_shotgun_reload, "rom:/custom/shotgun_reload.wav64");
 }
 
 void sfx_stop_all_channels(void)

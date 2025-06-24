@@ -25,6 +25,7 @@ void graphic_load(struct graphic *o, const char *path);
 void graphics_load(struct graphic *o, int num, const char **paths);
 void graphic_unload(struct graphic *o);
 void graphics_unload(struct graphic *o, int num);
+/* FIXME: Make these all pass as const pointers */
 void graphic_draw(struct graphic o, int px, int py,
                   int ox, int oy, const uint8_t flip_flags);
 void graphic_draw_index_x(struct graphic o, int px, int py,

@@ -267,7 +267,20 @@
 #define TX_END_FIVE            TX_ROM_CUSTOM("five.i4.sprite")
 #define TX_END_SIX             TX_ROM_CUSTOM("six.i4.sprite")
 #define TX_END_AM              TX_ROM_CUSTOM("am_big.i4.sprite")
+#define TX_END_DAMN            TX_ROM_CUSTOM("damn.i4.sprite")
 
 /* Golden Freddy */
 #define TX_GOLDEN_FREDDY_SIT   TX_ROM("ci8/573.sprite")
 #define TX_GOLDEN_FREDDY_SCARE TX_ROM("ci8/548.sprite")
+
+/* Shotgun */
+#define TX_SHOTGUN_00          TX_ROM_CUSTOM("shotgun_00.ci4.sprite")
+#define TX_SHOTGUN_01          TX_ROM_CUSTOM("shotgun_01.ci4.sprite")
+#define TX_SHOTGUN_02          TX_ROM_CUSTOM("shotgun_02.ci4.sprite")
+#define TX_SHOTGUN_03          TX_ROM_CUSTOM("shotgun_03.ci4.sprite")
+#define TX_SHOTGUN_04          TX_ROM_CUSTOM("shotgun_04.ci4.sprite")
+#define TX_SHOTGUN_05          TX_ROM_CUSTOM("shotgun_05.ci4.sprite")
+#define TX_SHOTGUN_06          TX_ROM_CUSTOM("shotgun_06.ci4.sprite")
+#define TX_SHOTGUN_07          TX_ROM_CUSTOM("shotgun_07.ci4.sprite")
+#define TX_SHOTGUN_08          TX_ROM_CUSTOM("shotgun_08.ci4.sprite")
+#define TX_SHOTGUN_09          TX_ROM_CUSTOM("shotgun_09.ci4.sprite")
