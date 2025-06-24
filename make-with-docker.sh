@@ -17,23 +17,12 @@ if [ "$(uname -m)" != "x86_64" ]; then
 fi
 
 if [ ! -d dump ]; then
-    # Build CTFAK.Cli
-    if [ ! -d CTFAK.Cli ]; then
-        docker build \
-            --file Dockerfile-ctfak \
-            --progress plain \
-            --platform linux/amd64 \
-            --target out \
-            --output type=local,dest=. \
-            .
-    fi
-
     # Dump the game assets
     docker build \
-        --file Dockerfile-dump \
+        --file Dockerfile-ctfak \
         --progress plain \
         --platform linux/amd64 \
-        --target out \
+        --target runner-out \
         --output type=local,dest=. \
         .
 fi

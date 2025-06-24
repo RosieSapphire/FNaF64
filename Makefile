@@ -53,7 +53,7 @@ CTFAK.Cli:
 		--file Dockerfile-ctfak \
 		--progress plain \
 		--platform linux/amd64 \
-		--target out \
+		--target builder-out \
 		--output type=local,dest=. \
 		.
 .PHONY: CTFAK.Cli
@@ -65,10 +65,10 @@ dump:
 		exit 1 \
 	)
 	docker build \
-		--file Dockerfile-dump \
+		--file Dockerfile-ctfak \
 		--progress plain \
 		--platform linux/amd64 \
-		--target out \
+		--target runner-out \
 		--output type=local,dest=. \
 		.
 .PHONY: dump
@@ -117,7 +117,7 @@ $(BUILD_DIR)/$(GAME).dfs: $(assets_conv)
 $(BUILD_DIR)/$(GAME).elf: $(src:%.c=$(BUILD_DIR)/%.o)
 
 $(GAME).z64: N64_ROM_TITLE="FiveNights-55"
-$(GAME).z64: $(BUILD_DIR)/$(GAME).dfs 
+$(GAME).z64: $(BUILD_DIR)/$(GAME).dfs
 $(GAME).z64: N64_ED64ROMCONFIGFLAGS=-w eeprom4k
 
 clean:
