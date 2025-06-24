@@ -93,11 +93,11 @@ int main(void)
                  */
                 joypad_poll();
                 uparams.dt = display_get_delta_time();
-                uparams.held = joypad_get_buttons_held(JOYPAD_PORT_1),
-                        uparams.pressed = joypad_get_buttons_pressed(JOYPAD_PORT_1),
-                        uparams.sticks = joypad_get_inputs(JOYPAD_PORT_1),
+                uparams.held = joypad_get_buttons_held(JOYPAD_PORT_1);
+                uparams.pressed = joypad_get_buttons_pressed(JOYPAD_PORT_1);
+                uparams.sticks = joypad_get_inputs(JOYPAD_PORT_1);
 
-                        scene_last = scene;
+                scene_last = scene;
                 scene = update_funcs[scene](uparams);
                 blip_update(uparams.dt);
                 static_update(uparams.dt);
