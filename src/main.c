@@ -17,11 +17,6 @@
 #include "game/paycheck.h"
 #include "game/save_data.h"
 
-enum {
-        RET_GOOD,
-        RET_EEPROM_FAILED
-};
-
 static void (*draw_funcs[SCENE_COUNT])(void) = {
         title_draw,
         which_night_draw,
@@ -136,5 +131,5 @@ int main(void)
         subtitles_unload();
         save_data_free();
 
-        return RET_GOOD;
+        return 0;
 }
