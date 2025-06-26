@@ -31,6 +31,7 @@ extern float game_scare_timer_freddy;
 extern float game_office_flicker_rand_timer;
 extern int   game_office_flicker_rand;
 extern float game_door_anim_timers[GAME_DOOR_CNT];
+extern float game_pause_timer_accum;
 /* MOVE TO C END */
 
 enum {

@@ -142,6 +142,8 @@ float game_scare_timer_freddy;
 float game_office_flicker_rand_timer;
 int   game_office_flicker_rand;
 float game_door_anim_timers[GAME_DOOR_CNT];
+float game_pause_timer_accum;
+
 bool  game_shotgun_is_unlocked;
 float game_shotgun_reload_timer;
 static bool    game_shotgun_play_sfx;
@@ -371,6 +373,8 @@ static void game_load(void)
         game_shotgun_screen_shake_mag  = 0.f;
         game_shotgun_broke_door_flags  = 0;
         game_shotgun_killed_all_timer  = 0.f;
+
+        game_pause_timer_accum = 0.f;
 
         game_show_exit_prompt = false;
 }
@@ -704,6 +708,8 @@ static void _game_update_random_events(float dt)
 enum scene game_update(struct update_params uparms)
 {
         if (game_show_exit_prompt) {
+                game_pause_timer_accum += uparms.dt;
+
                 if (uparms.pressed.start) {
 		        sfx_stop_all_channels();
                         game_unload();
