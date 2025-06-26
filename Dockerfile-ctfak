@@ -1,6 +1,13 @@
 # syntax=docker/dockerfile:1
 
-FROM ubuntu:24.04 AS build
+ARG BASE_IMAGE=ubuntu:24.04
+ARG BUILDER_DEPS_IMAGE=builder-deps-install
+ARG RUNNER_DEPS_IMAGE=runner-deps-install
+
+FROM ${BASE_IMAGE} AS builder-deps-install
+
+LABEL org.opencontainers.image.source=https://github.com/meeq/FNaF64
+LABEL org.opencontainers.image.description="Docker image for building CTFAK2.0 to dump assets from Five Nights at Freddy's"
 
 ENV DOTNET_CLI_TELEMETRY_OPTOUT=1
 
@@ -14,6 +21,8 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && curl -sSL https://dot.net/v1/dotnet-install.sh -o dotnet-install.sh \
     && bash dotnet-install.sh --channel 6.0 --install-dir /usr/share/dotnet \
     && ln -s /usr/share/dotnet/dotnet /usr/bin/dotnet
+
+FROM ${BUILDER_DEPS_IMAGE} AS builder
 
 USER ubuntu:ubuntu
 WORKDIR /CTFAK2.0
@@ -38,6 +47,76 @@ RUN dotnet restore CTFAK.sln \
         Interface/CTFAK.Cli/bin/Release/net6.0-windows/win-x64/ \
     && unzip ctfakrequirements.zip -d Interface/CTFAK.Cli/bin/Release/net6.0-windows/win-x64/
 
-FROM scratch AS out
+FROM scratch AS builder-out
 
-COPY --from=build /CTFAK2.0/Interface/CTFAK.Cli/bin/Release/net6.0-windows/win-x64 /CTFAK.Cli
+COPY --from=builder /CTFAK2.0/Interface/CTFAK.Cli/bin/Release/net6.0-windows/win-x64 /CTFAK.Cli
+
+FROM ${BASE_IMAGE} AS runner-deps-install
+
+LABEL org.opencontainers.image.source=https://github.com/meeq/FNaF64
+LABEL org.opencontainers.image.description="Docker image for running CTFAK2.0 to dump assets from Five Nights at Freddy's"
+
+# Install dependencies
+RUN --mount=target=/var/lib/apt/lists,type=cache,sharing=locked \
+    --mount=target=/var/cache/apt,type=cache,sharing=locked \
+    rm --force /etc/apt/apt.conf.d/docker-clean \
+    && echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' \
+        > /etc/apt/apt.conf.d/keep-cache \
+    && export DEBIAN_FRONTEND=noninteractive \
+    && dpkg --add-architecture i386 \
+    && apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        cabextract \
+        rename \
+        unzip \
+        wine32:i386 \
+        wine64 \
+        winetricks \
+        xvfb
+
+# Set up the Wine environment as a non-root user
+USER ubuntu:ubuntu
+WORKDIR /home/ubuntu
+
+ENV WINEARCH=win64
+ENV WINEPREFIX=/home/ubuntu/.wine64
+ENV WINEDEBUG=-all
+
+ADD --chown=ubuntu:ubuntu \
+    https://builds.dotnet.microsoft.com/dotnet/Runtime/6.0.36/dotnet-runtime-6.0.36-win-x64.exe \
+    dotnet-runtime-6.0.36-x64.exe
+
+ADD --chown=ubuntu:ubuntu \
+    https://builds.dotnet.microsoft.com/dotnet/aspnetcore/Runtime/6.0.36/aspnetcore-runtime-6.0.36-win-x64.exe \
+    aspnetcore-runtime-6.0.36-x64.exe
+
+# Install .NET 6.0 and ASP.NET Core 6.0
+RUN xvfb-run -a sh -c "\
+        wineboot --init \
+        && winetricks nocrashdialog \
+        && winetricks -q dotnet6 \
+        && wine dotnet-runtime-6.0.36-x64.exe /quiet /norestart \
+        && wine aspnetcore-runtime-6.0.36-x64.exe /norestart /quiet \
+    "
+
+WORKDIR /CTFAK.Cli
+COPY --from=builder-out --chown=ubuntu:ubuntu /CTFAK.Cli ./
+
+FROM ${RUNNER_DEPS_IMAGE} AS runner
+
+ARG DUMP_FILE="FiveNightsatFreddys.exe"
+ARG DUMP_NAME="Five Nights at Freddys"
+
+COPY --chown=ubuntu:ubuntu ${DUMP_FILE} ./
+RUN wine ./CTFAK.Cli.exe \
+        -path "${DUMP_FILE}" \
+        -closeonfinish \
+        -tool "Image Dumper" "Sound Dumper" \
+    && cd "Dumps/${DUMP_NAME}/Sounds" \
+    && rename 's/ /_/g' *
+
+FROM scratch AS runner-out
+
+ARG DUMP_NAME="Five Nights at Freddys"
+COPY --from=runner "/CTFAK.Cli/Dumps/${DUMP_NAME}/" /dump/
