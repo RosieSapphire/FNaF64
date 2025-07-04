@@ -16,10 +16,12 @@
 #include "game/title.h"
 
 #define TITLE_FACE_STATE_TIMER_MAX 0.08f
-#define TITLE_FACE_TRANS_TIMER_MAX 0.30f
+#define TITLE_FACE_ALPHA_TIMER_MAX 0.30f
 #define TITLE_SCANLINE_TIMER_MAX   20.f
 #define TITLE_SCANLINE_HEIGHT      10
 #define TITLE_GFX_FREDDY_FACE_CNT  4
+
+#define TITLE_GFX_BLIP_LOOP_DL_CNT    8
 
 #define TITLE_NEW_GAME_TIMER_DRAW_ONLY_PAPER 2.f
 #define TITLE_NEW_GAME_TIMER_FADE_OUT        7.f
@@ -57,9 +59,13 @@ static const char *title_gfx_freddy_face_paths[TITLE_GFX_FREDDY_FACE_CNT] = {
 
 static float   title_face_state_timer;
 static int     title_face_state;
-static float   title_face_trans_timer;
-static uint8_t title_face_trans;
+static float   title_face_alpha_timer;
+static uint8_t title_face_alpha;
 static float   title_scanline_timer;
+static float   title_blip_loop_timer;
+static uint8_t title_blip_loop_frame;
+static uint8_t title_blip_loop_alpha;
+static uint8_t title_blip_loop_invisible;
 static int     title_opt_cur;
 static int     title_opt_cur_setting;
 static int     title_opt_available;
@@ -80,6 +86,8 @@ static struct graphic title_gfx_bind_btn_text;
 static struct graphic title_gfx_settings_descs;
 static struct graphic title_gfx_eeprom_err;
 static struct graphic title_gfx_newspaper;
+
+static rspq_block_t *title_gfx_blip_loop_dls[TITLE_GFX_BLIP_LOOP_DL_CNT];
 
 static void title_load(void)
 {
@@ -104,12 +112,53 @@ static void title_load(void)
 	mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.8f, 0.8f);
 	wav64_play(&sfx_title_music, SFX_CH_AMBIENCE);
 
+        /* Generate the blip loop animation at runtime. */
+        {
+                int i;
+
+                struct blip_frame_info {
+                        int rect_cnt;
+                        int rect_ys[3][2];
+                };
+
+                const struct blip_frame_info inf[TITLE_GFX_BLIP_LOOP_DL_CNT] = {
+                        { 1, { {  61,  73 }, {  -1,  -1 }, {  -1,  -1 } } },
+                        { 1, { { 156, 165 }, {  -1,  -1 }, {  -1,  -1 } } },
+	                { 3, { {  12,  21 }, {  34,  36 }, { 156, 180 } } },
+                        { 2, { {  69, 107 }, { 117, 121 }, {  -1,  -1 } } },
+                        { 3, { {   6,  11 }, {  65,  69 }, { 189, 196 } } },
+                        { 1, { { 142, 146 }, {  -1,  -1 }, {  -1,  -1 } } },
+                        { 2, { {  64,  79 }, {  90,  93 }, {  -1,  -1 } } },
+                        { 1, { { 144, 173 }, {  -1,  -1 }, {  -1,  -1 } } }
+                };
+
+	        rdpq_set_mode_fill(RGBA16(0xFF, 0xFF, 0xFF, 0xFF));
+
+                for (i = 0; i < TITLE_GFX_BLIP_LOOP_DL_CNT; ++i) {
+                        const struct blip_frame_info *inf_cur;
+                        int j;
+
+                        inf_cur = inf + i;
+	                rspq_block_begin();
+                        for (j = 0; j < inf_cur->rect_cnt; ++j)
+                                rdpq_fill_rectangle(0,
+                                                    inf_cur->rect_ys[j][0],
+                                                    320,
+                                                    inf_cur->rect_ys[j][1]);
+	                title_gfx_blip_loop_dls[i] = rspq_block_end();
+                }
+        }
+
         /* Variables */
         title_face_state_timer       = 0.f;
         title_face_state             = 0;
-        title_face_trans_timer       = 0.f;
-        title_face_trans             = 0x7F;
+        title_face_alpha_timer       = 0.f;
+        title_face_alpha             = 0x7F;
         title_scanline_timer         = 0.f;
+        title_blip_loop_timer        = 0.f;
+        title_blip_loop_frame        = 0;
+        title_blip_loop_alpha        = 0x00;
+        title_blip_loop_invisible    = 0;
         title_opt_cur                = TITLE_OPT_NEW_GAME;
         title_opt_cur_setting        = 0;
         title_opt_available          = 2;
@@ -139,9 +188,6 @@ static void title_unload(void)
 
 void title_draw(void)
 {
-        int i, freddy_face_cur, star_cnt;
-	float newspaper_alpha = 1.f;
-
         if (!(title_flags & TITLE_FLAG_IS_LOADED))
 	        title_load();
 
@@ -152,22 +198,27 @@ void title_draw(void)
          * rest of the title is no longer required and just wastes
          * rendering time.
          */
-	if (title_new_game_timer >= TITLE_NEW_GAME_TIMER_DRAW_ONLY_PAPER) {
+	if (title_new_game_timer >= TITLE_NEW_GAME_TIMER_DRAW_ONLY_PAPER)
 		goto title_draw_newspaper;
-        }
 
-	freddy_face_cur = (title_face_state < TITLE_GFX_FREDDY_FACE_CNT) *
-                          title_face_state;
-	rdpq_set_mode_copy(false);
-	graphic_draw(title_gfx_freddy_face[freddy_face_cur],
-                     0, 0, 0, 0, GFX_FLIP_NONE);
+        /* Draw Freddy's face on the screen. */
+        {
+                int face_cur;
+
+	        face_cur = (title_face_state < TITLE_GFX_FREDDY_FACE_CNT) *
+                           title_face_state;
+	        rdpq_set_mode_copy(false);
+	        graphic_draw(title_gfx_freddy_face[face_cur],
+                             0, 0, 0, 0, GFX_FLIP_NONE);
+        }
 
         /* Make Freddy face darker randomly. */
 	rdpq_set_mode_standard();
-	rdpq_mode_alphacompare(1);
+        rdpq_mode_combiner(RDPQ_COMBINER_FLAT);
      	rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
-	rdpq_set_fog_color(RGBA32(0, 0, 0, 0xFF - title_face_trans));
-        rdpq_fill_rectangle(0, 0, 320, 320);
+        rdpq_set_prim_color(color_from_packed16(0));
+	rdpq_set_fog_color(color_from_packed32(title_face_alpha));
+        rdpq_fill_rectangle(0, 0, 320, 240);
 
 	static_draw(true);
 
@@ -177,16 +228,28 @@ void title_draw(void)
 
                 rdpq_set_mode_standard();
                 rdpq_mode_combiner(RDPQ_COMBINER_FLAT);
-                rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
-                rdpq_set_prim_color(RGBA32(0xFF, 0xFF, 0xFF, 75));
+                rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
+                rdpq_set_prim_color(color_from_packed16(0xFFFF));
+                rdpq_set_fog_color(RGBA32(0xFF, 0xFF, 0xFF, 75));
                 y_pos = (title_scanline_timer / TITLE_SCANLINE_TIMER_MAX) *
                         (240 + TITLE_SCANLINE_HEIGHT);
                 rdpq_fill_rectangle(0, y_pos - TITLE_SCANLINE_HEIGHT,
                                     320, y_pos);
         }
 
+        /* Draw Blip Loop */
+        if (!title_blip_loop_invisible) {
+                rdpq_set_mode_standard();
+                rdpq_mode_combiner(RDPQ_COMBINER_FLAT);
+                rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
+                rdpq_set_prim_color(color_from_packed16(0xFFFE));
+                rdpq_set_fog_color(color_from_packed32(title_blip_loop_alpha));
+                rspq_block_run(title_gfx_blip_loop_dls[title_blip_loop_frame]);
+        }
+
         /* Draw settings menu if it's open and skip the rest. */
 	if (title_flags & TITLE_FLAG_SETT_MENU_OPEN) {
+                int i;
 	        const int sett_opt_cur_y_pos[SETTING_COUNT] = {
 	        	 259, 311, 371, 424, 479, 534, 589
 	        };
@@ -224,19 +287,23 @@ void title_draw(void)
 	}
 
         /* Draw the normal title menu. */
-	rdpq_set_mode_standard();
-	rdpq_mode_alphacompare(true);
+        {
+                int star_cnt, i;
 
-        star_cnt = ((save_data & SAVE_NIGHT_5_BEATEN_BIT) >>
-                    SAVE_NIGHT_5_BEATEN_BIT_SHIFT) +
-                   ((save_data & SAVE_NIGHT_6_BEATEN_BIT) >>
-                    SAVE_NIGHT_6_BEATEN_BIT_SHIFT) +
-                   ((save_data & SAVE_MODE_20_BEATEN_BIT) >>
-                    SAVE_MODE_20_BEATEN_BIT_SHIFT);
-	title_opt_available = CLAMP(star_cnt, 0, 2) + 2;
-	for (i = 0; i < star_cnt; ++i) {
-		graphic_draw(title_gfx_star, 93 + 77 * i,
-                             350, 28, 27, GFX_FLIP_NONE);
+                star_cnt = ((save_data & SAVE_NIGHT_5_BEATEN_BIT) >>
+                            SAVE_NIGHT_5_BEATEN_BIT_SHIFT) +
+                           ((save_data & SAVE_NIGHT_6_BEATEN_BIT) >>
+                            SAVE_NIGHT_6_BEATEN_BIT_SHIFT) +
+                           ((save_data & SAVE_MODE_20_BEATEN_BIT) >>
+                            SAVE_MODE_20_BEATEN_BIT_SHIFT);
+	        title_opt_available = CLAMP(star_cnt, 0, 2) + 2;
+
+	        rdpq_set_mode_standard();
+	        rdpq_mode_alphacompare(1);
+	        for (i = 0; i < star_cnt; ++i) {
+	        	graphic_draw(title_gfx_star, 93 + 77 * i,
+                                     350, 28, 27, GFX_FLIP_NONE);
+                }
         }
 
 	graphic_draw_index_y(title_gfx_opt_text, 118, 420,
@@ -246,7 +313,10 @@ void title_draw(void)
 	graphic_draw(title_gfx_selector, 40,
                      429 + title_opt_cur * 66, 0, 0, GFX_FLIP_NONE);
 
-        /* Draw night number if we're hovering over Continue. */
+        /*
+         * Draw night number ONLY if we're hovering over Continue, and
+         * make sure that it can only go up to 5 (as per the original game).
+         */
 	if (title_opt_cur == TITLE_OPT_CONTINUE) {
 		graphic_draw(title_gfx_night_text, 444, 509,
                              0, 0, GFX_FLIP_NONE);
@@ -257,6 +327,7 @@ void title_draw(void)
 
 	blip_flash_draw();
 
+        /* Draw EEPROM failed error screen. */
 	if (save_data_eeprom_failed &&
             !(title_flags & TITLE_FLAG_EEP_FAIL_CONF)) {
 		rdpq_set_mode_standard();
@@ -271,48 +342,77 @@ void title_draw(void)
                              0, 0, GFX_FLIP_NONE);
 	}
 
-	if (!(title_flags & TITLE_FLAG_NEW_GAME_START))
-		return;
+	if (title_flags & TITLE_FLAG_NEW_GAME_START) {
+	        float newspaper_alpha;
 
 title_draw_newspaper:
-	if (title_new_game_timer <= TITLE_NEW_GAME_TIMER_DRAW_ONLY_PAPER)
-		newspaper_alpha = title_new_game_timer * 0.5f;
+	        if (title_new_game_timer <=
+                    TITLE_NEW_GAME_TIMER_DRAW_ONLY_PAPER) {
+	        	newspaper_alpha = title_new_game_timer * 0.5f;
+                } else if (title_new_game_timer >=
+                           TITLE_NEW_GAME_TIMER_FADE_OUT) {
+	        	newspaper_alpha = 1.0f - ((title_new_game_timer -
+                                         TITLE_NEW_GAME_TIMER_FADE_OUT) * 0.5f);
+	        	rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
+	        	rdpq_fill_rectangle(0, 0, 320, 240);
+	        } else {
+	                newspaper_alpha = 1.f;
+                }
 
-	if (title_new_game_timer >= TITLE_NEW_GAME_TIMER_FADE_OUT) {
-		newspaper_alpha = 1.0f - ((title_new_game_timer -
-                                 TITLE_NEW_GAME_TIMER_FADE_OUT) * 0.5f);
-		rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
-		rdpq_fill_rectangle(0, 0, 320, 240);
-	}
-
-	rdpq_set_mode_standard();
-	rdpq_mode_alphacompare(true);
-	rdpq_set_fog_color(RGBA32(0xFF, 0xFF, 0xFF, newspaper_alpha * 255));
-     	rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
-	graphic_draw(title_gfx_newspaper, 0, 0, 0, 0, GFX_FLIP_NONE);
+	        rdpq_set_mode_standard();
+                rdpq_mode_combiner(RDPQ_COMBINER_TEX_FLAT);
+     	        rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
+                rdpq_set_prim_color(color_from_packed32(0xFFFFFFFF));
+	        rdpq_set_fog_color(color_from_packed32(newspaper_alpha * 0xFF));
+	        graphic_draw(title_gfx_newspaper, 0, 0, 0, 0, GFX_FLIP_NONE);
+        }
 }
 
 enum scene title_update(const struct update_params uparms)
 {
-	bool freddy_face_state_tick, freddy_face_trans_tick;
-
         /* Face State */
-	title_face_state_timer = wrapf(title_face_state_timer + uparms.dt,
-                                       TITLE_FACE_STATE_TIMER_MAX,
-                                       &freddy_face_state_tick);
-	if (freddy_face_state_tick)
-		title_face_state = rand() % 100;
+        {
+                bool state_tick;
+
+	        title_face_state_timer =
+                        wrapf(title_face_state_timer + uparms.dt,
+                              TITLE_FACE_STATE_TIMER_MAX, &state_tick);
+	        if (state_tick) {
+	        	title_face_state = rand() % 100;
+                        title_blip_loop_alpha = 0xFF - ((rand() % 100) + 100);
+                }
+        }
 
         /* Face Transparency */
-	title_face_trans_timer = wrapf(title_face_trans_timer + uparms.dt,
-                                       TITLE_FACE_TRANS_TIMER_MAX,
-                                       &freddy_face_trans_tick);
-	if (freddy_face_trans_tick)
-		title_face_trans = rand() % 250;
+        {
+	        bool alpha_tick;
+
+	        title_face_alpha_timer =
+                        wrapf(title_face_alpha_timer + uparms.dt,
+                              TITLE_FACE_ALPHA_TIMER_MAX, &alpha_tick);
+	        if (alpha_tick) {
+	        	title_face_alpha = 0xFF - (rand() % 250);
+                        title_blip_loop_invisible = rand() % 3;
+                }
+        }
 
         /* Scanline */
         title_scanline_timer = wrapf(title_scanline_timer + uparms.dt,
                                      TITLE_SCANLINE_TIMER_MAX, NULL);
+
+        /* Blip Loop */
+        {
+                bool blip_loop_tick;
+
+                title_blip_loop_timer = wrapf(title_blip_loop_timer +
+                                              uparms.dt * speed_fps(10), 1.f,
+                                              &blip_loop_tick);
+                if (blip_loop_tick) {
+                        title_blip_loop_frame++;
+                        if (title_blip_loop_frame >= TITLE_GFX_BLIP_LOOP_DL_CNT)
+                                title_blip_loop_frame = 0;
+                }
+        }
 
         /* Check if EEPROM failed. */
         if (save_data_eeprom_failed &&
@@ -423,10 +523,10 @@ enum scene title_update(const struct update_params uparms)
 				eepfs_write("fnaf.dat", &save_data, 1);
 #ifdef TITLE_DEBUG_ENABLED
 			debugf("Reset night to %d with %d%d%d\n",
-					SAVE_NIGHT_NUM(save_data),
-					save_data & SAVE_NIGHT_5_BEATEN_BIT,
-					save_data & SAVE_NIGHT_6_BEATEN_BIT,
-					save_data & SAVE_MODE_20_BEATEN_BIT);
+			       SAVE_NIGHT_NUM(save_data),
+			       (save_data & SAVE_NIGHT_5_BEATEN_BIT),
+			       (save_data & SAVE_NIGHT_6_BEATEN_BIT),
+			       (save_data & SAVE_MODE_20_BEATEN_BIT));
 #endif
                         title_flags |= TITLE_FLAG_NEW_GAME_START;
 			return SCENE_TITLE_SCREEN;
