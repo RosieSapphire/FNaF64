@@ -11,7 +11,7 @@
 #include "game/doors.h"
 #include "game/camera.h"
 #include "game/static.h"
-#include "game/blip.h"
+#include "game/blip_flash.h"
 #include "game/ui.h"
 #include "game/subtitles.h"
 #include "game/hallucinations.h"
@@ -577,7 +577,7 @@ void game_draw(void)
 		camera_view_draw();
 		static_draw(true);
 		camera_ui_draw();
-		blip_draw();
+		blip_flash_draw();
 	}
 
         /* Shotgun */

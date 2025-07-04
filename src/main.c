@@ -6,7 +6,7 @@
 
 #include "game/static.h"
 #include "game/subtitles.h"
-#include "game/blip.h"
+#include "game/blip_flash.h"
 #include "game/which_night.h"
 #include "game/game.h"
 #include "game/title.h"
@@ -67,7 +67,7 @@ int main(void)
         perspective_init();
         sfx_load();
         static_load();
-        blip_create();
+        blip_flash_create();
 
         scene = SCENE_TITLE_SCREEN;
 
@@ -94,7 +94,7 @@ int main(void)
 
                 scene_last = scene;
                 scene = update_funcs[scene](uparams);
-                blip_update(uparams.dt);
+                blip_flash_update(uparams.dt);
                 static_update(uparams.dt);
 
                 if (scene_last ^ scene)
@@ -122,7 +122,7 @@ int main(void)
         display_close();
 
         /* Game Terminate */
-        blip_destroy();
+        blip_flash_destroy();
         static_unload();
         sfx_unload();
         perspective_free();

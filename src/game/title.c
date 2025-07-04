@@ -1,11 +1,13 @@
 #include <stdlib.h>
 
+#include "config.h"
+
 #include "engine/graphic.h"
 #include "engine/util.h"
 #include "engine/sfx.h"
 
 #include "game/static.h"
-#include "game/blip.h"
+#include "game/blip_flash.h"
 #include "game/ui.h"
 #include "game/game.h"
 #include "game/settings.h"
@@ -13,8 +15,11 @@
 #include "game/save_data.h"
 #include "game/title.h"
 
-#define TITLE_FACE_TIMER_SPEED 4.8f
-#define TITLE_GFX_FREDDY_FACE_CNT 4
+#define TITLE_FACE_STATE_TIMER_MAX 0.08f
+#define TITLE_FACE_TRANS_TIMER_MAX 0.30f
+#define TITLE_SCANLINE_TIMER_MAX   20.f
+#define TITLE_SCANLINE_HEIGHT      10
+#define TITLE_GFX_FREDDY_FACE_CNT  4
 
 #define TITLE_NEW_GAME_TIMER_DRAW_ONLY_PAPER 2.f
 #define TITLE_NEW_GAME_TIMER_FADE_OUT        7.f
@@ -50,8 +55,11 @@ static const char *title_gfx_freddy_face_paths[TITLE_GFX_FREDDY_FACE_CNT] = {
 	TX_FRED_FACE0, TX_FRED_FACE1, TX_FRED_FACE2, TX_FRED_FACE3,
 };
 
-static float   title_face_timer;
+static float   title_face_state_timer;
 static int     title_face_state;
+static float   title_face_trans_timer;
+static uint8_t title_face_trans;
+static float   title_scanline_timer;
 static int     title_opt_cur;
 static int     title_opt_cur_setting;
 static int     title_opt_available;
@@ -91,14 +99,17 @@ static void title_load(void)
 	graphic_load(&title_gfx_eeprom_err, TX_EEPROM_ERROR);
 	graphic_load(&title_gfx_newspaper, TX_NEWSPAPER);
 
-	blip_trigger(true);
+	blip_flash_trigger(true);
 	wav64_play(&sfx_static, SFX_CH_STATIC);
 	mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.8f, 0.8f);
 	wav64_play(&sfx_title_music, SFX_CH_AMBIENCE);
 
         /* Variables */
-        title_face_timer             = 0.0f;
+        title_face_state_timer       = 0.f;
         title_face_state             = 0;
+        title_face_trans_timer       = 0.f;
+        title_face_trans             = 0x7F;
+        title_scanline_timer         = 0.f;
         title_opt_cur                = TITLE_OPT_NEW_GAME;
         title_opt_cur_setting        = 0;
         title_opt_available          = 2;
@@ -150,7 +161,29 @@ void title_draw(void)
 	rdpq_set_mode_copy(false);
 	graphic_draw(title_gfx_freddy_face[freddy_face_cur],
                      0, 0, 0, 0, GFX_FLIP_NONE);
+
+        /* Make Freddy face darker randomly. */
+	rdpq_set_mode_standard();
+	rdpq_mode_alphacompare(1);
+     	rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
+	rdpq_set_fog_color(RGBA32(0, 0, 0, 0xFF - title_face_trans));
+        rdpq_fill_rectangle(0, 0, 320, 320);
+
 	static_draw(true);
+
+        /* Draw Scanline */
+        {
+                int y_pos;
+
+                rdpq_set_mode_standard();
+                rdpq_mode_combiner(RDPQ_COMBINER_FLAT);
+                rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
+                rdpq_set_prim_color(RGBA32(0xFF, 0xFF, 0xFF, 75));
+                y_pos = (title_scanline_timer / TITLE_SCANLINE_TIMER_MAX) *
+                        (240 + TITLE_SCANLINE_HEIGHT);
+                rdpq_fill_rectangle(0, y_pos - TITLE_SCANLINE_HEIGHT,
+                                    320, y_pos);
+        }
 
         /* Draw settings menu if it's open and skip the rest. */
 	if (title_flags & TITLE_FLAG_SETT_MENU_OPEN) {
@@ -222,7 +255,7 @@ void title_draw(void)
                                      GFX_FLIP_NONE);
 	}
 
-	blip_draw();
+	blip_flash_draw();
 
 	if (save_data_eeprom_failed &&
             !(title_flags & TITLE_FLAG_EEP_FAIL_CONF)) {
@@ -261,13 +294,27 @@ title_draw_newspaper:
 
 enum scene title_update(const struct update_params uparms)
 {
-	bool freddy_face_tick;
+	bool freddy_face_state_tick, freddy_face_trans_tick;
 
-	title_face_timer += uparms.dt * TITLE_FACE_TIMER_SPEED;
-	title_face_timer = wrapf(title_face_timer, 1, &freddy_face_tick);
-	if (freddy_face_tick)
+        /* Face State */
+	title_face_state_timer = wrapf(title_face_state_timer + uparms.dt,
+                                       TITLE_FACE_STATE_TIMER_MAX,
+                                       &freddy_face_state_tick);
+	if (freddy_face_state_tick)
 		title_face_state = rand() % 100;
 
+        /* Face Transparency */
+	title_face_trans_timer = wrapf(title_face_trans_timer + uparms.dt,
+                                       TITLE_FACE_TRANS_TIMER_MAX,
+                                       &freddy_face_trans_tick);
+	if (freddy_face_trans_tick)
+		title_face_trans = rand() % 250;
+
+        /* Scanline */
+        title_scanline_timer = wrapf(title_scanline_timer + uparms.dt,
+                                     TITLE_SCANLINE_TIMER_MAX, NULL);
+
+        /* Check if EEPROM failed. */
         if (save_data_eeprom_failed &&
             !(title_flags & TITLE_FLAG_EEP_FAIL_CONF)) {
                 title_flags |= uparms.pressed.start <<
@@ -275,6 +322,7 @@ enum scene title_update(const struct update_params uparms)
 		return SCENE_TITLE_SCREEN;
 	}
 
+        /* If new game started, do the fade in. */
 	if (title_flags & TITLE_FLAG_NEW_GAME_START) {
 		title_new_game_timer += uparms.dt;
 
@@ -305,7 +353,7 @@ enum scene title_update(const struct update_params uparms)
 	}
 
 	if (title_save_file_delete_timer >= TITLE_DELETE_TIMER_COMPLETE) {
-	        blip_trigger(false);
+	        blip_flash_trigger(false);
 	        save_data = 1;
 	        title_save_file_delete_timer = 0.0f;
                 title_flags |= TITLE_FLAG_SAVE_FILE_DEL;
@@ -325,7 +373,7 @@ enum scene title_update(const struct update_params uparms)
 	        	wav64_play(&sfx_boop, SFX_CH_BLIP);
 
 	        if (uparms.pressed.d_down || uparms.pressed.c_down) {
-	        	blip_trigger(false);
+	        	blip_flash_trigger(false);
 	        	title_opt_cur_setting++;
 	        }
 
@@ -333,7 +381,7 @@ enum scene title_update(const struct update_params uparms)
 	        	title_opt_cur_setting = 0;
 
 	        if (uparms.pressed.d_up || uparms.pressed.c_up) {
-	        	blip_trigger(false);
+	        	blip_flash_trigger(false);
 	        	title_opt_cur_setting--;
 	        }
 
@@ -348,14 +396,14 @@ enum scene title_update(const struct update_params uparms)
         /* Switching menu options. */
 	if (uparms.pressed.d_up || uparms.pressed.c_up) {
 		title_opt_cur--;
-		blip_trigger(false);
+		blip_flash_trigger(false);
 		if (title_opt_cur < 0)
 			title_opt_cur = title_opt_available - 1;
 	}
 
 	if (uparms.pressed.d_down || uparms.pressed.c_down) {
 		title_opt_cur++;
-		blip_trigger(false);
+		blip_flash_trigger(false);
 		if (title_opt_cur >= title_opt_available)
 			title_opt_cur = 0;
 	}

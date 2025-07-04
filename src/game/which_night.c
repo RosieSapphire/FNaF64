@@ -1,7 +1,7 @@
 #include "engine/graphic.h"
 #include "engine/util.h"
 
-#include "game/blip.h"
+#include "game/blip_flash.h"
 #include "game/game.h"
 #include "game/bonnie.h"
 #include "game/chica.h"
@@ -38,7 +38,7 @@ static void which_night_load(void)
         /* Graphics */
 	graphic_load(&which_night_gfx_atlas, TX_WHICH_NIGHT_ATLAS);
 
-	blip_trigger(true);
+	blip_flash_trigger(true);
 	which_night_is_loaded = true;
 
         /* Variables */
@@ -86,7 +86,7 @@ void which_night_draw(void)
 	rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
 	rdpq_fill_rectangle(0, 0, 320, 240);
 
-        blip_draw();
+        blip_flash_draw();
 }
 
 enum scene which_night_update(struct update_params uparms)

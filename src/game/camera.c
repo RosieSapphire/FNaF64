@@ -5,7 +5,7 @@
 #include "engine/sfx.h"
 #include "engine/perspective.h"
 
-#include "game/blip.h"
+#include "game/blip_flash.h"
 #include "game/buttons.h"
 #include "game/game.h"
 #include "game/freddy.h"
@@ -524,7 +524,7 @@ static void camera_update_glitch_timer(double dt)
 	camera_glitch_timer -= dt * 60;
 	camera_glitch_timer = CLAMP(camera_glitch_timer, 0, 300);
 
-	static bool has_sfx_blipped = false;
+	static bool has_sfx_blip_flashped = false;
 	bool bonnie_glitch = (bonnie_cam == cam_selected ||
 			bonnie_cam_last == cam_selected) &&
 			bonnie_blackout_timer > 0;
@@ -552,9 +552,9 @@ static void camera_update_glitch_timer(double dt)
 			}
 			camera_glitch_timer = 300;
 
-			if (!has_sfx_blipped) {
-				blip_trigger(true);
-				has_sfx_blipped = true;
+			if (!has_sfx_blip_flashped) {
+				blip_flash_trigger(true);
+				has_sfx_blip_flashped = true;
 			}
 		}
 		graphic_unload(views + cam_selected);
@@ -564,7 +564,7 @@ static void camera_update_glitch_timer(double dt)
 	if (camera_glitch_timer > 0)
 		return;
 
-	has_sfx_blipped = false;
+	has_sfx_blip_flashped = false;
 }
 
 static void camera_update_flicker(double dt)
@@ -614,7 +614,7 @@ static void camera_check_switching(const struct update_params uparms)
 		if (new_cam == -1)
 			continue;
 
-		blip_trigger(true);
+		blip_flash_trigger(true);
 		button_blink_timer = 0;
 		button_blink = 1;
 		cam_selected = new_cam;
@@ -702,7 +702,7 @@ void camera_update(int *button_state_ptr, const struct update_params uparms)
         }
 
 	if (!camera_was_visible && camera_is_visible) {
-		blip_trigger(true);
+		blip_flash_trigger(true);
 		*button_state_ptr &= ~(GAME_DOOR_BTN_LEFT_LIGHT | GAME_DOOR_BTN_RIGHT_LIGHT);
 	}
 	

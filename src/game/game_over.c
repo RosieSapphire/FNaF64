@@ -2,7 +2,7 @@
 #include "engine/sfx.h"
 
 #include "game/static.h"
-#include "game/blip.h"
+#include "game/blip_flash.h"
 #include "game/texture_index.h"
 #include "game/game_over.h"
 
@@ -18,7 +18,7 @@ static void _game_over_load(void)
 	graphic_load(&over_screen, TX_GAME_OVER_SCREEN);
 	graphic_load(&over_text, TX_GAME_OVER_TEXT);
 	over_timer = 0.0f;
-	blip_trigger(true);
+	blip_flash_trigger(true);
 
 	sfx_stop_all_channels();
 	mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.5f, 0.5f);
@@ -50,7 +50,7 @@ void game_over_draw(void)
 	}
 
 	static_draw(show_over_screen);
-	blip_draw();
+	blip_flash_draw();
 }
 
 enum scene game_over_update(struct update_params uparms)
