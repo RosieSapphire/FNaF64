@@ -97,14 +97,14 @@ static void title_load(void)
 	wav64_play(&sfx_title_music, SFX_CH_AMBIENCE);
 
         /* Variables */
-        title_face_timer = 0.0f;
-        title_face_state = 0;
-        title_opt_cur = TITLE_OPT_NEW_GAME;
-        title_opt_cur_setting = 0;
-        title_opt_available = 2;
-	title_new_game_timer = 0.f;
+        title_face_timer             = 0.0f;
+        title_face_state             = 0;
+        title_opt_cur                = TITLE_OPT_NEW_GAME;
+        title_opt_cur_setting        = 0;
+        title_opt_available          = 2;
+	title_new_game_timer         = 0.f;
         title_save_file_delete_timer = 0.f;
-        title_flags = TITLE_FLAG_IS_LOADED;
+        title_flags                  = TITLE_FLAG_IS_LOADED;
 }
 
 static void title_unload(void)
@@ -131,9 +131,8 @@ void title_draw(void)
         int i, freddy_face_cur, star_cnt;
 	float newspaper_alpha = 1.f;
 
-        if (!(title_flags & TITLE_FLAG_IS_LOADED)) {
+        if (!(title_flags & TITLE_FLAG_IS_LOADED))
 	        title_load();
-        }
 
         /*
          * When fading to the newspaper from a new game, it fades the paper
@@ -180,9 +179,8 @@ void title_draw(void)
 	        for (i = 0; i < SETTING_COUNT; ++i) {
                         int x, y;
 
-	        	if (!(settings_flags & (1 << i))) {
+	        	if (!(settings_flags & (1 << i)))
 	        		continue;
-                        }
 
                         x = 280 + 6;
                         y = (sett_opt_cur_y_pos[i] / 3) + 6;
@@ -240,14 +238,12 @@ void title_draw(void)
                              0, 0, GFX_FLIP_NONE);
 	}
 
-	if (!(title_flags & TITLE_FLAG_NEW_GAME_START)) {
+	if (!(title_flags & TITLE_FLAG_NEW_GAME_START))
 		return;
-        }
 
 title_draw_newspaper:
-	if (title_new_game_timer <= TITLE_NEW_GAME_TIMER_DRAW_ONLY_PAPER) {
+	if (title_new_game_timer <= TITLE_NEW_GAME_TIMER_DRAW_ONLY_PAPER)
 		newspaper_alpha = title_new_game_timer * 0.5f;
-        }
 
 	if (title_new_game_timer >= TITLE_NEW_GAME_TIMER_FADE_OUT) {
 		newspaper_alpha = 1.0f - ((title_new_game_timer -
@@ -269,9 +265,8 @@ enum scene title_update(const struct update_params uparms)
 
 	title_face_timer += uparms.dt * TITLE_FACE_TIMER_SPEED;
 	title_face_timer = wrapf(title_face_timer, 1, &freddy_face_tick);
-	if (freddy_face_tick) {
+	if (freddy_face_tick)
 		title_face_state = rand() % 100;
-        }
 
         if (save_data_eeprom_failed &&
             !(title_flags & TITLE_FLAG_EEP_FAIL_CONF)) {
@@ -302,9 +297,8 @@ enum scene title_update(const struct update_params uparms)
 
         /* Deleting your save file */
 	if (uparms.held.z) {
-		if (!(title_flags & TITLE_FLAG_SAVE_FILE_DEL)) {
+		if (!(title_flags & TITLE_FLAG_SAVE_FILE_DEL))
 			title_save_file_delete_timer += uparms.dt;
-                }
 	} else {
 		title_save_file_delete_timer = 0.0f;
                 title_flags &= ~(TITLE_FLAG_SAVE_FILE_DEL);
@@ -316,9 +310,8 @@ enum scene title_update(const struct update_params uparms)
 	        title_save_file_delete_timer = 0.0f;
                 title_flags |= TITLE_FLAG_SAVE_FILE_DEL;
 	        title_opt_cur = TITLE_OPT_NEW_GAME;
-	        if (!save_data_eeprom_failed) {
+	        if (!save_data_eeprom_failed)
 	        	eepfs_write("fnaf.dat", &save_data, sizeof(save_data));
-                }
 
 #ifdef TITLE_DEBUG_ENABLED
 	        debugf("Wiped save file to night %d\n", save_data);
@@ -328,27 +321,24 @@ enum scene title_update(const struct update_params uparms)
         /* Operating the settings menu only. */
         title_flags ^= uparms.pressed.r << TITLE_FLAG_SETT_MENU_OPEN_SHIFT;
 	if (title_flags & TITLE_FLAG_SETT_MENU_OPEN) {
-	        if (uparms.pressed.l) {
+	        if (uparms.pressed.l)
 	        	wav64_play(&sfx_boop, SFX_CH_BLIP);
-                }
 
 	        if (uparms.pressed.d_down || uparms.pressed.c_down) {
 	        	blip_trigger(false);
 	        	title_opt_cur_setting++;
 	        }
 
-	        if (title_opt_cur_setting >= SETTING_COUNT) {
+	        if (title_opt_cur_setting >= SETTING_COUNT)
 	        	title_opt_cur_setting = 0;
-                }
 
 	        if (uparms.pressed.d_up || uparms.pressed.c_up) {
 	        	blip_trigger(false);
 	        	title_opt_cur_setting--;
 	        }
 
-	        if (title_opt_cur_setting < 0) {
+	        if (title_opt_cur_setting < 0)
 	        	title_opt_cur_setting = SETTING_COUNT - 1;
-                }
 
 	        settings_flags ^= (uparms.pressed.a << title_opt_cur_setting);
 
@@ -359,17 +349,15 @@ enum scene title_update(const struct update_params uparms)
 	if (uparms.pressed.d_up || uparms.pressed.c_up) {
 		title_opt_cur--;
 		blip_trigger(false);
-		if (title_opt_cur < 0) {
+		if (title_opt_cur < 0)
 			title_opt_cur = title_opt_available - 1;
-                }
 	}
 
 	if (uparms.pressed.d_down || uparms.pressed.c_down) {
 		title_opt_cur++;
 		blip_trigger(false);
-		if (title_opt_cur >= title_opt_available) {
+		if (title_opt_cur >= title_opt_available)
 			title_opt_cur = 0;
-                }
 	}
 
         /* Starting conditions. */

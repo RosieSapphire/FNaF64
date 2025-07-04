@@ -97,14 +97,12 @@ int main(void)
                 blip_update(uparams.dt);
                 static_update(uparams.dt);
 
-                if (scene_last ^ scene) {
+                if (scene_last ^ scene)
                         rspq_wait();
-                }
 
                 /* Audio */
-                if (!audio_can_write()) {
+                if (!audio_can_write())
                         continue;
-                }
 
                 audio_buf = audio_write_begin();
                 mixer_poll(audio_buf, audio_get_buffer_length());
