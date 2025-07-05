@@ -7,15 +7,15 @@
  * Either that or you're a cheating little fucking cocksucker. >:3 I know what
  * kind of fucking person you are, Mr. Fart Smella. owo
  */
-// #define SAVE_DATA_OVERRIDE (SAVE_BEATEN_BITMASK | 0x7)
+// #define SAVE_DATA_COMPLETED_FILE
 
-bool save_data_eeprom_failed = false;
-uint8_t save_data = 1;
+bool    save_data_eeprom_failed = false;
+uint8_t save_data               = 0x1;
 
 bool save_data_init(void)
 {
-#ifdef SAVE_DATA_OVERRIDE
-        save_data = SAVE_DATA_OVERRIDE;
+#ifdef SAVE_DATA_COMPLETED_FILE
+        save_data = (SAVE_BEATEN_BITMASK | 0x5);
 
         return true;
 #endif

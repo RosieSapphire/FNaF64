@@ -29,141 +29,145 @@
  * happens between the 5-6 AM transition, it won't affect your save file. :D
  */
 
-static struct graphic am, six, five, damn_shell;
-static float timer;
-static bool is_loaded = false;
-static bool played_cheer;
+static struct graphic night_end_gfx_am;
+static struct graphic night_end_gfx_six;
+static struct graphic night_end_gfx_five;
+static struct graphic night_end_gfx_damn_shell;
+static        float   night_end_timer;
+static        bool    night_end_played_cheer;
+static        bool    night_end_is_loaded = false;
 
 static void night_end_load(void)
 {
         int night_last;
+        bool beat_20_mode_no_cheats;
 
-	if (is_loaded) {
-		return;
-        }
+        night_end_timer = 0.f;
 
-	timer = 0.0f;
-	save_data |= (SAVE_NIGHT_NUM(save_data) == 5) * SAVE_NIGHT_5_BEATEN_BIT;
-	save_data |= (SAVE_NIGHT_NUM(save_data) == 6) * SAVE_NIGHT_6_BEATEN_BIT;
+        /* Give stars for beating nights 5 and 6, as well as all 20 mode. */
+        beat_20_mode_no_cheats = freddy_ai_level == 20 &&
+                bonnie_ai_level == 20 &&
+                chica_ai_level == 20 &&
+                foxy_ai_level == 20 &&
+                !(settings_flags & SET_ROBOT_CHEAT_BIT) &&
+                !(settings_flags & SET_FAST_NIGHT_BIT);
 
-	if (freddy_ai_level == 20 && bonnie_ai_level == 20 &&
-	   chica_ai_level == 20 && foxy_ai_level == 20 &&
-	   !(settings_flags & SET_ROBOT_CHEAT_BIT) &&
-           !(settings_flags & SET_FAST_NIGHT_BIT)) {
-		save_data |= (SAVE_NIGHT_NUM(save_data) == 7) * SAVE_MODE_20_BEATEN_BIT;
-        }
+        save_data |=
+                ((SAVE_NIGHT_NUM(save_data) == 5) <<
+                SAVE_NIGHT_5_BEATEN_BIT_SHIFT) |
+                ((SAVE_NIGHT_NUM(save_data) == 6) <<
+                SAVE_NIGHT_6_BEATEN_BIT_SHIFT) |
+                (((SAVE_NIGHT_NUM(save_data) == 7) & beat_20_mode_no_cheats) <<
+                SAVE_MODE_20_BEATEN_BIT_SHIFT);
 
-        night_last = save_data & SAVE_NIGHT_NUM_BITMASK;
-        if ((save_data & SAVE_NIGHT_NUM_BITMASK) < 7) {
-	        save_data++;
-        }
+
+        night_last = (save_data++) & SAVE_NIGHT_NUM_BITMASK;
         debugf("Night Last: %d, Night Cur: %d\n",
                night_last, save_data & SAVE_NIGHT_NUM_BITMASK);
-	mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.8f, 0.8f);
-	wav64_play(&sfx_chimes, SFX_CH_AMBIENCE);
+        mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.8f, 0.8f);
+        wav64_play(&sfx_chimes, SFX_CH_AMBIENCE);
 
-	graphic_load(&am, TX_END_AM);
-	graphic_load(&six, TX_END_SIX);
-	graphic_load(&five, TX_END_FIVE);
-        if (game_won_by_murder) {
-	        graphic_load(&damn_shell, TX_END_DAMN);
-        }
+        graphic_load(&night_end_gfx_am, TX_END_AM);
+        graphic_load(&night_end_gfx_six, TX_END_SIX);
+        graphic_load(&night_end_gfx_five, TX_END_FIVE);
+        if (game_won_by_murder)
+                graphic_load(&night_end_gfx_damn_shell, TX_END_DAMN);
 
-	played_cheer = false;
-	is_loaded = true;
+        night_end_played_cheer = false;
+        night_end_is_loaded    = true;
 }
 
 static void night_end_unload(void)
 {
-	if (!is_loaded) {
-		return;
-        }
+        if (game_won_by_murder)
+                graphic_unload(&night_end_gfx_damn_shell);
 
-        if (game_won_by_murder) {
-	        graphic_unload(&damn_shell);
-        }
-
-	graphic_unload(&six);
-	graphic_unload(&five);
-	graphic_unload(&am);
-	is_loaded = false;
+        graphic_unload(&night_end_gfx_six);
+        graphic_unload(&night_end_gfx_five);
+        graphic_unload(&night_end_gfx_am);
+        night_end_is_loaded = false;
 }
 
 void night_end_draw(void)
 {
-	night_end_load();
+        float t;
+        const int five_start = 298, five_end = 188,
+                  six_start  = 408, six_end  = 298;
 
-	rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
-	rdpq_fill_rectangle(0, 0, 320, 240);
+        if (!night_end_is_loaded) {
+                night_end_load();
+        }
 
-	rdpq_set_mode_standard();
+        rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
+        rdpq_fill_rectangle(0, 0, 320, 240);
 
-	int five_start = 298;
-	int five_end = 298 - 110;
-	int six_start = 298 + 110;
-	int six_end = 298;
-	float t = CLAMP((timer - 1) * 0.2f, 0, 1);
+        rdpq_set_mode_standard();
 
-	graphic_draw(game_won_by_murder ? damn_shell : six,
+        t = CLAMP((night_end_timer - 1) * 0.2f, 0, 1);
+        graphic_draw(game_won_by_murder ?
+                     night_end_gfx_damn_shell : night_end_gfx_six,
                      390, lerpf(six_start, six_end, t),
                      -5, 0, GFX_FLIP_NONE);
-	graphic_draw(five, 390, lerpf(five_start, five_end, t),
+        graphic_draw(night_end_gfx_five, 390, lerpf(five_start, five_end, t),
                      -5, 0, GFX_FLIP_NONE);
-	graphic_draw(am, 486, 296, -5, 0, GFX_FLIP_NONE);
+        graphic_draw(night_end_gfx_am, 486, 296, -5, 0, GFX_FLIP_NONE);
 
-	rdpq_set_mode_fill(RGBA32(0x0, 0x0, 0x0, 0xFF));
-	rdpq_fill_rectangle(vcon(339), vcon(168),
-			vcon(339) + vcon(400), vcon(168) + vcon(120));
-	rdpq_fill_rectangle(vcon(339), vcon(384),
-			vcon(339) + vcon(400), vcon(384) + vcon(120));
+        rdpq_set_mode_fill(RGBA32(0x0, 0x0, 0x0, 0xFF));
+        rdpq_fill_rectangle(vcon(339), vcon(168),
+                            vcon(339) + vcon(400),
+                            vcon(168) + vcon(120));
+        rdpq_fill_rectangle(vcon(339), vcon(384),
+                            vcon(339) + vcon(400),
+                            vcon(384) + vcon(120));
 
-	float fade;
-	if (timer < 9)
- 		fade = CLAMP(1.0f - timer, 0, 1);
-	else
- 		fade = CLAMP(timer - 10.5f, 0, 1);
+        rdpq_set_mode_standard();
+        rdpq_mode_combiner(RDPQ_COMBINER_FLAT);
+        rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
+        {
+                float fade;
 
-	rdpq_set_mode_standard();
-	rdpq_set_prim_color(RGBA32(0x0, 0x0, 0x0, fade * 255));
-	rdpq_mode_combiner(RDPQ_COMBINER_FLAT);
-	rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
-	rdpq_fill_rectangle(0, 0, 320, 240);
+                fade = (night_end_timer < 9) ?
+                       CLAMP(1.0f - night_end_timer, 0, 1) :
+                       CLAMP(night_end_timer - 10.5f, 0, 1);
+                rdpq_set_prim_color(RGBA32(0x0, 0x0, 0x0, fade * 255));
+        }
+        rdpq_fill_rectangle(0, 0, 320, 240);
 }
 
 enum scene night_end_update(const struct update_params uparms)
 {
-	timer += uparms.dt;
+        night_end_timer += uparms.dt;
 
-	if (timer >= NIGHT_END_TIMER_PLAY_CHEER && !played_cheer) {
-		played_cheer = true;
-		mixer_ch_set_vol(SFX_CH_FAN, 0.8f, 0.8f);
-                if (!game_won_by_murder) {
-		        wav64_play(&sfx_cheering, SFX_CH_FAN);
-                } else {
-		        wav64_play(&sfx_daaamn, SFX_CH_FAN);
-                }
-	}
+        if (night_end_timer >= NIGHT_END_TIMER_PLAY_CHEER &&
+                !night_end_played_cheer) {
+                night_end_played_cheer = true;
+                mixer_ch_set_vol(SFX_CH_FAN, 0.8f, 0.8f);
+                wav64_play(game_won_by_murder ? &sfx_daaamn : &sfx_cheering,
+                           SFX_CH_FAN);
+        }
 
-	if (timer >= NIGHT_END_TIMER_EXIT) {
-		if (!save_data_eeprom_failed) {
-			eepfs_write("fnaf.dat", &save_data, 1);
-                }
+        if (night_end_timer < NIGHT_END_TIMER_EXIT)
+                return SCENE_NIGHT_END;
 
-		debugf("Saved night %d and %d%d%d to save file.\n",
-                       SAVE_NIGHT_NUM(save_data),
-		       (save_data & SAVE_NIGHT_5_BEATEN_BIT) > 0,
-		       (save_data & SAVE_NIGHT_6_BEATEN_BIT) > 0,
-		       (save_data & SAVE_MODE_20_BEATEN_BIT) > 0);
-                /* Use `rspq_wait()`. */
-		rdpq_call_deferred((void(*)(void *))night_end_unload, NULL);
-		sfx_stop_all_channels();
+        if (!save_data_eeprom_failed)
+                eepfs_write("fnaf.dat", &save_data, 1);
 
-		if (SAVE_NIGHT_NUM(save_data) < 6) {
-			return SCENE_WHICH_NIGHT;
-                }
+        debugf("Saved night %d and %d%d%d to save file.\n",
+               SAVE_NIGHT_NUM(save_data),
+               ((save_data & SAVE_NIGHT_5_BEATEN_BIT) >>
+               SAVE_NIGHT_5_BEATEN_BIT_SHIFT),
+               ((save_data & SAVE_NIGHT_6_BEATEN_BIT) >>
+               SAVE_NIGHT_6_BEATEN_BIT_SHIFT),
+               ((save_data & SAVE_MODE_20_BEATEN_BIT) >>
+               SAVE_MODE_20_BEATEN_BIT_SHIFT));
 
-		return SCENE_PAYCHECK;
-	}
+        if (night_end_is_loaded)
+                night_end_unload();
 
-	return SCENE_NIGHT_END;
+        sfx_stop_all_channels();
+
+        if (SAVE_NIGHT_NUM(save_data) < 6)
+                return SCENE_WHICH_NIGHT;
+
+        return SCENE_PAYCHECK;
 }
