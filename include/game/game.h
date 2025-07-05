@@ -4,8 +4,9 @@
 
 #include <libdragon.h>
 
-#include "engine/scene.h"
 #include "engine/update.h"
+
+#include "game/scene.h"
 
 #define GAME_DOOR_CNT 2
 

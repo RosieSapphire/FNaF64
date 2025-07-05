@@ -1,21 +1,19 @@
-#include "engine/graphic.h"
-#include "engine/scene.h"
 #include "engine/sfx.h"
 #include "engine/perspective.h"
-#include "engine/update.h"
 
-#include "game/static.h"
-#include "game/subtitles.h"
-#include "game/blip_flash.h"
+#include "game/scene.h"
+#include "game/title.h"
 #include "game/which_night.h"
 #include "game/game.h"
-#include "game/title.h"
 #include "game/night_end.h"
+#include "game/paycheck.h"
 #include "game/game_over.h"
 #include "game/powerdown.h"
 #include "game/custom_night.h"
-#include "game/paycheck.h"
 #include "game/save_data.h"
+#include "game/subtitles.h"
+#include "game/static.h"
+#include "game/blip_flash.h"
 
 static void (*draw_funcs[SCENE_COUNT])(void) = {
         title_draw,
