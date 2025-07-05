@@ -25,14 +25,16 @@ enum {
         GAME_DOOR_BTN_RIGHT_LIGHT = (1 << GAME_DOOR_BTN_RIGHT_LIGHT_SHIFT)
 };
 
-extern float game_office_turn;
-extern float game_office_turn_lerp;
-extern float game_scare_timer_foxy;
-extern float game_scare_timer_freddy;
-extern float game_office_flicker_rand_timer;
-extern int   game_office_flicker_rand;
-extern float game_door_anim_timers[GAME_DOOR_CNT];
-extern float game_pause_timer_accum;
+extern float   game_office_turn;
+extern float   game_office_turn_lerp;
+extern float   game_scare_timer_foxy;
+extern float   game_scare_timer_freddy;
+extern float   game_office_flicker_rand_timer;
+extern int     game_office_flicker_rand;
+extern float   game_door_anim_timers[GAME_DOOR_CNT];
+extern float   game_pause_timer_accum;
+extern uint8_t game_hour_cur;
+extern uint8_t game_hour_prev;
 /* MOVE TO C END */
 
 enum {
@@ -51,7 +53,6 @@ enum {
         JUMPSCARE_FLAG_FOXY | JUMPSCARE_FLAG_FREDDY
 };
 
-extern float   game_night_timer;
 extern int     game_power_usage;
 extern int     game_power_left;
 extern float   game_power_timer;
@@ -60,5 +61,6 @@ extern bool    game_shotgun_is_unlocked;
 extern float   game_shotgun_reload_timer;
 extern bool    game_won_by_murder;
 
-void game_draw(void);
+void       game_draw(void);
+void       game_hour_update(const struct update_params uparms);
 enum scene game_update(struct update_params uparms);

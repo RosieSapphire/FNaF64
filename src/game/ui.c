@@ -48,13 +48,11 @@ void ui_draw(void)
 	rdpq_mode_alphacompare(true);
 	graphic_draw(am, 879, 30, 0, 0, GFX_FLIP_NONE);
 	graphic_draw(night_text, 828, 71, 0, 0, GFX_FLIP_NONE);
-        /* TODO: Replace with CLAMP */
-	int hour = (int)CLAMP(game_night_timer / HOUR_LEN_SECONDS, 0, 6);
 
-	if (hour > 0)
+	if (game_hour_cur > 0) {
 		graphic_draw_index_y(hour_atlas, 843, 30,
-                                     9, hour, GFX_FLIP_NONE);
-	else {
+                                     9, game_hour_cur, GFX_FLIP_NONE);
+        } else {
 		graphic_draw_index_y(hour_atlas, 843 - 26,
                                      30, 9, 1, GFX_FLIP_NONE);
 		graphic_draw_index_y(hour_atlas, 843, 30, 9, 2, GFX_FLIP_NONE);

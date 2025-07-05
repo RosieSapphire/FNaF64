@@ -42,11 +42,8 @@ static float freddy_scare_rand_timer_loop;
 static float freddy_scare_rand_timer;
 static float freddy_scare_anim_timer;
 
-static void _power_down_load(void)
+static void power_down_load(void)
 {
-	if (is_loaded)
-		return;
-
 	show_up_timer = 0.0f;
 	total_timer = 0.0f;
 	freddy_state = 0;
@@ -67,11 +64,8 @@ static void _power_down_load(void)
 	is_loaded = true;
 }
 
-static void _power_down_unload(void)
+static void power_down_unload(void)
 {
-	if (!is_loaded)
-		return;
-
 	graphics_unload(room_views, 2);
 	graphics_unload(freddy_scare, FREDDY_SCARE_FRAMES);
 
@@ -80,7 +74,8 @@ static void _power_down_unload(void)
 
 void power_down_draw(void)
 {
-	_power_down_load();
+        if (!is_loaded)
+	        power_down_load();
 
 	perspective_begin();
 	rdpq_set_mode_copy(false);
@@ -107,12 +102,14 @@ void power_down_draw(void)
 
 enum scene power_down_update(struct update_params uparms)
 {
-	game_night_timer += uparms.dt;
-	if (game_night_timer >= 6 * HOUR_LEN_SECONDS) {
-		sfx_stop_all_channels();
-		rdpq_call_deferred((void (*)(void *))_power_down_unload, NULL);
-		return SCENE_NIGHT_END;
-	}
+        game_hour_update(uparms);
+        if (game_hour_cur >= 6) {
+                sfx_stop_all_channels();
+                if (is_loaded)
+                        power_down_unload();
+
+                return SCENE_NIGHT_END;
+        }
 
 	freddy_flicker_timer += uparms.dt;
 	bool tick_flicker;
@@ -191,8 +188,9 @@ enum scene power_down_update(struct update_params uparms)
 		freddy_scare_anim_timer += 60 * uparms.dt;
 		if (freddy_scare_anim_timer >= 40) {
 			sfx_stop_all_channels();
-			rdpq_call_deferred((void (*)(void *))_power_down_unload,
-					NULL);
+                        if (is_loaded)
+                                power_down_unload();
+
 			return SCENE_GAME_OVER;
 		}
 		break;
