@@ -23,7 +23,7 @@
 
 #define TITLE_GFX_BLIP_LOOP_DL_CNT    8
 
-#define TITLE_NEW_GAME_TIMER_DRAW_ONLY_PAPER 2.f
+#define TITLE_NEW_GAME_TIMER_ONLY_PAPER 2.f
 #define TITLE_NEW_GAME_TIMER_FADE_OUT        7.f
 #define TITLE_NEW_GAME_TIMER_NEXT_SCENE      9.f
 
@@ -178,7 +178,7 @@ void title_draw(void)
          * rest of the title is no longer required and just wastes
          * rendering time.
          */
-        if (title_new_game_timer >= TITLE_NEW_GAME_TIMER_DRAW_ONLY_PAPER)
+        if (title_new_game_timer >= TITLE_NEW_GAME_TIMER_ONLY_PAPER)
                 goto title_draw_newspaper;
 
         /* Draw Freddy's face on the screen. */
@@ -271,11 +271,11 @@ void title_draw(void)
                 int star_cnt, i;
 
                 star_cnt = ((save_data & SAVE_NIGHT_5_BEATEN_BIT) >>
-                            SAVE_NIGHT_5_BEATEN_BIT_SHIFT) +
-                           ((save_data & SAVE_NIGHT_6_BEATEN_BIT) >>
-                            SAVE_NIGHT_6_BEATEN_BIT_SHIFT) +
-                           ((save_data & SAVE_MODE_20_BEATEN_BIT) >>
-                            SAVE_MODE_20_BEATEN_BIT_SHIFT);
+                        SAVE_NIGHT_5_BEATEN_BIT_SHIFT) +
+                        ((save_data & SAVE_NIGHT_6_BEATEN_BIT) >>
+                        SAVE_NIGHT_6_BEATEN_BIT_SHIFT) +
+                        ((save_data & SAVE_MODE_20_BEATEN_BIT) >>
+                        SAVE_MODE_20_BEATEN_BIT_SHIFT);
                 title_opt_available = CLAMP(star_cnt, 0, 2) + 2;
 
                 rdpq_set_mode_standard();
@@ -325,11 +325,10 @@ void title_draw(void)
                 float newspaper_alpha;
 
 title_draw_newspaper:
-                if (title_new_game_timer <=
-                        TITLE_NEW_GAME_TIMER_DRAW_ONLY_PAPER) {
+                if (title_new_game_timer <= TITLE_NEW_GAME_TIMER_ONLY_PAPER) {
                         newspaper_alpha = title_new_game_timer * 0.5f;
                 } else if (title_new_game_timer >=
-                        TITLE_NEW_GAME_TIMER_FADE_OUT) {
+                           TITLE_NEW_GAME_TIMER_FADE_OUT) {
                         newspaper_alpha = 1.0f - ((title_new_game_timer -
                                 TITLE_NEW_GAME_TIMER_FADE_OUT) * 0.5f);
                         rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
@@ -387,7 +386,7 @@ enum scene title_update(const struct update_params uparms)
                                               uparms.dt * speed_fps(10), 1.f,
                                               &blip_loop_tick);
                 if (blip_loop_tick) {
-                        title_blip_loop_frame++;
+                        ++title_blip_loop_frame;
                         if (title_blip_loop_frame >= TITLE_GFX_BLIP_LOOP_DL_CNT)
                                 title_blip_loop_frame = 0;
                 }
@@ -395,23 +394,26 @@ enum scene title_update(const struct update_params uparms)
 
         /* Check if EEPROM failed. */
         if (save_data_eeprom_failed &&
-                !(title_flags & TITLE_FLAG_EEP_FAIL_CONF)) {
-                title_flags |= uparms.pressed.start <<
-                        TITLE_FLAG_EEP_FAIL_CONF_SHIFT;
+            !(title_flags & TITLE_FLAG_EEP_FAIL_CONF)) {
+                title_flags |= (uparms.pressed.start <<
+                                TITLE_FLAG_EEP_FAIL_CONF_SHIFT);
                 return SCENE_TITLE_SCREEN;
         }
 
         /* If new game started, do the fade in. */
         if (title_flags & TITLE_FLAG_NEW_GAME_START) {
+                bool skip_newspaper;
+
                 title_new_game_timer += uparms.dt;
 
                 /* Check for skipping newspaper for new game. */
-                if ((uparms.pressed.a | uparms.pressed.start) &&
+                skip_newspaper =
+                        (uparms.pressed.a | uparms.pressed.start) &&
                         title_new_game_timer < TITLE_NEW_GAME_TIMER_FADE_OUT &&
-                        title_new_game_timer >
-                        TITLE_NEW_GAME_TIMER_DRAW_ONLY_PAPER) {
+                        title_new_game_timer > TITLE_NEW_GAME_TIMER_ONLY_PAPER;
+
+                if (skip_newspaper)
                         title_new_game_timer = TITLE_NEW_GAME_TIMER_FADE_OUT;
-                }
 
                 if (title_new_game_timer >= TITLE_NEW_GAME_TIMER_NEXT_SCENE) {
                         title_unload();
@@ -433,10 +435,10 @@ enum scene title_update(const struct update_params uparms)
 
         if (title_save_file_delete_timer >= TITLE_DELETE_TIMER_COMPLETE) {
                 blip_flash_trigger(false);
-                save_data = 1;
-                title_save_file_delete_timer = 0.0f;
-                title_flags |= TITLE_FLAG_SAVE_FILE_DEL;
-                title_opt_cur = TITLE_OPT_NEW_GAME;
+                save_data                     = 0x1;
+                title_save_file_delete_timer  = 0.0f;
+                title_flags                  |= TITLE_FLAG_SAVE_FILE_DEL;
+                title_opt_cur                 = TITLE_OPT_NEW_GAME;
                 if (!save_data_eeprom_failed)
                         eepfs_write("fnaf.dat", &save_data, sizeof(save_data));
 
@@ -446,7 +448,7 @@ enum scene title_update(const struct update_params uparms)
         }
 
         /* Operating the settings menu only. */
-        title_flags ^= uparms.pressed.r << TITLE_FLAG_SETT_MENU_OPEN_SHIFT;
+        title_flags ^= (uparms.pressed.r << TITLE_FLAG_SETT_MENU_OPEN_SHIFT);
         if (title_flags & TITLE_FLAG_SETT_MENU_OPEN) {
                 if (uparms.pressed.l)
                         wav64_play(&sfx_boop, SFX_CH_BLIP);
@@ -494,20 +496,12 @@ enum scene title_update(const struct update_params uparms)
                 case TITLE_OPT_NEW_GAME:
                         /* Just reset the nights, not the stars */
                         save_data &= SAVE_NIGHT_5_BEATEN_BIT |
-                                SAVE_NIGHT_6_BEATEN_BIT |
-                                SAVE_MODE_20_BEATEN_BIT;
+                                     SAVE_NIGHT_6_BEATEN_BIT |
+                                     SAVE_MODE_20_BEATEN_BIT;
                         save_data |= 1;
 
                         if (!save_data_eeprom_failed)
                                 eepfs_write("fnaf.dat", &save_data, 1);
-
-#ifdef TITLE_DEBUG_ENABLED
-                        debugf("Reset night to %d with %d%d%d\n",
-                               SAVE_NIGHT_NUM(save_data),
-                               (save_data & SAVE_NIGHT_5_BEATEN_BIT),
-                               (save_data & SAVE_NIGHT_6_BEATEN_BIT),
-                               (save_data & SAVE_MODE_20_BEATEN_BIT));
-#endif
 
                         title_flags |= TITLE_FLAG_NEW_GAME_START;
                         return SCENE_TITLE_SCREEN;

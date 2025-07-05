@@ -49,25 +49,25 @@ extern wav64_t sfx_shotgun_blast;
 extern wav64_t sfx_shotgun_reload;
 
 enum sfx_channels {
-	SFX_CH_AMBIENCE,
-	SFX_CH_PHONECALL,
-	SFX_CH_FAN,
-	SFX_CH_LIGHT,
-	SFX_CH_DOOR,
-	SFX_CH_CAMERA,
-	SFX_CH_BLIP,
-	SFX_CH_STATIC,
-	SFX_CH_JUMPSCARE,
-	SFX_CH_KITCHEN,
-	SFX_CH_FOOTSTEPS,
-	SFX_CH_FREDDYRUN,
-	SFX_CH_FREDDYLAUGH,
-	SFX_CH_ROBOTVOICE,
-	SFX_CH_MUSICBOX,
-	SFX_CH_FOXSONG,
+        SFX_CH_AMBIENCE,
+        SFX_CH_PHONECALL,
+        SFX_CH_FAN,
+        SFX_CH_LIGHT,
+        SFX_CH_DOOR,
+        SFX_CH_CAMERA,
+        SFX_CH_BLIP,
+        SFX_CH_STATIC,
+        SFX_CH_JUMPSCARE,
+        SFX_CH_KITCHEN,
+        SFX_CH_FOOTSTEPS,
+        SFX_CH_FREDDYRUN,
+        SFX_CH_FREDDYLAUGH,
+        SFX_CH_ROBOTVOICE,
+        SFX_CH_MUSICBOX,
+        SFX_CH_FOXSONG,
         SFX_CH_SHOTTY1,
         SFX_CH_SHOTTY2,
-	SFX_CH_CNT
+        SFX_CH_CNT
 };
 
 void sfx_load(void);

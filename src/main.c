@@ -15,10 +15,16 @@
 #include "game/static.h"
 #include "game/blip_flash.h"
 
+#include "game/freddy.h"
+#include "game/bonnie.h"
+#include "game/chica.h"
+#include "game/foxy.h"
+
 static void (*draw_funcs[SCENE_COUNT])(void) = {
         title_draw,
         which_night_draw,
         game_draw,
+
         night_end_draw,
         paycheck_draw,
         game_over_draw,
@@ -85,10 +91,10 @@ int main(void)
                  * happen at a designated tickrate of 60.
                  */
                 joypad_poll();
-                uparams.dt = display_get_delta_time();
-                uparams.held = joypad_get_buttons_held(JOYPAD_PORT_1);
+                uparams.dt      = display_get_delta_time();
+                uparams.held    = joypad_get_buttons_held(JOYPAD_PORT_1);
                 uparams.pressed = joypad_get_buttons_pressed(JOYPAD_PORT_1);
-                uparams.sticks = joypad_get_inputs(JOYPAD_PORT_1);
+                uparams.sticks  = joypad_get_inputs(JOYPAD_PORT_1);
 
                 scene_last = scene;
                 scene = update_funcs[scene](uparams);
