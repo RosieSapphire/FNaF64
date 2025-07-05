@@ -67,7 +67,7 @@ int main(void)
         perspective_init();
         sfx_load();
         static_load();
-        blip_flash_create();
+        blip_flash_init();
 
         scene = SCENE_TITLE_SCREEN;
 
@@ -122,7 +122,7 @@ int main(void)
         display_close();
 
         /* Game Terminate */
-        blip_flash_destroy();
+        blip_flash_free();
         static_unload();
         sfx_unload();
         perspective_free();

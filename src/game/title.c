@@ -87,7 +87,7 @@ static struct graphic title_gfx_settings_descs;
 static struct graphic title_gfx_eeprom_err;
 static struct graphic title_gfx_newspaper;
 
-static rspq_block_t *title_gfx_blip_loop_dls[TITLE_GFX_BLIP_LOOP_DL_CNT];
+static rspq_block_t **title_gfx_blip_loop_dls;
 
 static void title_load(void)
 {
@@ -114,13 +114,6 @@ static void title_load(void)
 
         /* Generate the blip loop animation at runtime. */
         {
-                int i;
-
-                struct blip_frame_info {
-                        int rect_cnt;
-                        int rect_ys[3][2];
-                };
-
                 const struct blip_frame_info inf[TITLE_GFX_BLIP_LOOP_DL_CNT] = {
                         { 1, { {  61,  73 }, {  -1,  -1 }, {  -1,  -1 } } },
                         { 1, { { 156, 165 }, {  -1,  -1 }, {  -1,  -1 } } },
@@ -132,6 +125,9 @@ static void title_load(void)
                         { 1, { { 144, 173 }, {  -1,  -1 }, {  -1,  -1 } } }
                 };
 
+                title_gfx_blip_loop_dls =
+                        blip_create_from_info(inf, TITLE_GFX_BLIP_LOOP_DL_CNT);
+                /*
 	        rdpq_set_mode_fill(RGBA16(0xFF, 0xFF, 0xFF, 0xFF));
 
                 for (i = 0; i < TITLE_GFX_BLIP_LOOP_DL_CNT; ++i) {
@@ -147,6 +143,7 @@ static void title_load(void)
                                                     inf_cur->rect_ys[j][1]);
 	                title_gfx_blip_loop_dls[i] = rspq_block_end();
                 }
+                */
         }
 
         /* Variables */
@@ -182,6 +179,7 @@ static void title_unload(void)
 	graphic_unload(&title_gfx_selector);
 	graphic_unload(&title_gfx_star);
 	graphics_unload(title_gfx_freddy_face, TITLE_GFX_FREDDY_FACE_CNT);
+        blip_destroy(&title_gfx_blip_loop_dls, TITLE_GFX_BLIP_LOOP_DL_CNT);
 
         title_flags &= ~(TITLE_FLAG_IS_LOADED);
 }
