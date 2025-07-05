@@ -1,4 +1,4 @@
-DEBUG_ENABLED := 1
+DEBUG_ENABLED := 0
 GAME := fnaf
 CFLAGS += -Wall -Wextra -Werror -pedantic -ansi -Iinclude
 ifeq ($(DEBUG_ENABLED), 1)
