@@ -12,7 +12,6 @@
 #include "game/bonnie.h"
 #include "game/chica.h"
 #include "game/foxy.h"
-#include "game/golden_freddy.h"
 #include "game/settings.h"
 #include "game/texture_index.h"
 #include "game/save_data.h"
@@ -348,11 +347,12 @@ void camera_view_draw(void)
 		return;
 
 	case CAM_2B:
-		if ((golden_freddy_state != 1 && 
-		     golden_freddy_state != 2) ||
-		    bonnie_cam == CAM_2B) {
+		if ((game_goldfred_state !=
+                     GAME_GOLDFRED_STATE_IN_CAM2B) && 
+		    (game_goldfred_state !=
+                     GAME_GOLDFRED_STATE_READY_TO_ATTACK) ||
+		    bonnie_cam == CAM_1B)
 			break;
-		}
 
 		graphic_load(views_extra + 1, TX_CAM_2B_GOLD);
 		graphic_draw(views_extra[1], view_turn, 0, 0, 0, GFX_FLIP_NONE);
@@ -593,18 +593,17 @@ static void camera_update_button_blink(double dt)
 static void camera_check_switching(const struct update_params uparms)
 {
         int i;
-
-	if (cam_selected == CAM_2B &&
-			(golden_freddy_state == 1 ||
-			 golden_freddy_state == 2))
-		return;
-
 	int dirs[4] = {
 		uparms.pressed.c_left  || uparms.pressed.d_left,
 		uparms.pressed.c_right || uparms.pressed.d_right,
 		uparms.pressed.c_up    || uparms.pressed.d_up,
 		uparms.pressed.c_down  || uparms.pressed.d_down,
 	};
+
+	if (cam_selected == CAM_2B &&
+            (game_goldfred_state == GAME_GOLDFRED_STATE_IN_CAM2B ||
+             game_goldfred_state == GAME_GOLDFRED_STATE_READY_TO_ATTACK))
+		return;
 
 	for (i = 0; i < 4; ++i) {
 		if (!dirs[i])

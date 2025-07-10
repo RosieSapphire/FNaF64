@@ -6,7 +6,7 @@
 #include "game/bonnie.h"
 #include "game/chica.h"
 #include "game/foxy.h"
-#include "game/golden_freddy.h"
+#include "game/golden_freddy_scare.h"
 #include "game/texture_index.h"
 #include "game/custom_night.h"
 
@@ -77,7 +77,7 @@ void custom_night_draw(void)
 
         /* Golden Freddy jumpscaring takes precedence over everthing. */
         if (custom_was_that_the_bite_of_87) {
-                golden_freddy_draw_scare();
+                golden_freddy_scare_draw();
                 return;
         }
         
@@ -130,7 +130,7 @@ enum scene custom_night_update(struct update_params uparms)
 
         /* Keep updating Golden Freddy's jumpscare until the game crashes. */
         if (custom_was_that_the_bite_of_87) {
-                golden_freddy_update(uparms.dt);
+                golden_freddy_scare_update(uparms.dt);
                 return SCENE_CUSTOM_NIGHT;
         }
 
@@ -167,9 +167,8 @@ enum scene custom_night_update(struct update_params uparms)
 		if (freddy_ai_level == 1 && bonnie_ai_level == 9 &&
 		    chica_ai_level == 8 && foxy_ai_level == 7) {
                         custom_was_that_the_bite_of_87 = true;
-                        wav64_play(&sfx_jumpscare_low, SFX_CH_JUMPSCARE);
-                        golden_freddy_load();
-                        golden_freddy_state = GOLDEN_FREDDY_STATE_JUMPSCARING;
+                        golden_freddy_scare_load();
+                        golden_freddy_is_scaring = true;
                         return SCENE_CUSTOM_NIGHT;
                 }
 		return SCENE_WHICH_NIGHT;

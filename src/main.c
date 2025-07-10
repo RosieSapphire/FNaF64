@@ -73,6 +73,7 @@ int main(void)
         static_load();
         blip_flash_init();
 
+        /* TODO: Add the warning screen at the beginning. */
         scene = SCENE_TITLE_SCREEN;
 
         while (1) {

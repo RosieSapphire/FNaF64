@@ -20,7 +20,7 @@
 #include "game/bonnie.h"
 #include "game/chica.h"
 #include "game/foxy.h"
-#include "game/golden_freddy.h"
+#include "game/golden_freddy_scare.h"
 #include "game/settings.h"
 #include "game/save_data.h"
 #include "game/texture_index.h"
@@ -46,6 +46,10 @@
 
 #define GAME_OFFICE_VIEW_CNT 5
 
+#define GAME_GOLDFRED_SCARE_TIMER_START 5.f
+#define GAME_GOLDFRED_SCARE_TIMER_CRASH 1.5f
+#define GAME_GOLDFRED_1_IN_CHANCE       100000
+
 #define GAME_SHOTGUN_ANIM_FRAME_CNT        10
 #define GAME_SHOTGUN_RELOAD_TIMER          .8f
 #define GAME_SHOTGUN_FRAME_PLAY_RELOAD_SFX 3
@@ -63,6 +67,17 @@ enum {
                 (1 << GAME_SHOTGUN_BROKE_DOOR_LEFT_SHIFT),
         GAME_SHOTGUN_BROKE_DOOR_RIGHT =
                 (1 << GAME_SHOTGUN_BROKE_DOOR_RIGHT_SHIFT)
+};
+
+enum {
+        GAME_GOLDFRED_ATTEMPT,
+        GAME_GOLDFRED_IN_CAM2B,
+        GAME_GOLDFRED_READY_TO_ATTACK,
+        GAME_GOLDFRED_IN_OFFICE,
+        GAME_GOLDFRED_JUMPSCARING,
+        GAME_GOLDFRED_NEUTRALIZED,
+        GAME_GOLDFRED_CRASH_GAME,
+        GAME_GOLDFRED_STATE_CNT
 };
 
 /* Graphics Paths */
@@ -117,6 +132,7 @@ static struct graphic game_gfx_door_btns[GAME_DOOR_BUTTON_GFX_CNT];
 static struct graphic game_gfx_anim_doors[GAME_DOOR_ANIM_FRAME_CNT];
 static struct graphic game_gfx_fan_anim[GAME_FAN_FRAME_CNT];
 static struct graphic game_gfx_shotgun_anim[GAME_SHOTGUN_ANIM_FRAME_CNT];
+static struct graphic game_gfx_goldfred_in_office;
 
 /* TODO: Make graphics have a flag that specifies if it should be scaled. */
 static sprite_t *game_gfx_exit_prompt;
@@ -135,10 +151,12 @@ uint8_t game_hour_prev;
 int     game_power_usage;
 int     game_power_left;
 float   game_power_timer;
+/* FIXME: Make jumpscares mute all other sounds so there's no sound clipping. */
 uint8_t game_jumpscare_flags;
 bool    game_won_by_murder;
 bool    game_shotgun_is_unlocked;
 float   game_shotgun_reload_timer;
+uint8_t game_goldfred_state;
 
 /* Local Variables */
 static float   game_sfx_jumpscare_exit_timer;
@@ -154,6 +172,9 @@ static float   game_shotgun_screen_shake_mag;
 static uint8_t game_shotgun_broke_door_flags;
 static float   game_shotgun_killed_all_timer;
 static bool    game_show_exit_prompt;
+static float   game_goldfred_attempt_timer;
+static float   game_goldfred_office_timer;
+
 static bool    game_is_loaded = false;
 
 struct door_btn {
@@ -237,8 +258,10 @@ static void game_load(void)
         chica_load();
         foxy_load();
         freddy_load();
-        golden_freddy_load();
         hallucinations_load();
+
+        /* Golden Freddy */
+        graphic_load(&game_gfx_goldfred_in_office, TX_GOLDEN_FREDDY_SIT);
 
         /* Exit Prompt */
         game_gfx_exit_prompt = sprite_load(TX_EXIT_PROMPT);
@@ -257,6 +280,12 @@ static void game_load(void)
         game_won_by_murder   = false;
         game_is_loaded       = true;
 
+        golden_freddy_scare_load();
+        graphic_load(&game_gfx_goldfred_in_office, TX_GOLDEN_FREDDY_SIT);
+        game_goldfred_state         = GAME_GOLDFRED_STATE_ATTEMPT;
+        game_goldfred_attempt_timer = 0.f;
+        game_goldfred_office_timer  = 0.f;
+
         game_ticks_since_load = get_ticks() - game_ticks_since_load;
         game_time_since_load  = (float)game_ticks_since_load /
                 (float)TICKS_PER_SECOND;
@@ -272,7 +301,6 @@ static void game_unload(void)
         sprite_free(game_gfx_exit_prompt);
 
         hallucinations_unload();
-        golden_freddy_unload();
         freddy_unload();
         foxy_unload();
         chica_unload();
@@ -297,6 +325,10 @@ static void game_unload(void)
         /* Office */
         graphics_unload(game_gfx_office_views, GAME_OFFICE_VIEW_CNT);
         graphics_unload(game_gfx_foxy_scare, FOXY_SCARE_FRAME_CNT);
+
+        /* Golden Freddy */
+        golden_freddy_scare_unload();
+        graphic_unload(&game_gfx_goldfred_in_office);
 
         game_is_loaded = false;
 }
@@ -430,17 +462,17 @@ static void game_office_elements_draw(const float shotgun_shake_offset)
 
 void game_draw(void)
 {
-        float shotgun_shake_offset;
-
         if (!game_is_loaded)
                 game_load();
 
-        if (golden_freddy_state == GOLDEN_FREDDY_STATE_JUMPSCARING) {
-                golden_freddy_draw_scare();
+        if (golden_freddy_is_scaring) {
+                golden_freddy_scare_draw();
                 return;
         }
 
         if (!camera_is_visible) {
+                float shotgun_shake_offset;
+
                 shotgun_shake_offset =
                         sinf((GAME_SHOTGUN_RELOAD_TIMER -
                              game_shotgun_reload_timer) * M_PI *
@@ -448,15 +480,13 @@ void game_draw(void)
                         game_shotgun_screen_shake_mag;
                 perspective_begin();
 
-                /* Office */
                 game_office_view_draw(shotgun_shake_offset);
-
-                /*
-                 * TODO: Put this into a check statement
-                 * to make it much clearer.
-                 */
-                golden_freddy_draw_in_room(game_office_turn +
-                                           shotgun_shake_offset);
+                if (game_goldfred_state == GAME_GOLDFRED_STATE_IN_OFFICE) {
+                        rdpq_set_mode_copy(true);
+                        graphic_draw(game_gfx_goldfred_in_office,
+                                     660 + game_office_turn, 478,
+                                     270, 260, GFX_FLIP_NONE);
+                }
 
                 if (!game_jumpscare_flags)
                         game_office_elements_draw(shotgun_shake_offset);
@@ -466,56 +496,53 @@ void game_draw(void)
                         chica_draw_scare();
 
                 perspective_end();
+
+                /* Shotgun */
+                if (game_shotgun_is_unlocked) {
+                        float n11, zo, off_x,
+                        off_y, theta;
+                        int frame_cur;
+                        rdpq_blitparms_t params;
+
+                        n11    = -((game_office_turn + 320.f) / 320.f);
+                        zo     = (n11 + 1.f) * .5f;
+                        off_x  = n11 * 64.f;
+                        off_y  = sinf(M_PI * zo) * -8.f;
+                        theta  = TO_RADIANS(n11 * -GAME_SHOTGUN_MAX_ABS_THETA);
+                        frame_cur = (int)((game_shotgun_reload_timer /
+                                           GAME_SHOTGUN_RELOAD_TIMER) *
+                                          (GAME_SHOTGUN_ANIM_FRAME_CNT - 1));
+                        if (frame_cur > 0)
+                                frame_cur = (GAME_SHOTGUN_ANIM_FRAME_CNT - 1) -
+                                        frame_cur;
+
+                        params.tile      = TILE0;
+                        params.s0        = 0;
+                        params.t0        = 0;
+                        params.width     = 0;
+                        params.height    = 0;
+                        params.flip_x    = false;
+                        params.flip_y    = false;
+                        params.cx        = 83;
+                        params.cy        = 77;
+                        params.scale_x   = 2.f;
+                        params.scale_y   = 2.f;
+                        params.theta     = theta;
+                        params.filtering = true;
+                        params.nx        = 0;
+                        params.ny        = 0;
+
+                        rdpq_set_mode_standard();
+                        rdpq_mode_alphacompare(1);
+                        rdpq_mode_filter(FILTER_MEDIAN);
+                        rdpq_sprite_blit(game_gfx_shotgun_anim[frame_cur].spr,
+                                         160 + off_x, 240 + off_y, &params);
+                }
         } else {
                 camera_view_draw();
                 static_draw(true);
                 camera_ui_draw();
                 blip_flash_draw();
-        }
-
-        /* Shotgun */
-        if (game_shotgun_is_unlocked && !camera_is_visible) {
-                float shotty_n11, shotty_01, shotty_offset_x,
-                shotty_offset_y, shotty_theta;
-                int shotty_frame_cur;
-                rdpq_blitparms_t params;
-
-                shotty_n11       = -((game_office_turn + 320.f) / 320.f);
-                shotty_01        = (shotty_n11 + 1.f) * .5f;
-                shotty_offset_x  = shotty_n11 * 64.f;
-                shotty_offset_y  = sinf(M_PI * shotty_01) * -8.f;
-                shotty_theta     = TO_RADIANS(shotty_n11 *
-                                              -GAME_SHOTGUN_MAX_ABS_THETA);
-                shotty_frame_cur = (int)((game_shotgun_reload_timer /
-                        GAME_SHOTGUN_RELOAD_TIMER) *
-                        (GAME_SHOTGUN_ANIM_FRAME_CNT - 1));
-                if (shotty_frame_cur > 0) {
-                        shotty_frame_cur = (GAME_SHOTGUN_ANIM_FRAME_CNT - 1) -
-                                shotty_frame_cur;
-                }
-
-                params.tile      = TILE0;
-                params.s0        = 0;
-                params.t0        = 0;
-                params.width     = 0;
-                params.height    = 0;
-                params.flip_x    = false;
-                params.flip_y    = false;
-                params.cx        = 83;
-                params.cy        = 77;
-                params.scale_x   = 2.f;
-                params.scale_y   = 2.f;
-                params.theta     = shotty_theta;
-                params.filtering = true;
-                params.nx        = 0;
-                params.ny        = 0;
-
-                rdpq_set_mode_standard();
-                rdpq_mode_alphacompare(1);
-                rdpq_mode_filter(FILTER_MEDIAN);
-                rdpq_sprite_blit(game_gfx_shotgun_anim[shotty_frame_cur].spr,
-                                 160 + shotty_offset_x,
-                                 240 + shotty_offset_y, &params);
         }
 
         if (settings_flags & SET_ROBOT_CHEAT_BIT) {
@@ -776,6 +803,77 @@ void game_hour_update(const struct update_params uparms)
         freddy_ai_level = CLAMP(freddy_ai_level, 0, 20);
 }
 
+/* Returns if Golden Freddy is actively jumpscaring. */
+static bool game_goldfred_update(const float dt)
+{
+        if (golden_freddy_is_scaring) {
+                golden_freddy_scare_update(dt);
+                return true;
+        }
+
+        switch(game_goldfred_state) {
+        case GAME_GOLDFRED_STATE_ATTEMPT:
+                bool attempt;
+                int val;
+
+                game_goldfred_attempt_timer =
+                        wrapf(game_goldfred_attempt_timer + dt, 1.0f, &attempt);
+                val = -1;
+                if (attempt && !(val = rand() % GAME_GOLDFRED_1_IN_CHANCE))
+                        game_goldfred_state = GAME_GOLDFRED_STATE_IN_CAM2B;
+
+                debugf("%d\n", val);
+
+                return false;
+
+        case GAME_GOLDFRED_STATE_IN_CAM2B:
+                if (cam_selected != CAM_2B ||
+                    bonnie_cam   == CAM_2B ||
+                    !camera_is_visible)
+                        return false;
+
+                game_goldfred_state = GAME_GOLDFRED_STATE_READY_TO_ATTACK;
+                mixer_ch_set_vol(SFX_CH_FREDDYLAUGH, 1.0f, 1.0f);
+                wav64_play(&sfx_girl_giggle, SFX_CH_FREDDYLAUGH);
+
+                return false;
+
+        case GAME_GOLDFRED_STATE_READY_TO_ATTACK:
+                if (camera_is_visible)
+                        return false;
+
+                hallucinations_trigger();
+                game_goldfred_state = GAME_GOLDFRED_STATE_IN_OFFICE;
+                return false;
+
+        case GAME_GOLDFRED_STATE_IN_OFFICE:
+                /*
+                 * Flipping the camera up while he's in the office
+                 * removes him for the rest of the night.
+                 */
+                if (camera_is_visible)
+                        game_goldfred_state = GAME_GOLDFRED_STATE_NEUTRALIZED;
+
+                game_goldfred_office_timer += dt;
+                if (game_goldfred_office_timer <
+                    GOLDEN_FREDDY_TIMER_START_SCARING)
+                        return false;
+
+                game_goldfred_state = GAME_GOLDFRED_STATE_JUMPSCARING;
+                golden_freddy_is_scaring = true;
+                golden_freddy_scare_update(dt);
+                return true;
+
+        case GAME_GOLDFRED_STATE_JUMPSCARING:
+                return true;
+
+        case GAME_GOLDFRED_STATE_NEUTRALIZED:
+                return false;
+        }
+
+        return false;
+}
+
 enum scene game_update(struct update_params uparms)
 {
         if (game_show_exit_prompt) {
@@ -794,7 +892,10 @@ enum scene game_update(struct update_params uparms)
                 return SCENE_MAIN_GAME;
         }
 
-        golden_freddy_update(uparms.dt);
+        /* Can't do jack shit if Golden Freddy's attacking. :3 */
+        if (game_goldfred_update(uparms.dt))
+                return SCENE_MAIN_GAME;
+
         hallucinations_update(uparms.dt);
 
         /*
@@ -812,7 +913,7 @@ enum scene game_update(struct update_params uparms)
          * You are actively being jumpscared by Golden Freddy,
          * and are powerless to do absolutely anything. Damn.
          */
-        if (golden_freddy_state == GOLDEN_FREDDY_STATE_JUMPSCARING)
+        if (game_goldfred_state == GAME_GOLDFRED_STATE_JUMPSCARING)
                 return SCENE_MAIN_GAME;
 
         /* TODO: Add an indication on which button to press to turn off call. */
@@ -856,30 +957,48 @@ enum scene game_update(struct update_params uparms)
                 game_shotgun_update(uparms);
 
         /* Fan */
-        game_fan_anim_timer = wrapf(game_fan_anim_timer + uparms.dt * speed_fps(99), GAME_FAN_FRAME_CNT, NULL);
+        game_fan_anim_timer = wrapf(game_fan_anim_timer +
+                                    (uparms.dt * speed_fps(99)),
+                                    GAME_FAN_FRAME_CNT, NULL);
 
-        /* Doors */
-        const float door_speed = speed_fps(50);
-        if (game_door_btn_states_cur & GAME_DOOR_BTN_LEFT_DOOR) {
-                game_door_anim_timers[GAME_DOOR_LEFT] += uparms.dt * door_speed;
-        } else {
-                game_door_anim_timers[GAME_DOOR_LEFT] -= uparms.dt * door_speed;
+        /* Door Animations */
+        {
+                float door_speed;
+
+                door_speed = speed_fps(50);
+
+                /* Left */
+                if (game_door_btn_states_cur & GAME_DOOR_BTN_LEFT_DOOR)
+                        game_door_anim_timers[GAME_DOOR_LEFT] +=
+                                uparms.dt * door_speed;
+                else
+                        game_door_anim_timers[GAME_DOOR_LEFT] -=
+                                uparms.dt * door_speed;
+
+                game_door_anim_timers[GAME_DOOR_LEFT] =
+                        CLAMP(game_door_anim_timers[GAME_DOOR_LEFT],
+                              0, GAME_DOOR_ANIM_FRAME_CNT - 1);
+
+                /* Right */
+                if (game_door_btn_states_cur & GAME_DOOR_BTN_RIGHT_DOOR)
+                        game_door_anim_timers[GAME_DOOR_RIGHT] +=
+                                uparms.dt * door_speed;
+                else
+                        game_door_anim_timers[GAME_DOOR_RIGHT] -=
+                                uparms.dt * door_speed;
+
+                game_door_anim_timers[GAME_DOOR_RIGHT] =
+                        CLAMP(game_door_anim_timers[GAME_DOOR_RIGHT],
+                              0, GAME_DOOR_ANIM_FRAME_CNT - 1);
         }
 
-        if (game_door_btn_states_cur & GAME_DOOR_BTN_RIGHT_DOOR) {
-                game_door_anim_timers[GAME_DOOR_RIGHT] += uparms.dt * door_speed;
-        } else {
-                game_door_anim_timers[GAME_DOOR_RIGHT] -= uparms.dt * door_speed;
-        }
-
-        game_door_anim_timers[GAME_DOOR_LEFT] = CLAMP(game_door_anim_timers[GAME_DOOR_LEFT], 0, GAME_DOOR_ANIM_FRAME_CNT - 1);
-        game_door_anim_timers[GAME_DOOR_RIGHT] = CLAMP(game_door_anim_timers[GAME_DOOR_RIGHT], 0, GAME_DOOR_ANIM_FRAME_CNT - 1);
-
+        /* Door Buttons */
         if (!camera_is_visible) {
                 game_door_buttons_update_left(uparms);
                 game_door_buttons_update_right(uparms);
         }
 
+        /* TODO: Deabstract all this shit. */
         camera_update(&game_door_btn_states_cur, uparms);
         ui_update(game_door_btn_states_cur, uparms.dt);
         bonnie_update(&game_door_btn_states_cur, uparms.dt);
@@ -899,9 +1018,8 @@ enum scene game_update(struct update_params uparms)
                 game_sfx_jumpscare_exit_timer = 40.f;
         }
 
-        if (uparms.pressed.start && !game_show_exit_prompt) {
+        if (uparms.pressed.start && !game_show_exit_prompt)
                 game_show_exit_prompt = true;
-        }
 
         return SCENE_MAIN_GAME;
 }
