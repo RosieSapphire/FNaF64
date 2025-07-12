@@ -108,6 +108,7 @@ void freddy_update(const int button_state, const float dt)
                         game_jumpscare_flags |= GAME_JUMPSCARE_FLAG_FREDDY;
                         debugf("%d\n", game_jumpscare_flags);
                         ready_to_scare = false;
+                        sfx_stop_all_channels();
                         wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
                         return;
                 }

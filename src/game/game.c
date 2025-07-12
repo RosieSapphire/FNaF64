@@ -150,7 +150,6 @@ uint8_t game_hour_prev;
 int     game_power_usage;
 int     game_power_left;
 float   game_power_timer;
-/* FIXME: Make jumpscares mute all other sounds so there's no sound clipping. */
 uint8_t game_jumpscare_flags;
 bool    game_won_by_murder;
 bool    game_shotgun_is_unlocked;

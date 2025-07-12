@@ -126,6 +126,7 @@ void bonnie_update(int *button_state_ptr, const float dt)
         bool cam_flip_down = (!camera_is_visible && camera_was_visible);
         if (bonnie_cam == YOURE_FUCKED && cam_flip_down) {
                 game_jumpscare_flags |= GAME_JUMPSCARE_FLAG_BONNIE;
+                sfx_stop_all_channels();
                 wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
                 return;
         }

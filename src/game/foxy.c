@@ -1,3 +1,5 @@
+/* TODO: REFACTOR! */
+
 #include <stdlib.h>
 
 #include "engine/util.h"
@@ -72,6 +74,7 @@ static void _foxy_trigger_sfx_jumpscare(void)
 {
         camera_is_using = false;
         game_jumpscare_flags |= GAME_JUMPSCARE_FLAG_FOXY;
+        sfx_stop_all_channels();
         wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
 }
 
