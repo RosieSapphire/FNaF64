@@ -9,13 +9,13 @@ float wrapf(float x, float max, bool *has_wrapped)
 {
         bool wrapped = false;
         while (x >= max) {
-        	float dist = x - max;
-        	x = dist;
-        	wrapped = true;
+                float dist = x - max;
+                x = dist;
+                wrapped = true;
         }
 
         if (has_wrapped)
-        	*has_wrapped = wrapped;
+                *has_wrapped = wrapped;
 
         return x;
 }
@@ -23,7 +23,7 @@ float wrapf(float x, float max, bool *has_wrapped)
 float fcutoff(float x, float threshold)
 {
         if (fabsf(x) < threshold)
-        	return 0.0f;
+                return 0.0f;
 
         return x;
 }
@@ -31,7 +31,7 @@ float fcutoff(float x, float threshold)
 int icutoff(int x, int threshold)
 {
         if (abs(x) < threshold)
-        	return 0.0f;
+                return 0.0f;
 
         return x;
 }

@@ -25,7 +25,7 @@ void graphics_load(struct graphic *o, int num, const char **paths)
         int i;
 
         for (i = 0; i < num; ++i)
-        	graphic_load(o + i, paths[i]);
+                graphic_load(o + i, paths[i]);
 }
 
 void graphic_unload(struct graphic *o)
@@ -45,7 +45,7 @@ void graphics_unload(struct graphic *o, int num)
         int i;
 
         for (i = 0; i < num; ++i)
-        	graphic_unload(o + i);
+                graphic_unload(o + i);
 }
 
 void graphic_draw(struct graphic o, int px, int py,

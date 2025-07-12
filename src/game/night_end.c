@@ -17,6 +17,11 @@
 
 #define NIGHT_END_TIMER_PLAY_CHEER 6.2f
 
+/*
+ * Possible TODO: Instead of it just setting the timer, just make it
+ * skip the whole thing outright at the first possible update. Or
+ * even during the load function.
+ */
 #ifdef NIGHT_END_SKIP
 #define NIGHT_END_TIMER_EXIT 0.f
 #else

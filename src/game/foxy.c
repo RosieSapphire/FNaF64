@@ -53,8 +53,8 @@ void foxy_unload(void)
 static void _foxy_update_stun_timer(double dt)
 {
         if (camera_is_visible) {
-        	stun_timer = 50 + (rand() % 1000);
-        	return;
+                stun_timer = 50 + (rand() % 1000);
+                return;
         }
  
         stun_timer -= dt * 60;
@@ -88,8 +88,8 @@ static void _foxy_trigger_reset(void)
 
         int power_deduct = 10 + (50 * num_door_pounds);
         if (power_deduct >= game_power_left) {
-        	game_power_left = 0;
-        	return;
+                game_power_left = 0;
+                return;
         }
 
         game_power_left -= power_deduct;
@@ -106,53 +106,54 @@ void foxy_update(const int button_state, const float dt)
         bool fox_song_play;
         fox_song_timer = wrapf(fox_song_timer, 4.0f, &fox_song_play);
         if (fox_song_play && (rand() % 30) == 1)
-        	wav64_play(&sfx_foxy_hum, SFX_CH_FOXSONG);
+                wav64_play(&sfx_foxy_hum, SFX_CH_FOXSONG);
 
         /* Handle jumpscaring */
         if (game_jumpscare_flags & JUMPSCARE_FLAG_FOXY) {
-        	game_scare_timer_foxy += speed_fps(25) * dt;
-        	game_scare_timer_foxy = CLAMP(game_scare_timer_foxy,
-        			0, FOXY_SCARE_FRAME_CNT - 1);
-        	return;
+                game_scare_timer_foxy += speed_fps(25) * dt;
+                game_scare_timer_foxy = CLAMP(game_scare_timer_foxy,
+                                0, FOXY_SCARE_FRAME_CNT - 1);
+                return;
         } else {
                 game_scare_timer_foxy = 0.f;
         }
 
         if (cam_selected == CAM_2A && camera_is_visible &&
            foxy_progress == 3 && !foxy_use_run_timer) {
-        	foxy_use_run_timer = true;
-        	wav64_play(&sfx_foxy_running, SFX_CH_JUMPSCARE);
+                foxy_use_run_timer = true;
+                wav64_play(&sfx_foxy_running, SFX_CH_JUMPSCARE);
         }
 
         if (foxy_use_run_timer) {
-        	foxy_run_timer += dt * 60;
-        	foxy_run_timer = CLAMP(foxy_run_timer, 0, 100);
-        	if (foxy_run_timer == 100) {
-        		if (button_state & GAME_DOOR_BTN_LEFT_DOOR)
-        			_foxy_trigger_reset();
+                foxy_run_timer += dt * 60;
+                foxy_run_timer = CLAMP(foxy_run_timer, 0, 100);
+                if (foxy_run_timer == 100) {
+                        if (button_state & GAME_DOOR_BTN_LEFT_DOOR)
+                                _foxy_trigger_reset();
                         else
-        			_foxy_trigger_sfx_jumpscare();
-        	}
+                                _foxy_trigger_sfx_jumpscare();
+                }
         }
 
         if (foxy_progress == 3 && !(game_jumpscare_flags &
                                     JUMPSCARE_FLAG_FOXY))
-        	foxy_no_check_timer += dt * 60;
+                foxy_no_check_timer += dt * 60;
 
         if (foxy_no_check_timer >= 1500 && !(game_jumpscare_flags &
                                              JUMPSCARE_FLAG_FOXY)) {
-        	if (button_state & GAME_DOOR_BTN_LEFT_DOOR)
-        		_foxy_trigger_reset();
+                if (button_state & GAME_DOOR_BTN_LEFT_DOOR)
+                        _foxy_trigger_reset();
                 else
-        		_foxy_trigger_sfx_jumpscare();
+                        _foxy_trigger_sfx_jumpscare();
         }
 
         _foxy_update_stun_timer(dt);
-        if (!_foxy_update_move_timer(dt) || stun_timer > 0 || foxy_progress >= 3)
-        	return;
+        if (!_foxy_update_move_timer(dt) || stun_timer > 0 ||
+            foxy_progress >= 3)
+                return;
 
         if ((1 + (rand() % 20)) > foxy_ai_level)
-        	return;
+                return;
 
         foxy_progress++;
 }

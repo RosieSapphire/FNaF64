@@ -49,10 +49,10 @@ void paycheck_draw(void)
 
         alpha = 1.f;
         if (paycheck_timer <= PAYCHECK_TIMER_FADE_IN_END)
-        	alpha = paycheck_timer * 0.5f;
+                alpha = paycheck_timer * 0.5f;
 
         if (paycheck_timer >= PAYCHECK_TIMER_FADE_OUT_START)
-        	alpha = 1.0f -
+                alpha = 1.0f -
                         ((paycheck_timer - PAYCHECK_TIMER_FADE_OUT_START) *
                          0.5f);
 
@@ -81,14 +81,14 @@ enum scene paycheck_update(struct update_params uparms)
         if ((uparms.pressed.a | uparms.pressed.b | uparms.pressed.start) &&
             (paycheck_timer < PAYCHECK_TIMER_FADE_OUT_START &&
              paycheck_timer > PAYCHECK_TIMER_FADE_IN_END))
-        	paycheck_timer = PAYCHECK_TIMER_FADE_OUT_START;
+                paycheck_timer = PAYCHECK_TIMER_FADE_OUT_START;
 
         if (paycheck_timer >= PAYCHECK_TIMER_RETURN) {
                 if (paycheck_is_loaded)
                         paycheck_unload();
 
-        	sfx_stop_all_channels();
-        	return SCENE_TITLE_SCREEN;
+                sfx_stop_all_channels();
+                return SCENE_TITLE_SCREEN;
         }
 
         return SCENE_PAYCHECK;

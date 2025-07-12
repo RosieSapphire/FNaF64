@@ -117,23 +117,23 @@ void bonnie_draw_debug(void)
 void bonnie_update(int *button_state_ptr, const float dt)
 {
         if (game_jumpscare_flags & JUMPSCARE_FLAG_BONNIE) {
-        	scare_timer += dt * speed_fps(75);
-        	scare_timer = wrapf(scare_timer, BONNIE_SCARE_FRAMES, NULL);
-        	return;
+                scare_timer += dt * speed_fps(75);
+                scare_timer = wrapf(scare_timer, BONNIE_SCARE_FRAMES, NULL);
+                return;
         }
 
         bool cam_flip_down = (!camera_is_visible && camera_was_visible);
         if (bonnie_cam == YOURE_FUCKED && cam_flip_down) {
                 game_jumpscare_flags |= JUMPSCARE_FLAG_BONNIE;
-        	wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
-        	return;
+                wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
+                return;
         }
 
         which_room_timer += dt;
         bool switch_which;
         which_room_timer = wrapf(which_room_timer, 1, &switch_which);
         if (switch_which)
-        	which_room = rand() & 1;
+                which_room = rand() & 1;
 
         bonnie_blackout_timer -= dt * 60;
         bonnie_blackout_timer = CLAMP(bonnie_blackout_timer, 0, 10);
@@ -142,22 +142,22 @@ void bonnie_update(int *button_state_ptr, const float dt)
         bool try_move;
         move_timer = wrapf(move_timer, MOVE_TIMER, &try_move);
         if (!try_move)
-        	return;
+                return;
 
         if ((1 + (rand() % 20)) > bonnie_ai_level)
-        	return;
+                return;
 
         bonnie_cam_last = bonnie_cam;
         int cam_next = new_cam_lut[bonnie_cam][which_room];
         if (cam_next == YOURE_FUCKED &&
             (*button_state_ptr & GAME_DOOR_BTN_LEFT_DOOR))
-        	cam_next = CAM_1B;
+                cam_next = CAM_1B;
 
         if (cam_next < AT_DOOR) {
-        	float foot_vol = footstep_vol_lut[cam_next];
+                float foot_vol = footstep_vol_lut[cam_next];
 
-        	debugf("%f\n", foot_vol);
-        	mixer_ch_set_vol(SFX_CH_FOOTSTEPS, foot_vol, foot_vol);
+                debugf("%f\n", foot_vol);
+                mixer_ch_set_vol(SFX_CH_FOOTSTEPS, foot_vol, foot_vol);
         }
 
         wav64_play(&sfx_deep_step, SFX_CH_FOOTSTEPS);
@@ -174,9 +174,9 @@ void bonnie_update(int *button_state_ptr, const float dt)
                 bonnie_blackout_timer = 10;
 
         if (bonnie_cam != AT_DOOR)
-        	bonnie_scared = false;
+                bonnie_scared = false;
 
         if ((bonnie_cam == AT_DOOR && bonnie_cam_last != AT_DOOR) ||
             (bonnie_cam != AT_DOOR && bonnie_cam_last == AT_DOOR))
-        	*button_state_ptr &= ~GAME_DOOR_BTN_LEFT_LIGHT;
+                *button_state_ptr &= ~GAME_DOOR_BTN_LEFT_LIGHT;
 }

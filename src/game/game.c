@@ -454,9 +454,11 @@ static void game_office_elements_draw(const float shotgun_shake_offset)
         }
         
         rdpq_set_mode_copy(true);
-        graphic_draw(game_gfx_door_btns[left_index], 48 + game_office_turn + shotgun_shake_offset,
+        graphic_draw(game_gfx_door_btns[left_index],
+                     48 + game_office_turn + shotgun_shake_offset,
                      390, 42, 127, 0);
-        graphic_draw(game_gfx_door_btns[right_index], 1546 + game_office_turn + shotgun_shake_offset,
+        graphic_draw(game_gfx_door_btns[right_index],
+                     1546 + game_office_turn + shotgun_shake_offset,
                      400, 49, 127, 0);
 }
 

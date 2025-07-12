@@ -107,35 +107,35 @@ void chica_draw_debug(void)
 static void _chica_update_kitchen_volume(void)
 {
         if (CAM_6 != chica_cam) {
-        	mixer_ch_set_vol(SFX_CH_KITCHEN, 0, 0);
-        	return;
+                mixer_ch_set_vol(SFX_CH_KITCHEN, 0, 0);
+                return;
         }
 
         if (!camera_is_visible) {
-        	mixer_ch_set_vol(SFX_CH_KITCHEN, 0.1f, 0.1f);
-        	return;
+                mixer_ch_set_vol(SFX_CH_KITCHEN, 0.1f, 0.1f);
+                return;
         }
 
         if (cam_selected == chica_cam)
-        	mixer_ch_set_vol(SFX_CH_KITCHEN, 0.75f, 0.75f);
+                mixer_ch_set_vol(SFX_CH_KITCHEN, 0.75f, 0.75f);
         else
-        	mixer_ch_set_vol(SFX_CH_KITCHEN, 0.2f, 0.2f);
+                mixer_ch_set_vol(SFX_CH_KITCHEN, 0.2f, 0.2f);
         
 }
 
 void chica_update(int *button_state_ptr, const float dt)
 {
         if (game_jumpscare_flags & JUMPSCARE_FLAG_CHICA) {
-        	scare_timer += dt * speed_fps(50);
-        	scare_timer = wrapf(scare_timer, CHICA_SCARE_FRAMES, NULL);
-        	return;
+                scare_timer += dt * speed_fps(50);
+                scare_timer = wrapf(scare_timer, CHICA_SCARE_FRAMES, NULL);
+                return;
         }
 
         bool cam_flip_down = (!camera_is_visible && camera_was_visible);
         if (chica_cam == YOURE_FUCKED && cam_flip_down) {
                 game_jumpscare_flags |= JUMPSCARE_FLAG_CHICA;
-        	wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
-        	return;
+                wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
+                return;
         }
 
         _chica_update_kitchen_volume();
@@ -143,40 +143,40 @@ void chica_update(int *button_state_ptr, const float dt)
         kitchen_noise_timer += dt;
         bool kitchen_noise_tick;
         kitchen_noise_timer = wrapf(kitchen_noise_timer,
-        		4, &kitchen_noise_tick);
+                        4, &kitchen_noise_tick);
 
         if (kitchen_noise_tick) {
-        	int kitchen_rand_val = rand() % 10;
-        	/* I'm sorry I have to do this, but for some reason, the way
-        	 * that Libdragon handles wav64_t, I have no choice */
-        	switch(kitchen_rand_val) {
-        	case 0:
-        		wav64_play(&sfx_kitchen_0, SFX_CH_KITCHEN);
-        		break;
+                int kitchen_rand_val = rand() % 10;
+                /* I'm sorry I have to do this, but for some reason, the way
+                 * that Libdragon handles wav64_t, I have no choice */
+                switch(kitchen_rand_val) {
+                case 0:
+                        wav64_play(&sfx_kitchen_0, SFX_CH_KITCHEN);
+                        break;
 
-        	case 1:
-        		wav64_play(&sfx_kitchen_1, SFX_CH_KITCHEN);
-        		break;
+                case 1:
+                        wav64_play(&sfx_kitchen_1, SFX_CH_KITCHEN);
+                        break;
 
-        	case 2:
-        		wav64_play(&sfx_kitchen_2, SFX_CH_KITCHEN);
-        		break;
+                case 2:
+                        wav64_play(&sfx_kitchen_2, SFX_CH_KITCHEN);
+                        break;
 
-        	case 3:
-        		wav64_play(&sfx_kitchen_2, SFX_CH_KITCHEN);
-        		break;
+                case 3:
+                        wav64_play(&sfx_kitchen_2, SFX_CH_KITCHEN);
+                        break;
 
-        	case 4:
-        		wav64_play(&sfx_kitchen_3, SFX_CH_KITCHEN);
-        		break;
-        	}
+                case 4:
+                        wav64_play(&sfx_kitchen_3, SFX_CH_KITCHEN);
+                        break;
+                }
         }
 
         which_room_timer += dt;
         bool switch_which;
         which_room_timer = wrapf(which_room_timer, 1, &switch_which);
         if (switch_which)
-        	which_room = rand() & 1;
+                which_room = rand() & 1;
 
         chica_blackout_timer -= dt * 60;
         chica_blackout_timer = CLAMP(chica_blackout_timer, 0, 10);
@@ -185,26 +185,26 @@ void chica_update(int *button_state_ptr, const float dt)
         bool try_move;
         move_timer = wrapf(move_timer, MOVE_TIMER, &try_move);
         if (!try_move)
-        	return;
+                return;
 
         if ((1 + (rand() % 20)) > chica_ai_level)
-        	return;
+                return;
 
         chica_cam_last = chica_cam;
         int cam_next = new_cam_lut[chica_cam][which_room];
         if (cam_next == YOURE_FUCKED &&
             (*button_state_ptr & GAME_DOOR_BTN_RIGHT_DOOR)) {
-        	cam_next = CAM_4A;
-        	/* BULLSHIT FIX THIS SHOULDN'T HAVE TO BE HERE! */
+                cam_next = CAM_4A;
+                /* BULLSHIT FIX THIS SHOULDN'T HAVE TO BE HERE! */
                 camera_states[CAM_4A] |= (CHICA_BIT | ROOM_SPOT_BIT);
-        	if (cam_selected == CAM_4A)
-        		chica_blackout_timer = 10;
+                if (cam_selected == CAM_4A)
+                        chica_blackout_timer = 10;
         }
 
         if (cam_next < AT_DOOR) {
-        	float foot_vol = footstep_vol_lut[cam_next];
+                float foot_vol = footstep_vol_lut[cam_next];
 
-        	mixer_ch_set_vol(SFX_CH_FOOTSTEPS, foot_vol, foot_vol);
+                mixer_ch_set_vol(SFX_CH_FOOTSTEPS, foot_vol, foot_vol);
         }
 
         wav64_play(&sfx_deep_step, SFX_CH_FOOTSTEPS);
@@ -219,9 +219,9 @@ void chica_update(int *button_state_ptr, const float dt)
                 chica_blackout_timer = 10;
 
         if (chica_cam != AT_DOOR)
-        	chica_scared = false;
+                chica_scared = false;
 
         if ((chica_cam == AT_DOOR && chica_cam_last != AT_DOOR) ||
             (chica_cam != AT_DOOR && chica_cam_last == AT_DOOR))
-        	*button_state_ptr &= ~GAME_DOOR_BTN_RIGHT_LIGHT;
+                *button_state_ptr &= ~GAME_DOOR_BTN_RIGHT_LIGHT;
 }
