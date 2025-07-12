@@ -6,6 +6,8 @@
  * functionality since it completely catches you by surprise if you didn't
  * already notice, but I'm going for near 100% accuracy, so this is something
  * I'll have to take care of at some point.
+ *
+ * Also, TODO: REFACTOR!
  */
 
 #include <stdlib.h>
@@ -14,7 +16,6 @@
 #include "engine/graphic.h"
 #include "engine/sfx.h"
 
-#include "game/buttons.h"
 #include "game/camera.h"
 #include "game/texture_index.h"
 #include "game/game.h"
@@ -83,7 +84,7 @@ void bonnie_load(void)
         move_timer = 0.0f;
         bonnie_cam_last = 0;
         bonnie_cam = 0;
-        game_jumpscare_flags &= ~(JUMPSCARE_FLAG_BONNIE);
+        game_jumpscare_flags &= ~(GAME_JUMPSCARE_FLAG_BONNIE);
         scare_timer = 0.0f;
 
         graphics_load(bonnie_scare, BONNIE_SCARE_FRAMES, bonnie_scare_paths);
@@ -116,7 +117,7 @@ void bonnie_draw_debug(void)
 
 void bonnie_update(int *button_state_ptr, const float dt)
 {
-        if (game_jumpscare_flags & JUMPSCARE_FLAG_BONNIE) {
+        if (game_jumpscare_flags & GAME_JUMPSCARE_FLAG_BONNIE) {
                 scare_timer += dt * speed_fps(75);
                 scare_timer = wrapf(scare_timer, BONNIE_SCARE_FRAMES, NULL);
                 return;
@@ -124,7 +125,7 @@ void bonnie_update(int *button_state_ptr, const float dt)
 
         bool cam_flip_down = (!camera_is_visible && camera_was_visible);
         if (bonnie_cam == YOURE_FUCKED && cam_flip_down) {
-                game_jumpscare_flags |= JUMPSCARE_FLAG_BONNIE;
+                game_jumpscare_flags |= GAME_JUMPSCARE_FLAG_BONNIE;
                 wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
                 return;
         }

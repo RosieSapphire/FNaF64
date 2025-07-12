@@ -8,7 +8,6 @@
 
 #include "game/office.h"
 #include "game/fan.h"
-#include "game/buttons.h"
 #include "game/doors.h"
 #include "game/camera.h"
 #include "game/static.h"
@@ -339,7 +338,7 @@ static void game_office_view_draw(const float shotgun_shake_offset)
 
         rdpq_set_mode_copy(false);
         
-        if (game_jumpscare_flags & JUMPSCARE_FLAG_FOXY) {
+        if (game_jumpscare_flags & GAME_JUMPSCARE_FLAG_FOXY) {
                 graphic_draw(game_gfx_foxy_scare[(int)game_scare_timer_foxy],
                              game_office_turn + shotgun_shake_offset,
                              0, 0, 0, GFX_FLIP_NONE);
@@ -354,7 +353,7 @@ static void game_office_view_draw(const float shotgun_shake_offset)
                 graphic_unload(game_freddy_scare + i);
         }
         
-        if (game_jumpscare_flags & JUMPSCARE_FLAG_FREDDY) {
+        if (game_jumpscare_flags & GAME_JUMPSCARE_FLAG_FREDDY) {
                 int frame = (int)game_scare_timer_freddy;
 
                 graphic_load(game_freddy_scare + frame,
@@ -492,9 +491,9 @@ void game_draw(void)
 
                 if (!game_jumpscare_flags)
                         game_office_elements_draw(shotgun_shake_offset);
-                else if (game_jumpscare_flags & JUMPSCARE_FLAG_BONNIE)
+                else if (game_jumpscare_flags & GAME_JUMPSCARE_FLAG_BONNIE)
                         bonnie_draw_scare();
-                else if (game_jumpscare_flags & JUMPSCARE_FLAG_CHICA)
+                else if (game_jumpscare_flags & GAME_JUMPSCARE_FLAG_CHICA)
                         chica_draw_scare();
 
                 perspective_end();
@@ -728,8 +727,8 @@ static void game_shotgun_update(const struct update_params uparms)
                 } else if (bonnie_cam == AT_DOOR) {
                         bonnie_ai_level = 0;
                         bonnie_cam = -1;
-                } else if (game_jumpscare_flags & JUMPSCARE_FLAG_FOXY) {
-                        game_jumpscare_flags &= ~(JUMPSCARE_FLAG_FOXY);
+                } else if (game_jumpscare_flags & GAME_JUMPSCARE_FLAG_FOXY) {
+                        game_jumpscare_flags &= ~(GAME_JUMPSCARE_FLAG_FOXY);
                         foxy_ai_level = 0;
                         foxy_progress = 0;
                         foxy_run_timer = 0.f;
@@ -1001,7 +1000,7 @@ enum scene game_update(struct update_params uparms)
         foxy_update(game_door_btn_states_cur, uparms.dt);
         freddy_update(game_door_btn_states_cur, uparms.dt);
 
-        if (game_jumpscare_flags & JUMPSCARE_FLAG_MASK) {
+        if (game_jumpscare_flags & GAME_JUMPSCARE_FLAG_MASK) {
                 game_sfx_jumpscare_exit_timer -= uparms.dt * 60;
                 if (game_sfx_jumpscare_exit_timer <= 0) {
                         sfx_stop_all_channels();

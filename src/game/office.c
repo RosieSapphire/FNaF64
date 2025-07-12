@@ -5,7 +5,6 @@
 #include "engine/sfx.h"
 
 #include "game/game.h"
-#include "game/buttons.h"
 #include "game/camera.h"
 #include "game/bonnie.h"
 #include "game/chica.h"
@@ -17,7 +16,7 @@
 
 void office_update(const int button_state, struct update_params uparms)
 {
-        if (game_jumpscare_flags & JUMPSCARE_FLAG_MASK)
+        if (game_jumpscare_flags & GAME_JUMPSCARE_FLAG_MASK)
                 camera_is_using = false;
 
         if (!camera_is_visible) {

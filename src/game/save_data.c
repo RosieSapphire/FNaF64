@@ -7,7 +7,7 @@
  * Either that or you're a cheating little fucking cocksucker. >:3 I know what
  * kind of fucking person you are, Mr. Fart Smella. owo
  */
-// #define SAVE_DATA_COMPLETED_FILE
+#define SAVE_DATA_COMPLETED_FILE
 
 bool    save_data_eeprom_failed;
 uint8_t save_data;

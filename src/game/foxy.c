@@ -4,7 +4,6 @@
 #include "engine/sfx.h"
 
 #include "game/camera.h"
-#include "game/buttons.h"
 #include "game/texture_index.h"
 #include "game/game.h"
 #include "game/foxy.h"
@@ -37,7 +36,7 @@ void foxy_load(void)
         foxy_progress = 0;
         stun_timer = 0.0f;
         foxy_no_check_timer = 0.0f;
-        game_jumpscare_flags &= ~(JUMPSCARE_FLAG_FOXY);
+        game_jumpscare_flags &= ~(GAME_JUMPSCARE_FLAG_FOXY);
         game_scare_timer_foxy = 0.0f;
         foxy_run_timer = 0.0f;
         foxy_use_run_timer = false;
@@ -72,7 +71,7 @@ static bool _foxy_update_move_timer(double dt)
 static void _foxy_trigger_sfx_jumpscare(void)
 {
         camera_is_using = false;
-        game_jumpscare_flags |= JUMPSCARE_FLAG_FOXY;
+        game_jumpscare_flags |= GAME_JUMPSCARE_FLAG_FOXY;
         wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
 }
 
@@ -109,7 +108,7 @@ void foxy_update(const int button_state, const float dt)
                 wav64_play(&sfx_foxy_hum, SFX_CH_FOXSONG);
 
         /* Handle jumpscaring */
-        if (game_jumpscare_flags & JUMPSCARE_FLAG_FOXY) {
+        if (game_jumpscare_flags & GAME_JUMPSCARE_FLAG_FOXY) {
                 game_scare_timer_foxy += speed_fps(25) * dt;
                 game_scare_timer_foxy = CLAMP(game_scare_timer_foxy,
                                 0, FOXY_SCARE_FRAME_CNT - 1);
@@ -136,11 +135,11 @@ void foxy_update(const int button_state, const float dt)
         }
 
         if (foxy_progress == 3 && !(game_jumpscare_flags &
-                                    JUMPSCARE_FLAG_FOXY))
+                                    GAME_JUMPSCARE_FLAG_FOXY))
                 foxy_no_check_timer += dt * 60;
 
         if (foxy_no_check_timer >= 1500 && !(game_jumpscare_flags &
-                                             JUMPSCARE_FLAG_FOXY)) {
+                                             GAME_JUMPSCARE_FLAG_FOXY)) {
                 if (button_state & GAME_DOOR_BTN_LEFT_DOOR)
                         _foxy_trigger_reset();
                 else

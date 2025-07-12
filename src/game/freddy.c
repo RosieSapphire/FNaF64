@@ -1,3 +1,5 @@
+/* TODO: REFACTOR! */
+
 #include <stdlib.h>
 
 #include "engine/util.h"
@@ -6,7 +8,6 @@
 
 #include "game/game.h"
 #include "game/camera.h"
-#include "game/buttons.h"
 #include "game/bonnie.h"
 #include "game/chica.h"
 #include "game/freddy.h"
@@ -59,7 +60,7 @@ void freddy_load(void)
         move_timer = 0.0f;
         freddy_cam_last = 0;
         freddy_cam = 0;
-        game_jumpscare_flags &= ~(JUMPSCARE_FLAG_FREDDY);
+        game_jumpscare_flags &= ~(GAME_JUMPSCARE_FLAG_FREDDY);
         ready_to_scare = false;
         ready_scare_timer = 0.0f;
         freddy_scare_timer = 0.0f;
@@ -104,7 +105,7 @@ void freddy_update(const int button_state, const float dt)
                 bool try_scare;
                 ready_scare_timer = wrapf(ready_scare_timer, 1, &try_scare);
                 if (try_scare && ((rand() % 4) == 0)) {
-                        game_jumpscare_flags |= JUMPSCARE_FLAG_FREDDY;
+                        game_jumpscare_flags |= GAME_JUMPSCARE_FLAG_FREDDY;
                         debugf("%d\n", game_jumpscare_flags);
                         ready_to_scare = false;
                         wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
@@ -113,7 +114,7 @@ void freddy_update(const int button_state, const float dt)
                 return;
         }
 
-        if (game_jumpscare_flags & JUMPSCARE_FLAG_FREDDY) {
+        if (game_jumpscare_flags & GAME_JUMPSCARE_FLAG_FREDDY) {
                 freddy_scare_timer += dt * speed_fps(25);
                 freddy_scare_timer = CLAMP(freddy_scare_timer, 0,
                                            FREDDY_SCARE_FRAME_CNT);

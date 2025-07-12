@@ -1,3 +1,5 @@
+/* TODO: REFACTOR! */
+
 #include <stdlib.h>
 
 #include "engine/graphic.h"
@@ -5,24 +7,24 @@
 #include "engine/util.h"
 
 #include "game/camera.h"
-#include "game/buttons.h"
 #include "game/texture_index.h"
 #include "game/game.h"
 #include "game/chica.h"
 
 #define MOVE_TIMER 4.98f
 
-int chica_ai_level = 0;
-static int which_room;
-static float which_room_timer;
-static int which_spot;
+int   chica_ai_level = 0;
 float chica_blackout_timer;
-bool chica_scared;
+bool  chica_scared;
+int   chica_cam_last;
+int   chica_cam;
+
+static int   which_room;
+static float which_room_timer;
+static int   which_spot;
 static float move_timer;
-int chica_cam_last;
-int chica_cam;
 static float scare_timer;
-static float kitchen_noise_timer = 0.0f;
+static float kitchen_noise_timer;
 
 static const float footstep_vol_lut[CAM_COUNT] = {
         0.1f,  // 1A
@@ -65,16 +67,17 @@ const char *chica_scare_paths[CHICA_SCARE_FRAMES] = {
 
 void chica_load(void)
 {
-        which_room = 0;
-        which_room_timer = 0.0f;
-        which_spot = 0;
-        chica_blackout_timer = 0.0f;
-        chica_scared = 0;
-        move_timer = 0.0f;
-        chica_cam_last = 0;
-        chica_cam = 0;
-        game_jumpscare_flags &= ~(JUMPSCARE_FLAG_CHICA);
-        scare_timer = 0.0f;
+        which_room            = 0;
+        which_room_timer      = 0.f;
+        which_spot            = 0;
+        chica_blackout_timer  = 0.f;
+        chica_scared          = 0;
+        move_timer            = 0.f;
+        chica_cam_last        = 0;
+        chica_cam             = 0;
+        game_jumpscare_flags &= ~(GAME_JUMPSCARE_FLAG_CHICA);
+        scare_timer           = 0.f;
+        kitchen_noise_timer   = 0.f;
 
         graphics_load(chica_scare, CHICA_SCARE_FRAMES, chica_scare_paths);
 }
@@ -91,15 +94,16 @@ void chica_draw_scare(void)
 
 void chica_draw_debug(void)
 {
-        int w = vcon(35);
-        int h = w;
-        int x = vcon(cam_button_pos[chica_cam][0] - 317);
-        int y = vcon(cam_button_pos[chica_cam][1]);
-        int x0 = x;
-        int y0 = y;
-        int x1 = x + w;
-        int y1 = y + h;
+        int w, h, x, y, x0, y0, x1, y1;
 
+        w  = vcon(35);
+        h  = w;
+        x  = vcon(cam_button_pos[chica_cam][0] - 317);
+        y  = vcon(cam_button_pos[chica_cam][1]);
+        x0 = x;
+        y0 = y;
+        x1 = x + w;
+        y1 = y + h;
         rdpq_set_mode_fill(RGBA32(0xDF, 0xCB, 0x00, 0xFF));
         rdpq_fill_rectangle(x0, y0, x1, y1);
 }
@@ -125,7 +129,7 @@ static void _chica_update_kitchen_volume(void)
 
 void chica_update(int *button_state_ptr, const float dt)
 {
-        if (game_jumpscare_flags & JUMPSCARE_FLAG_CHICA) {
+        if (game_jumpscare_flags & GAME_JUMPSCARE_FLAG_CHICA) {
                 scare_timer += dt * speed_fps(50);
                 scare_timer = wrapf(scare_timer, CHICA_SCARE_FRAMES, NULL);
                 return;
@@ -133,7 +137,7 @@ void chica_update(int *button_state_ptr, const float dt)
 
         bool cam_flip_down = (!camera_is_visible && camera_was_visible);
         if (chica_cam == YOURE_FUCKED && cam_flip_down) {
-                game_jumpscare_flags |= JUMPSCARE_FLAG_CHICA;
+                game_jumpscare_flags |= GAME_JUMPSCARE_FLAG_CHICA;
                 wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
                 return;
         }
