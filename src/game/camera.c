@@ -6,7 +6,6 @@
 #include "engine/perspective.h"
 
 #include "game/blip_flash.h"
-#include "game/buttons.h"
 #include "game/game.h"
 #include "game/freddy.h"
 #include "game/bonnie.h"
@@ -698,7 +697,7 @@ void camera_update(int *button_state_ptr, const struct update_params uparms)
         {
                 float vol;
 
-                vol = 0.1f + (camera_is_visible * 0.15f);
+                vol = 0.1f + (!camera_is_visible * 0.15f);
                 mixer_ch_set_vol(SFX_CH_FAN, vol, vol);
         }
 
