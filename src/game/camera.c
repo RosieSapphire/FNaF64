@@ -24,143 +24,143 @@
 #define CAM_MANUAL_TURN_MIN -640
 
 const int cam_button_pos[CAM_COUNT][2] = {
-	{ 983, 353}, // 1A
-	{ 963, 409}, // 1B
-	{ 931, 487}, // 1C
-	{ 983, 603}, // 2A
-	{ 983, 643}, // 2B
-	{ 899, 585}, // 3
-	{1089, 604}, // 4A
-	{1089, 644}, // 4B
-	{ 857, 436}, // 5
-	{1186, 568}, // 6
-	{1195, 437}, // 7
+        { 983, 353}, // 1A
+        { 963, 409}, // 1B
+        { 931, 487}, // 1C
+        { 983, 603}, // 2A
+        { 983, 643}, // 2B
+        { 899, 585}, // 3
+        {1089, 604}, // 4A
+        {1089, 644}, // 4B
+        { 857, 436}, // 5
+        {1186, 568}, // 6
+        {1195, 437}, // 7
 };
 
 static const char *flip_anim_paths[FLIP_FRAMES] = {
-	TX_CAM_FLIP00, TX_CAM_FLIP01, TX_CAM_FLIP02, TX_CAM_FLIP03,
-	TX_CAM_FLIP04, TX_CAM_FLIP05, TX_CAM_FLIP06, TX_CAM_FLIP07,
-	TX_CAM_FLIP08, TX_CAM_FLIP09, TX_CAM_FLIP10,
+        TX_CAM_FLIP00, TX_CAM_FLIP01, TX_CAM_FLIP02, TX_CAM_FLIP03,
+        TX_CAM_FLIP04, TX_CAM_FLIP05, TX_CAM_FLIP06, TX_CAM_FLIP07,
+        TX_CAM_FLIP08, TX_CAM_FLIP09, TX_CAM_FLIP10,
 };
 
 static const char *fox_paths[4] = {
-	TX_CAM_1C0, TX_CAM_1C1, TX_CAM_1C2, TX_CAM_1C3,
+        TX_CAM_1C0, TX_CAM_1C1, TX_CAM_1C2, TX_CAM_1C3,
 };
 
 static const int which_cam_lut[CAM_COUNT][4] = {
-	{    -1,     -1,     -1, CAM_1B}, // 1A
-	{ CAM_5,  CAM_7, CAM_1A, CAM_1C}, // 1B
-	{ CAM_5,  CAM_7, CAM_1B,  CAM_3}, // 1C
-	{ CAM_3, CAM_4A, CAM_1C, CAM_2B}, // 2A
-	{ CAM_3, CAM_4B, CAM_2A,     -1}, // 2B
-	{    -1, CAM_2A, CAM_1C,     -1}, // 3
-	{CAM_2A,  CAM_6,     -1, CAM_4B}, // 4A
-	{CAM_2B,     -1, CAM_4A,     -1}, // 4B
-	{    -1, CAM_1B,     -1, CAM_1C}, // 5
-	{CAM_4A,     -1,  CAM_7,     -1}, // 6
-	{CAM_1B,     -1,     -1,  CAM_6}, // 7
+        {    -1,     -1,     -1, CAM_1B}, // 1A
+        { CAM_5,  CAM_7, CAM_1A, CAM_1C}, // 1B
+        { CAM_5,  CAM_7, CAM_1B,  CAM_3}, // 1C
+        { CAM_3, CAM_4A, CAM_1C, CAM_2B}, // 2A
+        { CAM_3, CAM_4B, CAM_2A,     -1}, // 2B
+        {    -1, CAM_2A, CAM_1C,     -1}, // 3
+        {CAM_2A,  CAM_6,     -1, CAM_4B}, // 4A
+        {CAM_2B,     -1, CAM_4A,     -1}, // 4B
+        {    -1, CAM_1B,     -1, CAM_1C}, // 5
+        {CAM_4A,     -1,  CAM_7,     -1}, // 6
+        {CAM_1B,     -1,     -1,  CAM_6}, // 7
 };
 
 struct camera_state {
-	const char *path;
-	int state;
+        const char *path;
+        int state;
 };
 
 struct camera_state cam_1a_states[] = {
-	{TX_CAM_1A_ALL,       FREDDY_BIT | BONNIE_BIT | CHICA_BIT},
-	{TX_CAM_1A_CHIC_FRED, FREDDY_BIT | CHICA_BIT},
-	{TX_CAM_1A_BON_FRED,  FREDDY_BIT | BONNIE_BIT},
-	{TX_CAM_1A_FRED,      FREDDY_BIT},
-	{TX_CAM_1A_EMPTY,     0},
+        {TX_CAM_1A_ALL,       FREDDY_BIT | BONNIE_BIT | CHICA_BIT},
+        {TX_CAM_1A_CHIC_FRED, FREDDY_BIT | CHICA_BIT},
+        {TX_CAM_1A_BON_FRED,  FREDDY_BIT | BONNIE_BIT},
+        {TX_CAM_1A_FRED,      FREDDY_BIT},
+        {TX_CAM_1A_EMPTY,     0},
 };
 
 struct camera_state cam_1b_states[] = {
-	{TX_CAM_1B_EMPTY, 0},
-	{TX_CAM_1B_EMPTY, FREDDY_BIT},
-	{TX_CAM_1B_CHIC0, FREDDY_BIT | CHICA_BIT},
-	{TX_CAM_1B_CHIC1, FREDDY_BIT | CHICA_BIT | ROOM_SPOT_BIT},
-	{TX_CAM_1B_BON0,  FREDDY_BIT | BONNIE_BIT},
-	{TX_CAM_1B_BON1,  FREDDY_BIT | BONNIE_BIT | ROOM_SPOT_BIT},
-	{TX_CAM_1B_CHIC0, FREDDY_BIT | CHICA_BIT | BONNIE_BIT},
-	{TX_CAM_1B_CHIC1, FREDDY_BIT | CHICA_BIT | BONNIE_BIT | ROOM_SPOT_BIT},
-	{TX_CAM_1B_BON0,  BONNIE_BIT},
-	{TX_CAM_1B_BON1,  BONNIE_BIT | ROOM_SPOT_BIT},
-	{TX_CAM_1B_CHIC0, CHICA_BIT},
-	{TX_CAM_1B_CHIC1, CHICA_BIT | ROOM_SPOT_BIT},
-	{TX_CAM_1B_CHIC0, CHICA_BIT | BONNIE_BIT},
-	{TX_CAM_1B_CHIC1, CHICA_BIT | BONNIE_BIT | ROOM_SPOT_BIT},
+        {TX_CAM_1B_EMPTY, 0},
+        {TX_CAM_1B_EMPTY, FREDDY_BIT},
+        {TX_CAM_1B_CHIC0, FREDDY_BIT | CHICA_BIT},
+        {TX_CAM_1B_CHIC1, FREDDY_BIT | CHICA_BIT | ROOM_SPOT_BIT},
+        {TX_CAM_1B_BON0,  FREDDY_BIT | BONNIE_BIT},
+        {TX_CAM_1B_BON1,  FREDDY_BIT | BONNIE_BIT | ROOM_SPOT_BIT},
+        {TX_CAM_1B_CHIC0, FREDDY_BIT | CHICA_BIT | BONNIE_BIT},
+        {TX_CAM_1B_CHIC1, FREDDY_BIT | CHICA_BIT | BONNIE_BIT | ROOM_SPOT_BIT},
+        {TX_CAM_1B_BON0,  BONNIE_BIT},
+        {TX_CAM_1B_BON1,  BONNIE_BIT | ROOM_SPOT_BIT},
+        {TX_CAM_1B_CHIC0, CHICA_BIT},
+        {TX_CAM_1B_CHIC1, CHICA_BIT | ROOM_SPOT_BIT},
+        {TX_CAM_1B_CHIC0, CHICA_BIT | BONNIE_BIT},
+        {TX_CAM_1B_CHIC1, CHICA_BIT | BONNIE_BIT | ROOM_SPOT_BIT},
 };
 
 struct camera_state cam_2a_states[] = {
-	{TX_CAM_2A_EMPTY, 0},
-	{TX_CAM_2A_BON,   BONNIE_BIT},
-	{TX_CAM_2A_BON,   BONNIE_BIT | ROOM_SPOT_BIT},
+        {TX_CAM_2A_EMPTY, 0},
+        {TX_CAM_2A_BON,   BONNIE_BIT},
+        {TX_CAM_2A_BON,   BONNIE_BIT | ROOM_SPOT_BIT},
 };
 
 struct camera_state cam_2b_states[] = {
-	{TX_CAM_2B_EMPTY, 0},
-	{TX_CAM_2B_BON0,  BONNIE_BIT},
-	{TX_CAM_2B_BON0,  BONNIE_BIT | ROOM_SPOT_BIT},
+        {TX_CAM_2B_EMPTY, 0},
+        {TX_CAM_2B_BON0,  BONNIE_BIT},
+        {TX_CAM_2B_BON0,  BONNIE_BIT | ROOM_SPOT_BIT},
 };
 
 struct camera_state cam_3_states[] = {
-	{TX_CAM_3_EMPTY, 0},
-	{TX_CAM_3_BON,   BONNIE_BIT},
-	{TX_CAM_3_BON,   BONNIE_BIT | ROOM_SPOT_BIT},
+        {TX_CAM_3_EMPTY, 0},
+        {TX_CAM_3_BON,   BONNIE_BIT},
+        {TX_CAM_3_BON,   BONNIE_BIT | ROOM_SPOT_BIT},
 };
 
 static struct camera_state cam_4a_states[] = {
-	{TX_CAM_4A_EMPTY, 0},
-	{TX_CAM_4A_CHIC0, CHICA_BIT},
-	{TX_CAM_4A_CHIC1, CHICA_BIT | ROOM_SPOT_BIT},
-	{TX_CAM_4A_CHIC0, FREDDY_BIT | CHICA_BIT},
-	{TX_CAM_4A_CHIC1, FREDDY_BIT | CHICA_BIT | ROOM_SPOT_BIT},
-	{TX_CAM_4A_FRED,  FREDDY_BIT},
+        {TX_CAM_4A_EMPTY, 0},
+        {TX_CAM_4A_CHIC0, CHICA_BIT},
+        {TX_CAM_4A_CHIC1, CHICA_BIT | ROOM_SPOT_BIT},
+        {TX_CAM_4A_CHIC0, FREDDY_BIT | CHICA_BIT},
+        {TX_CAM_4A_CHIC1, FREDDY_BIT | CHICA_BIT | ROOM_SPOT_BIT},
+        {TX_CAM_4A_FRED,  FREDDY_BIT},
 };
 
 static struct camera_state cam_4b_states[] = {
-	{TX_CAM_4B_EMPTY, 0},
-	{TX_CAM_4B_CHIC0, CHICA_BIT},
-	{TX_CAM_4B_CHIC0, CHICA_BIT | ROOM_SPOT_BIT},
-	{TX_CAM_4B_CHIC0, FREDDY_BIT | CHICA_BIT},
-	{TX_CAM_4B_CHIC0, FREDDY_BIT | CHICA_BIT | ROOM_SPOT_BIT},
-	{TX_CAM_4B_FRED,  FREDDY_BIT},
+        {TX_CAM_4B_EMPTY, 0},
+        {TX_CAM_4B_CHIC0, CHICA_BIT},
+        {TX_CAM_4B_CHIC0, CHICA_BIT | ROOM_SPOT_BIT},
+        {TX_CAM_4B_CHIC0, FREDDY_BIT | CHICA_BIT},
+        {TX_CAM_4B_CHIC0, FREDDY_BIT | CHICA_BIT | ROOM_SPOT_BIT},
+        {TX_CAM_4B_FRED,  FREDDY_BIT},
 };
 
 static struct camera_state cam_5_states[] = {
-	{TX_CAM_5_EMPTY, 0},
-	{TX_CAM_5_BON0,  BONNIE_BIT},
-	{TX_CAM_5_BON1,  BONNIE_BIT | ROOM_SPOT_BIT},
+        {TX_CAM_5_EMPTY, 0},
+        {TX_CAM_5_BON0,  BONNIE_BIT},
+        {TX_CAM_5_BON1,  BONNIE_BIT | ROOM_SPOT_BIT},
 };
 
 static struct camera_state cam_7_states[] = {
-	{TX_CAM_7_EMPTY, 0},
-	{TX_CAM_7_CHIC0, CHICA_BIT},
-	{TX_CAM_7_CHIC1, CHICA_BIT | ROOM_SPOT_BIT},
-	{TX_CAM_7_FRED,  FREDDY_BIT},
-	{TX_CAM_7_FRED,  FREDDY_BIT | CHICA_BIT},
-	{TX_CAM_7_FRED,  FREDDY_BIT | CHICA_BIT | ROOM_SPOT_BIT},
+        {TX_CAM_7_EMPTY, 0},
+        {TX_CAM_7_CHIC0, CHICA_BIT},
+        {TX_CAM_7_CHIC1, CHICA_BIT | ROOM_SPOT_BIT},
+        {TX_CAM_7_FRED,  FREDDY_BIT},
+        {TX_CAM_7_FRED,  FREDDY_BIT | CHICA_BIT},
+        {TX_CAM_7_FRED,  FREDDY_BIT | CHICA_BIT | ROOM_SPOT_BIT},
 };
 
 static int cam_state_counts[CAM_COUNT] = {
-	 5, // 1A
-	14, // 1B
-	 0, // 1C
-	 3, // 2A
-	 3, // 2B
-	 3, // 3
-	 6, // 4A
-	 6, // 4B
-	 3, // 5
-	 0, // 6
-	 6, // 7
+         5, // 1A
+        14, // 1B
+         0, // 1C
+         3, // 2A
+         3, // 2B
+         3, // 3
+         6, // 4A
+         6, // 4B
+         3, // 5
+         0, // 6
+         6, // 7
 };
 
 static struct camera_state *cam_states[CAM_COUNT] = {
-	cam_1a_states, cam_1b_states, NULL,
-	cam_2a_states, cam_2b_states, cam_3_states,
-	cam_4a_states, cam_4b_states, cam_5_states,
-	NULL, cam_7_states,
+        cam_1a_states, cam_1b_states, NULL,
+        cam_2a_states, cam_2b_states, cam_3_states,
+        cam_4a_states, cam_4b_states, cam_5_states,
+        NULL, cam_7_states,
 };
 
 static int camera_states_last[CAM_COUNT] = { 0 };
@@ -197,59 +197,59 @@ static struct graphic views_extra[VIEWS_EXTRA];
 
 void camera_load(void)
 {
-	flip_timer = 0.0f;
-	camera_was_using = false;
-	camera_is_using = false;
-	camera_was_visible = false;
-	camera_is_visible = false;
-	camera_glitch_timer = 0.0f;
-	button_blink_timer = 0.0f;
-	button_blink = 1;
-	view_turn = 0.0f;
-	flicker_timer = 0.0f;
-	flicker_val = 0;
-	cam_selected = CAM_1A;
+        flip_timer = 0.0f;
+        camera_was_using = false;
+        camera_is_using = false;
+        camera_was_visible = false;
+        camera_is_visible = false;
+        camera_glitch_timer = 0.0f;
+        button_blink_timer = 0.0f;
+        button_blink = 1;
+        view_turn = 0.0f;
+        flicker_timer = 0.0f;
+        flicker_val = 0;
+        cam_selected = CAM_1A;
 
-	rspq_block_begin();
-	rdpq_set_mode_fill(RGBA32(0xFF, 0xFF, 0xFF, 0xFF));
-	rdpq_fill_rectangle(10, 5, 311, 6);    // top
-	rdpq_fill_rectangle(10, 6, 11, 231);   // left
-	rdpq_fill_rectangle(310, 6, 311, 231); // right
-	rdpq_fill_rectangle(10, 230, 311, 231); // bottom
-	border_block = rspq_block_end();
+        rspq_block_begin();
+        rdpq_set_mode_fill(RGBA32(0xFF, 0xFF, 0xFF, 0xFF));
+        rdpq_fill_rectangle(10, 5, 311, 6);    // top
+        rdpq_fill_rectangle(10, 6, 11, 231);   // left
+        rdpq_fill_rectangle(310, 6, 311, 231); // right
+        rdpq_fill_rectangle(10, 230, 311, 231); // bottom
+        border_block = rspq_block_end();
 
-	graphics_load(flip_anim, FLIP_FRAMES, flip_anim_paths);
-	graphics_load(buttons, 2, button_paths);
-	graphic_load(&map, TX_CAM_MAP);
-	graphic_load(&name_atlas, TX_CAM_NAME_ATLAS);
-	graphic_load(&missing_footage, TX_CAM_CORRUPTED);
+        graphics_load(flip_anim, FLIP_FRAMES, flip_anim_paths);
+        graphics_load(buttons, 2, button_paths);
+        graphic_load(&map, TX_CAM_MAP);
+        graphic_load(&name_atlas, TX_CAM_NAME_ATLAS);
+        graphic_load(&missing_footage, TX_CAM_CORRUPTED);
 
-	wav64_play(&sfx_robot_voice, SFX_CH_ROBOTVOICE);
+        wav64_play(&sfx_robot_voice, SFX_CH_ROBOTVOICE);
 }
 
 static const char *camera_get_view_path(void)
 {
         int i, bitmask;
 
-	bitmask = (FREDDY_BIT | CHICA_BIT | BONNIE_BIT | ROOM_SPOT_BIT);
-	for (i = 0; i < cam_state_counts[cam_selected]; ++i) {
-		if ((cam_states[cam_selected][i].state & bitmask) ==
-				(camera_states[cam_selected] & bitmask)) {
+        bitmask = (FREDDY_BIT | CHICA_BIT | BONNIE_BIT | ROOM_SPOT_BIT);
+        for (i = 0; i < cam_state_counts[cam_selected]; ++i) {
+        	if ((cam_states[cam_selected][i].state & bitmask) ==
+        			(camera_states[cam_selected] & bitmask)) {
 
-			// debugf("%s\n", cam_states[cam_selected][i].path);
-			return cam_states[cam_selected][i].path;
-		}
-	}
+        		// debugf("%s\n", cam_states[cam_selected][i].path);
+        		return cam_states[cam_selected][i].path;
+        	}
+        }
 
-	char buf[64] = {0};
-	buf[0] = '0';
-	buf[1] = 'b';
-	for (i = 2; i < 2 + 16; ++i) {
-		int j = i - 2;
-		buf[i] = ((camera_states[cam_selected] & (1 << j)) >> j) + 48;
-	}
+        char buf[64] = {0};
+        buf[0] = '0';
+        buf[1] = 'b';
+        for (i = 2; i < 2 + 16; ++i) {
+        	int j = i - 2;
+        	buf[i] = ((camera_states[cam_selected] & (1 << j)) >> j) + 48;
+        }
 
-	assertf(0, "Invalid state: %s on cam %d\n", buf, cam_selected);
+        assertf(0, "Invalid state: %s on cam %d\n", buf, cam_selected);
 }
 
 static void _camera_views_unload(bool exclude_current)
@@ -260,416 +260,416 @@ static void _camera_views_unload(bool exclude_current)
                    ~(FACE_GLITCH_MASK | FLICKER_BIT);
         cam_cur = camera_states[cam_selected] &
                   ~(FACE_GLITCH_MASK | FLICKER_BIT);
-	for (i = 0; i < CAM_COUNT; ++i) {
-		if (!exclude_current) {
-			graphic_unload(views + i);
-			continue;
-		}
+        for (i = 0; i < CAM_COUNT; ++i) {
+        	if (!exclude_current) {
+        		graphic_unload(views + i);
+        		continue;
+        	}
 
-		if (i == cam_selected && cam_last == cam_cur)
-			continue;
+        	if (i == cam_selected && cam_last == cam_cur)
+        		continue;
 
-		graphic_unload(views + i);
-	}
+        	graphic_unload(views + i);
+        }
 }
 
 void camera_unload(void)
 {
-	graphics_unload(flip_anim, FLIP_FRAMES);
-	cam_selected = CAM_1A;
-	flip_timer = 0.0f;
-	camera_is_using = false;
-	camera_is_visible = false;
-	rspq_block_free(border_block);
-	graphic_unload(&map);
-	graphics_unload(buttons, 2);
-	graphic_unload(&name_atlas);
-	graphic_unload(&missing_footage);
+        graphics_unload(flip_anim, FLIP_FRAMES);
+        cam_selected = CAM_1A;
+        flip_timer = 0.0f;
+        camera_is_using = false;
+        camera_is_visible = false;
+        rspq_block_free(border_block);
+        graphic_unload(&map);
+        graphics_unload(buttons, 2);
+        graphic_unload(&name_atlas);
+        graphic_unload(&missing_footage);
 
-	_camera_views_unload(false);
+        _camera_views_unload(false);
 }
 
 void camera_flip_draw(void)
 {
-	int frame = (int)flip_timer;
-	if (camera_is_visible || frame == 0)
-		return;
+        int frame = (int)flip_timer;
+        if (camera_is_visible || frame == 0)
+        	return;
 
-	rdpq_set_mode_copy(true);
-	graphic_draw(flip_anim[frame], 0, 0, 0, 0, GFX_FLIP_NONE);
+        rdpq_set_mode_copy(true);
+        graphic_draw(flip_anim[frame], 0, 0, 0, 0, GFX_FLIP_NONE);
 }
 
 void camera_view_draw(void)
 {
         int i;
 
-	if (camera_glitch_timer) {
-		rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
-		rdpq_fill_rectangle(0, 0, 320, 240);
-		return;
-	}
+        if (camera_glitch_timer) {
+        	rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
+        	rdpq_fill_rectangle(0, 0, 320, 240);
+        	return;
+        }
 
-	perspective_begin();
-	rdpq_set_mode_copy(false);
-	
-	_camera_views_unload(true);
-	switch(cam_selected) {
-	case CAM_1C:
-		graphic_load(views + cam_selected, fox_paths[foxy_progress]);
-		graphic_draw(views[cam_selected], view_turn,
+        perspective_begin();
+        rdpq_set_mode_copy(false);
+        
+        _camera_views_unload(true);
+        switch(cam_selected) {
+        case CAM_1C:
+        	graphic_load(views + cam_selected, fox_paths[foxy_progress]);
+        	graphic_draw(views[cam_selected], view_turn,
                              0, 0, 0, GFX_FLIP_NONE);
-		perspective_end();
-		return;
+        	perspective_end();
+        	return;
 
-	case CAM_2A:
-		if (foxy_run_timer > 0 && foxy_run_timer < 35) {
-			int frame = (foxy_run_timer / 35.0f) * FOXY_RUN_FRAMES;
-			frame = CLAMP(frame, 0, FOXY_RUN_FRAMES - 1);
-			graphic_draw(foxy_run[frame], view_turn,
+        case CAM_2A:
+        	if (foxy_run_timer > 0 && foxy_run_timer < 35) {
+        		int frame = (foxy_run_timer / 35.0f) * FOXY_RUN_FRAMES;
+        		frame = CLAMP(frame, 0, FOXY_RUN_FRAMES - 1);
+        		graphic_draw(foxy_run[frame], view_turn,
                                      0, 0, 0, GFX_FLIP_NONE);
-			perspective_end();
-			return;
-		}
+        		perspective_end();
+        		return;
+        	}
 
-		if (camera_states[CAM_2A] & FLICKER_BIT) {
+        	if (camera_states[CAM_2A] & FLICKER_BIT) {
                         /* FIXME: This will cause a crash... immediately... */
-			graphic_load(views + cam_selected,
-				     camera_get_view_path());
-			graphic_draw(views[cam_selected],
-				     view_turn, 0, 0, 0, GFX_FLIP_NONE);
-			perspective_end();
-			return;
-		}
+        		graphic_load(views + cam_selected,
+        			     camera_get_view_path());
+        		graphic_draw(views[cam_selected],
+        			     view_turn, 0, 0, 0, GFX_FLIP_NONE);
+        		perspective_end();
+        		return;
+        	}
 
-		graphic_load(views_extra, TX_CAM_2A_DARK);
-		graphic_draw(views_extra[0], view_turn, 0, 0, 0, GFX_FLIP_NONE);
-		perspective_end();
-		return;
+        	graphic_load(views_extra, TX_CAM_2A_DARK);
+        	graphic_draw(views_extra[0], view_turn, 0, 0, 0, GFX_FLIP_NONE);
+        	perspective_end();
+        	return;
 
-	case CAM_2B:
-		if (((game_goldfred_state !=
+        case CAM_2B:
+        	if (((game_goldfred_state !=
                       GAME_GOLDFRED_STATE_IN_CAM2B) && 
-		     (game_goldfred_state !=
+        	     (game_goldfred_state !=
                       GAME_GOLDFRED_STATE_READY_TO_ATTACK)) ||
-		    bonnie_cam == CAM_1B)
-			break;
+        	    bonnie_cam == CAM_1B)
+        		break;
 
-		graphic_load(views_extra + 1, TX_CAM_2B_GOLD);
-		graphic_draw(views_extra[1], view_turn, 0, 0, 0, GFX_FLIP_NONE);
-		perspective_end();
-		return;
+        	graphic_load(views_extra + 1, TX_CAM_2B_GOLD);
+        	graphic_draw(views_extra[1], view_turn, 0, 0, 0, GFX_FLIP_NONE);
+        	perspective_end();
+        	return;
 
-	case CAM_6:
-		rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
-		rdpq_fill_rectangle(0, 0, 320, 240);
-		perspective_end();
+        case CAM_6:
+        	rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
+        	rdpq_fill_rectangle(0, 0, 320, 240);
+        	perspective_end();
 
-		rdpq_set_mode_standard();
-		rdpq_mode_alphacompare(true);
-		graphic_draw(missing_footage, 294, 90, 0, 0, GFX_FLIP_NONE);
-		return;
+        	rdpq_set_mode_standard();
+        	rdpq_mode_alphacompare(true);
+        	graphic_draw(missing_footage, 294, 90, 0, 0, GFX_FLIP_NONE);
+        	return;
 
-	default:
-		break;
-	}
+        default:
+        	break;
+        }
 
-	int bot_cams[2] = {bonnie_cam, chica_cam};
-	int bot_req_cams[2] = {CAM_2B, CAM_4B};
-	const char *side_paths[2][2] = {
-		{TX_CAM_2B_BON0, TX_CAM_2B_BON1},
-		{TX_CAM_4B_CHIC0, TX_CAM_4B_CHIC1}
-	};
+        int bot_cams[2] = {bonnie_cam, chica_cam};
+        int bot_req_cams[2] = {CAM_2B, CAM_4B};
+        const char *side_paths[2][2] = {
+        	{TX_CAM_2B_BON0, TX_CAM_2B_BON1},
+        	{TX_CAM_4B_CHIC0, TX_CAM_4B_CHIC1}
+        };
 
-	// Handle face glitching for Bonnie and Chica
-	int glitch_val = camera_states[cam_selected] >> 5;
-	for (i = 0; i < 2; ++i) {
-		if (cam_selected != bot_req_cams[i] ||
-				bot_cams[i] != cam_selected)
-			continue;
+        // Handle face glitching for Bonnie and Chica
+        int glitch_val = camera_states[cam_selected] >> 5;
+        for (i = 0; i < 2; ++i) {
+        	if (cam_selected != bot_req_cams[i] ||
+        			bot_cams[i] != cam_selected)
+        		continue;
 
-		if (glitch_val < 25) {
-			graphic_load(views + cam_selected,
-					camera_get_view_path());
-			graphic_draw(views[cam_selected], view_turn,
+        	if (glitch_val < 25) {
+        		graphic_load(views + cam_selected,
+        				camera_get_view_path());
+        		graphic_draw(views[cam_selected], view_turn,
                                      0, 0, 0, GFX_FLIP_NONE);
-			perspective_end();
-			return;
-		}
+        		perspective_end();
+        		return;
+        	}
 
-		if (glitch_val >= 25 && glitch_val < 29) {
-			int o = !i ? 1 : 3;
-			graphic_load(views_extra + o, side_paths[i][0]);
-			graphic_draw(views_extra[o], view_turn,
+        	if (glitch_val >= 25 && glitch_val < 29) {
+        		int o = !i ? 1 : 3;
+        		graphic_load(views_extra + o, side_paths[i][0]);
+        		graphic_draw(views_extra[o], view_turn,
                                      0, 0, 0, GFX_FLIP_NONE);
-			perspective_end();
-			return;
-		}
+        		perspective_end();
+        		return;
+        	}
 
-		if (glitch_val >= 29) {
-			int o = !i ? 2 : 4;
-			graphic_load(views_extra + o, side_paths[i][1]);
-			graphic_draw(views_extra[o], view_turn,
+        	if (glitch_val >= 29) {
+        		int o = !i ? 2 : 4;
+        		graphic_load(views_extra + o, side_paths[i][1]);
+        		graphic_draw(views_extra[o], view_turn,
                                      0, 0, 0, GFX_FLIP_NONE);
-			perspective_end();
-			return;
-		}
-	}
+        		perspective_end();
+        		return;
+        	}
+        }
 
-	graphics_unload(views_extra, VIEWS_EXTRA);
-	graphic_load(views + cam_selected, camera_get_view_path());
-	graphic_draw(views[cam_selected], view_turn, 0, 0, 0, GFX_FLIP_NONE);
-	perspective_end();
+        graphics_unload(views_extra, VIEWS_EXTRA);
+        graphic_load(views + cam_selected, camera_get_view_path());
+        graphic_draw(views[cam_selected], view_turn, 0, 0, 0, GFX_FLIP_NONE);
+        perspective_end();
 }
 
 void camera_ui_draw(void)
 {
         int i;
 
-	rdpq_set_mode_fill(RGBA32(0xFF, 0xFF, 0xFF, 0xFF));
-	rspq_block_run(border_block);
-	rdpq_set_mode_standard();
-	rdpq_mode_alphacompare(true);
-	graphic_draw(map, 531, 313, 0, 0, GFX_FLIP_NONE);
+        rdpq_set_mode_fill(RGBA32(0xFF, 0xFF, 0xFF, 0xFF));
+        rspq_block_run(border_block);
+        rdpq_set_mode_standard();
+        rdpq_mode_alphacompare(true);
+        graphic_draw(map, 531, 313, 0, 0, GFX_FLIP_NONE);
 
-	for (i = 0; i < CAM_COUNT; ++i) {
-		bool blink = button_blink && i == cam_selected;
-		graphic_draw(buttons[blink], cam_button_pos[i][0] - 317,
-				cam_button_pos[i][1], 29, 19, GFX_FLIP_NONE);
-		graphic_draw_index_x(name_atlas,
+        for (i = 0; i < CAM_COUNT; ++i) {
+        	bool blink = button_blink && i == cam_selected;
+        	graphic_draw(buttons[blink], cam_button_pos[i][0] - 317,
+        			cam_button_pos[i][1], 29, 19, GFX_FLIP_NONE);
+        	graphic_draw_index_x(name_atlas,
                                      cam_button_pos[i][0] - 317 - 24,
-				     cam_button_pos[i][1] - 12,
+        			     cam_button_pos[i][1] - 12,
                                      11, i, GFX_FLIP_NONE);
-	}
+        }
 
-	if (camera_glitch_timer) {
-		graphic_draw(missing_footage, 294, 90, 0, 0, GFX_FLIP_NONE);
+        if (camera_glitch_timer) {
+        	graphic_draw(missing_footage, 294, 90, 0, 0, GFX_FLIP_NONE);
         }
 }
 
 static void camera_flip_update(const struct update_params uparms)
 {
-	int frame = (int)flip_timer;
-	camera_was_using = camera_is_using;
-	const bool button_down =
-		(uparms.pressed.r || uparms.pressed.l ||
+        int frame = (int)flip_timer;
+        camera_was_using = camera_is_using;
+        const bool button_down =
+        	(uparms.pressed.r || uparms.pressed.l ||
                  (uparms.pressed.z && !game_shotgun_is_unlocked));
-	const bool flip_anim_stopped = (frame == 0 || frame == FLIP_FRAMES);
-	camera_is_using ^= button_down && flip_anim_stopped;
+        const bool flip_anim_stopped = (frame == 0 || frame == FLIP_FRAMES);
+        camera_is_using ^= button_down && flip_anim_stopped;
 
-	flip_timer += (camera_is_using * 2 - 1) * uparms.dt * speed_fps(50);
-	flip_timer = CLAMP(flip_timer, 0, FLIP_FRAMES);
-	frame = (int)flip_timer;
+        flip_timer += (camera_is_using * 2 - 1) * uparms.dt * speed_fps(50);
+        flip_timer = CLAMP(flip_timer, 0, FLIP_FRAMES);
+        frame = (int)flip_timer;
 }
 
 static void camera_update_turn(const struct update_params uparms)
 {
-	if (settings_flags & SET_MANUAL_CAM_TURN_BIT) {
+        if (settings_flags & SET_MANUAL_CAM_TURN_BIT) {
                 if (camera_is_visible) {
-	                view_turn -= icutoff(uparms.sticks.stick_x, 10) *
+                        view_turn -= icutoff(uparms.sticks.stick_x, 10) *
                                      CAM_MANUAL_TURN_SPEED * uparms.dt;
-	                view_turn = CLAMP(view_turn, CAM_MANUAL_TURN_MIN, 0);
+                        view_turn = CLAMP(view_turn, CAM_MANUAL_TURN_MIN, 0);
                 }
 
-		return;
-	}
+        	return;
+        }
 
-	static float view_turn_timer = 0.0f;
-	static float view_stop_timer = 0.0f;
-	static int view_turn_state = 0;
-	view_turn = lerpf(0, -640, view_turn_timer);
-	switch(view_turn_state) {
-	case 0:
-		if (view_turn_timer < 1.0f)
-			view_turn_timer += uparms.dt / 5.0f;
-		else {
-			view_turn_timer = 1.0f;
-			view_turn_state = 1;
-			view_stop_timer = 2;
-		}
-		return;
+        static float view_turn_timer = 0.0f;
+        static float view_stop_timer = 0.0f;
+        static int view_turn_state = 0;
+        view_turn = lerpf(0, -640, view_turn_timer);
+        switch(view_turn_state) {
+        case 0:
+        	if (view_turn_timer < 1.0f)
+        		view_turn_timer += uparms.dt / 5.0f;
+        	else {
+        		view_turn_timer = 1.0f;
+        		view_turn_state = 1;
+        		view_stop_timer = 2;
+        	}
+        	return;
 
-	case 1:
-		if (view_stop_timer > 0)
-			view_stop_timer -= uparms.dt;
-		else {
-			view_stop_timer = 0;
-			view_turn_state = 2;
-		}
-		return;
+        case 1:
+        	if (view_stop_timer > 0)
+        		view_stop_timer -= uparms.dt;
+        	else {
+        		view_stop_timer = 0;
+        		view_turn_state = 2;
+        	}
+        	return;
 
-	case 2:
-		if (view_turn_timer > 0.0f)
-			view_turn_timer -= uparms.dt / 5.0f;
-		else {
-			view_turn_timer = 0.0f;
-			view_turn_state = 3;
-			view_stop_timer = 2;
-		}
-		return;
+        case 2:
+        	if (view_turn_timer > 0.0f)
+        		view_turn_timer -= uparms.dt / 5.0f;
+        	else {
+        		view_turn_timer = 0.0f;
+        		view_turn_state = 3;
+        		view_stop_timer = 2;
+        	}
+        	return;
 
-	case 3:
-		if (view_stop_timer > 0)
-			view_stop_timer -= uparms.dt;
-		else {
-			view_stop_timer = 0;
-			view_turn_state = 0;
-		}
-		return;
+        case 3:
+        	if (view_stop_timer > 0)
+        		view_stop_timer -= uparms.dt;
+        	else {
+        		view_stop_timer = 0;
+        		view_turn_state = 0;
+        	}
+        	return;
 
-	}
+        }
 }
 
 static void camera_update_glitch_timer(double dt)
 {
-	camera_glitch_timer -= dt * 60;
-	camera_glitch_timer = CLAMP(camera_glitch_timer, 0, 300);
+        camera_glitch_timer -= dt * 60;
+        camera_glitch_timer = CLAMP(camera_glitch_timer, 0, 300);
 
-	static bool has_sfx_blip_flashped = false;
-	bool bonnie_glitch = (bonnie_cam == cam_selected ||
-			bonnie_cam_last == cam_selected) &&
-			bonnie_blackout_timer > 0;
-	bool chica_glitch = (chica_cam == cam_selected ||
-			chica_cam_last == cam_selected) &&
-			chica_blackout_timer > 0;
-	if (bonnie_glitch || chica_glitch) {
-		if (camera_is_visible) {
-			switch(rand() % 4) {
-			case 0:
-				wav64_play(&sfx_cam_glitch_1, SFX_CH_CAMERA);
-				break;
+        static bool has_sfx_blip_flashped = false;
+        bool bonnie_glitch = (bonnie_cam == cam_selected ||
+        		bonnie_cam_last == cam_selected) &&
+        		bonnie_blackout_timer > 0;
+        bool chica_glitch = (chica_cam == cam_selected ||
+        		chica_cam_last == cam_selected) &&
+        		chica_blackout_timer > 0;
+        if (bonnie_glitch || chica_glitch) {
+        	if (camera_is_visible) {
+        		switch(rand() % 4) {
+        		case 0:
+        			wav64_play(&sfx_cam_glitch_1, SFX_CH_CAMERA);
+        			break;
 
-			case 1:
-				wav64_play(&sfx_cam_glitch_2, SFX_CH_CAMERA);
-				break;
+        		case 1:
+        			wav64_play(&sfx_cam_glitch_2, SFX_CH_CAMERA);
+        			break;
 
-			case 2:
-				wav64_play(&sfx_cam_glitch_3, SFX_CH_CAMERA);
-				break;
+        		case 2:
+        			wav64_play(&sfx_cam_glitch_3, SFX_CH_CAMERA);
+        			break;
 
-			case 3:
-				wav64_play(&sfx_cam_glitch_4, SFX_CH_CAMERA);
-				break;
-			}
-			camera_glitch_timer = 300;
+        		case 3:
+        			wav64_play(&sfx_cam_glitch_4, SFX_CH_CAMERA);
+        			break;
+        		}
+        		camera_glitch_timer = 300;
 
-			if (!has_sfx_blip_flashped) {
-				blip_flash_trigger(true);
-				has_sfx_blip_flashped = true;
-			}
-		}
-		graphic_unload(views + cam_selected);
-		return;
-	}
+        		if (!has_sfx_blip_flashped) {
+        			blip_flash_trigger(true);
+        			has_sfx_blip_flashped = true;
+        		}
+        	}
+        	graphic_unload(views + cam_selected);
+        	return;
+        }
 
-	if (camera_glitch_timer > 0)
-		return;
+        if (camera_glitch_timer > 0)
+        	return;
 
-	has_sfx_blip_flashped = false;
+        has_sfx_blip_flashped = false;
 }
 
 static void camera_update_flicker(double dt)
 {
-	flicker_timer += dt * 60;
-	bool flick;
-	flicker_timer = wrapf(flicker_timer, 1.0f, &flick);
-	if (flick)
-		flicker_val = 1 + (rand() % 10);
+        flicker_timer += dt * 60;
+        bool flick;
+        flicker_timer = wrapf(flicker_timer, 1.0f, &flick);
+        if (flick)
+        	flicker_val = 1 + (rand() % 10);
 
-	camera_states_last[cam_selected] = camera_states[cam_selected];
-	if (flicker_val <= 3 && cam_selected == CAM_2A)
-		camera_states[cam_selected] |= FLICKER_BIT;
-	else
-		camera_states[cam_selected] &= ~FLICKER_BIT;
+        camera_states_last[cam_selected] = camera_states[cam_selected];
+        if (flicker_val <= 3 && cam_selected == CAM_2A)
+        	camera_states[cam_selected] |= FLICKER_BIT;
+        else
+        	camera_states[cam_selected] &= ~FLICKER_BIT;
 }
 
 static void camera_update_button_blink(double dt)
 {
-	button_blink_timer += speed_fps(3) * dt;
-	bool blink;
-	button_blink_timer = wrapf(button_blink_timer, 1.0f, &blink);
-	button_blink ^= blink;
+        button_blink_timer += speed_fps(3) * dt;
+        bool blink;
+        button_blink_timer = wrapf(button_blink_timer, 1.0f, &blink);
+        button_blink ^= blink;
 }
 
 static void camera_check_switching(const struct update_params uparms)
 {
         int i;
-	int dirs[4] = {
-		uparms.pressed.c_left  || uparms.pressed.d_left,
-		uparms.pressed.c_right || uparms.pressed.d_right,
-		uparms.pressed.c_up    || uparms.pressed.d_up,
-		uparms.pressed.c_down  || uparms.pressed.d_down,
-	};
+        int dirs[4] = {
+        	uparms.pressed.c_left  || uparms.pressed.d_left,
+        	uparms.pressed.c_right || uparms.pressed.d_right,
+        	uparms.pressed.c_up    || uparms.pressed.d_up,
+        	uparms.pressed.c_down  || uparms.pressed.d_down,
+        };
 
-	if (cam_selected == CAM_2B &&
+        if (cam_selected == CAM_2B &&
             (game_goldfred_state == GAME_GOLDFRED_STATE_IN_CAM2B ||
              game_goldfred_state == GAME_GOLDFRED_STATE_READY_TO_ATTACK))
-		return;
+        	return;
 
-	for (i = 0; i < 4; ++i) {
-		if (!dirs[i])
-			continue;
+        for (i = 0; i < 4; ++i) {
+        	if (!dirs[i])
+        		continue;
 
-		int new_cam = which_cam_lut[cam_selected][i];
-		if (new_cam == -1)
-			continue;
+        	int new_cam = which_cam_lut[cam_selected][i];
+        	if (new_cam == -1)
+        		continue;
 
-		blip_flash_trigger(true);
-		button_blink_timer = 0;
-		button_blink = 1;
-		cam_selected = new_cam;
-	}
+        	blip_flash_trigger(true);
+        	button_blink_timer = 0;
+        	button_blink = 1;
+        	cam_selected = new_cam;
+        }
 }
 
 static void camera_update_robot_voice(double dt)
 {
- 	static float robot_voice_timer = 0.0f;
-	bool robot_voice_tick;
-	robot_voice_timer += dt;
-	robot_voice_timer = wrapf(robot_voice_timer, 0.1f, &robot_voice_tick);
-	
-	if (!camera_is_visible) {
-		mixer_ch_set_vol(SFX_CH_ROBOTVOICE, 0, 0);
-		return;
-	}
+         static float robot_voice_timer = 0.0f;
+        bool robot_voice_tick;
+        robot_voice_timer += dt;
+        robot_voice_timer = wrapf(robot_voice_timer, 0.1f, &robot_voice_tick);
+        
+        if (!camera_is_visible) {
+        	mixer_ch_set_vol(SFX_CH_ROBOTVOICE, 0, 0);
+        	return;
+        }
 
-	if (!robot_voice_tick)
-		return;
+        if (!robot_voice_tick)
+        	return;
 
-	bool bonnie_in_corner_cam_and_looking =
-		(cam_selected == bonnie_cam && bonnie_cam == CAM_2B);
-	bool chica_in_corner_cam_and_looking =
-		(cam_selected == chica_cam && chica_cam == CAM_4B);
+        bool bonnie_in_corner_cam_and_looking =
+        	(cam_selected == bonnie_cam && bonnie_cam == CAM_2B);
+        bool chica_in_corner_cam_and_looking =
+        	(cam_selected == chica_cam && chica_cam == CAM_4B);
 
-	if (!camera_is_visible || SAVE_NIGHT_NUM(save_data) < 4) {
-		mixer_ch_set_vol(SFX_CH_ROBOTVOICE, 0, 0);
-		return;
-	}
+        if (!camera_is_visible || SAVE_NIGHT_NUM(save_data) < 4) {
+        	mixer_ch_set_vol(SFX_CH_ROBOTVOICE, 0, 0);
+        	return;
+        }
 
-	if (bonnie_in_corner_cam_and_looking ||
+        if (bonnie_in_corner_cam_and_looking ||
             chica_in_corner_cam_and_looking) {
-		float vol = (float)(1 + (rand() % 5) * 5) / 100.0f;
-		mixer_ch_set_vol(SFX_CH_ROBOTVOICE, vol, vol);
-		return;
-	}
+        	float vol = (float)(1 + (rand() % 5) * 5) / 100.0f;
+        	mixer_ch_set_vol(SFX_CH_ROBOTVOICE, vol, vol);
+        	return;
+        }
 
-	mixer_ch_set_vol(SFX_CH_ROBOTVOICE, 0, 0);
+        mixer_ch_set_vol(SFX_CH_ROBOTVOICE, 0, 0);
 }
 
 static void camera_update_face_glitch(double dt)
 {
- 	static float face_glitch_timer = 0.0f;
- 	face_glitch_timer += dt;
-	bool face_glitch_tick;
-	face_glitch_timer = wrapf(face_glitch_timer, 0.05f, &face_glitch_tick);
-	if (!face_glitch_tick)
-		return;
+         static float face_glitch_timer = 0.0f;
+         face_glitch_timer += dt;
+        bool face_glitch_tick;
+        face_glitch_timer = wrapf(face_glitch_timer, 0.05f, &face_glitch_tick);
+        if (!face_glitch_tick)
+        	return;
 
-	camera_states[cam_selected] &= ~(FACE_GLITCH_MASK);
+        camera_states[cam_selected] &= ~(FACE_GLITCH_MASK);
 
-	if (SAVE_NIGHT_NUM(save_data) < 4)
-		return;
+        if (SAVE_NIGHT_NUM(save_data) < 4)
+        	return;
 
-	camera_states[cam_selected] |= ((rand() % 30) + 1) << FACE_GLITCH_SHIFT;
+        camera_states[cam_selected] |= ((rand() % 30) + 1) << FACE_GLITCH_SHIFT;
 }
 
 void camera_update(int *button_state_ptr, const struct update_params uparms)
@@ -686,46 +686,46 @@ void camera_update(int *button_state_ptr, const struct update_params uparms)
                                    ((i == freddy_cam) * FREDDY_BIT);
         }
 
-	camera_flip_update(uparms);
-	camera_was_visible = camera_is_visible;
-	camera_is_visible = ((int)flip_timer == FLIP_FRAMES);
+        camera_flip_update(uparms);
+        camera_was_visible = camera_is_visible;
+        camera_is_visible = ((int)flip_timer == FLIP_FRAMES);
 
-	if (!camera_is_visible)
-		_camera_views_unload(false);
+        if (!camera_is_visible)
+        	_camera_views_unload(false);
 
         /* Handle SFX */
-	if (camera_is_visible) {
-		mixer_ch_set_vol(SFX_CH_FAN, 0.1f, 0.1f);
+        if (camera_is_visible) {
+        	mixer_ch_set_vol(SFX_CH_FAN, 0.1f, 0.1f);
         } else {
-		mixer_ch_set_vol(SFX_CH_FAN, 0.25f, 0.25f);
+        	mixer_ch_set_vol(SFX_CH_FAN, 0.25f, 0.25f);
         }
 
-	if (!camera_was_visible && camera_is_visible) {
-		blip_flash_trigger(true);
-		*button_state_ptr &= ~(GAME_DOOR_BTN_LEFT_LIGHT | GAME_DOOR_BTN_RIGHT_LIGHT);
-	}
-	
-	if (camera_is_using ^ camera_was_using) {
-	        if (!camera_is_using) {
-	                wav64_play(&sfx_cam_down, SFX_CH_BLIP);
-	                mixer_ch_stop(SFX_CH_CAMERA);
-	        }
+        if (!camera_was_visible && camera_is_visible) {
+        	blip_flash_trigger(true);
+        	*button_state_ptr &= ~(GAME_DOOR_BTN_LEFT_LIGHT | GAME_DOOR_BTN_RIGHT_LIGHT);
+        }
+        
+        if (camera_is_using ^ camera_was_using) {
+                if (!camera_is_using) {
+                        wav64_play(&sfx_cam_down, SFX_CH_BLIP);
+                        mixer_ch_stop(SFX_CH_CAMERA);
+                }
 
-	        wav64_play(&sfx_cam_up, SFX_CH_BLIP);
-	        wav64_play(&sfx_cam_scan, SFX_CH_CAMERA);
+                wav64_play(&sfx_cam_up, SFX_CH_BLIP);
+                wav64_play(&sfx_cam_scan, SFX_CH_CAMERA);
         }
 
-	camera_update_glitch_timer(uparms.dt);
-	camera_update_turn(uparms);
+        camera_update_glitch_timer(uparms.dt);
+        camera_update_turn(uparms);
 
-	if (!camera_is_visible)
-		return;
+        if (!camera_is_visible)
+        	return;
 
-	camera_update_flicker(uparms.dt);
-	camera_update_button_blink(uparms.dt);
-	camera_check_switching(uparms);
+        camera_update_flicker(uparms.dt);
+        camera_update_button_blink(uparms.dt);
+        camera_check_switching(uparms);
 
-	/* if night is greater than 4 */
-	camera_update_face_glitch(uparms.dt);
-	camera_update_robot_voice(uparms.dt);
+        /* if night is greater than 4 */
+        camera_update_face_glitch(uparms.dt);
+        camera_update_robot_voice(uparms.dt);
 }

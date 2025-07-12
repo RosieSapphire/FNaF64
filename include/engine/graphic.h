@@ -17,7 +17,7 @@ enum {
 };
 
 struct graphic {
-	sprite_t *spr;
+        sprite_t *spr;
         bool is_loaded;
 };
 

@@ -12,9 +12,9 @@ void graphic_load(struct graphic *o, const char *path)
                 return;
         }
 
-	o->spr = sprite_load(path);
-	loaded_cnt++;
-	local_loaded_cnt = loaded_cnt - GLOBAL_GRAPHICS_CNT;
+        o->spr = sprite_load(path);
+        loaded_cnt++;
+        local_loaded_cnt = loaded_cnt - GLOBAL_GRAPHICS_CNT;
 #ifdef GRAPHIC_DEBUG_ENABLED
         debugf("%d loaded_cnt (%s)\n", local_loaded_cnt, path);
 #endif
@@ -25,8 +25,8 @@ void graphics_load(struct graphic *o, int num, const char **paths)
 {
         int i;
 
-	for (i = 0; i < num; ++i) {
-		graphic_load(o + i, paths[i]);
+        for (i = 0; i < num; ++i) {
+        	graphic_load(o + i, paths[i]);
         }
 }
 
@@ -36,10 +36,10 @@ void graphic_unload(struct graphic *o)
                 return;
         }
 
-	sprite_free(o->spr);
+        sprite_free(o->spr);
         o->spr = NULL;
-	loaded_cnt--;
-	local_loaded_cnt = loaded_cnt - 8;
+        loaded_cnt--;
+        local_loaded_cnt = loaded_cnt - 8;
         o->is_loaded = false;
 }
 
@@ -47,20 +47,20 @@ void graphics_unload(struct graphic *o, int num)
 {
         int i;
 
-	for (i = 0; i < num; ++i) {
-		graphic_unload(o + i);
+        for (i = 0; i < num; ++i) {
+        	graphic_unload(o + i);
         }
 }
 
 void graphic_draw(struct graphic o, int px, int py,
                   int ox, int oy, const uint8_t flip_flags)
 {
-	rdpq_blitparms_t parms;
+        rdpq_blitparms_t parms;
 
-	px = vcon(px);
-	py = vcon(py);
-	ox = vcon(ox);
-	oy = vcon(oy);
+        px = vcon(px);
+        py = vcon(py);
+        ox = vcon(ox);
+        oy = vcon(oy);
 
         parms.tile = TILE0;
         parms.s0 = 0;
@@ -78,16 +78,16 @@ void graphic_draw(struct graphic o, int px, int py,
         parms.nx = 0;
         parms.ny = 0;
 
-	rdpq_sprite_blit(o.spr, px, py, &parms);
+        rdpq_sprite_blit(o.spr, px, py, &parms);
 }
 
 void graphic_draw_index_x(struct graphic o, int px, int py,
                           int w, int i, const uint8_t flip_flags)
 {
-	rdpq_blitparms_t parms;
+        rdpq_blitparms_t parms;
 
-	px = vcon(px);
-	py = vcon(py);
+        px = vcon(px);
+        py = vcon(py);
 
         parms.tile = TILE0;
         parms.s0 = w * i;
@@ -105,16 +105,16 @@ void graphic_draw_index_x(struct graphic o, int px, int py,
         parms.nx = 0;
         parms.ny = 0;
 
-	rdpq_sprite_blit(o.spr, px, py, &parms);
+        rdpq_sprite_blit(o.spr, px, py, &parms);
 }
 
 void graphic_draw_index_y(struct graphic o, int px, int py,
                           int h, int i, const uint8_t flip_flags)
 {
-	rdpq_blitparms_t parms;
+        rdpq_blitparms_t parms;
 
-	px = vcon(px);
-	py = vcon(py);
+        px = vcon(px);
+        py = vcon(py);
 
         parms.tile = TILE0;
         parms.s0 = 0;
@@ -132,5 +132,5 @@ void graphic_draw_index_y(struct graphic o, int px, int py,
         parms.nx = 0;
         parms.ny = 0;
 
-	rdpq_sprite_blit(o.spr, px, py, &parms);
+        rdpq_sprite_blit(o.spr, px, py, &parms);
 }

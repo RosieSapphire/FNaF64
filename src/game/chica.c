@@ -25,202 +25,202 @@ static float scare_timer;
 static float kitchen_noise_timer = 0.0f;
 
 static const float footstep_vol_lut[CAM_COUNT] = {
-	0.1f,  // 1A
-	0.1f,  // 1B
-	0,     // 1C
-	0,     // 2A
-	0,     // 2B
-	0,     // 3
-	0.3f,  // 4A
-	0.3f,  // 4B
-	0,     // 5
-	0.15f, // 6
-	0.2f,  // 7
+        0.1f,  // 1A
+        0.1f,  // 1B
+        0,     // 1C
+        0,     // 2A
+        0,     // 2B
+        0,     // 3
+        0.3f,  // 4A
+        0.3f,  // 4B
+        0,     // 5
+        0.15f, // 6
+        0.2f,  // 7
 };
 
 static const int new_cam_lut[CAM_COUNT + 2][2] = {
-	{      CAM_1B,       CAM_1B}, // 1A
-	{       CAM_7,        CAM_6}, // 1B
-	{          -1,           -1}, // 1C
-	{          -1,           -1}, // 2A
-	{          -1,           -1}, // 2B
-	{          -1,           -1}, // 3
-	{      CAM_1B,       CAM_4B}, // 4A
-	{      CAM_4A,      AT_DOOR}, // 4B
-	{          -1,           -1}, // 5
-	{       CAM_7,       CAM_4A}, // 6
-	{       CAM_6,       CAM_4A}, // 7
-	{YOURE_FUCKED, YOURE_FUCKED}, // At Door
-	{YOURE_FUCKED, YOURE_FUCKED}, // You're Fucked
+        {      CAM_1B,       CAM_1B}, // 1A
+        {       CAM_7,        CAM_6}, // 1B
+        {          -1,           -1}, // 1C
+        {          -1,           -1}, // 2A
+        {          -1,           -1}, // 2B
+        {          -1,           -1}, // 3
+        {      CAM_1B,       CAM_4B}, // 4A
+        {      CAM_4A,      AT_DOOR}, // 4B
+        {          -1,           -1}, // 5
+        {       CAM_7,       CAM_4A}, // 6
+        {       CAM_6,       CAM_4A}, // 7
+        {YOURE_FUCKED, YOURE_FUCKED}, // At Door
+        {YOURE_FUCKED, YOURE_FUCKED}, // You're Fucked
 };
 
 #define CHICA_SCARE_FRAMES 8
 
 struct graphic chica_scare[CHICA_SCARE_FRAMES];
 const char *chica_scare_paths[CHICA_SCARE_FRAMES] = {
-	TX_CHICA_SCARE0, TX_CHICA_SCARE1, TX_CHICA_SCARE2,
-	TX_CHICA_SCARE3, TX_CHICA_SCARE4, TX_CHICA_SCARE5,
-	TX_CHICA_SCARE6, TX_CHICA_SCARE7,
+        TX_CHICA_SCARE0, TX_CHICA_SCARE1, TX_CHICA_SCARE2,
+        TX_CHICA_SCARE3, TX_CHICA_SCARE4, TX_CHICA_SCARE5,
+        TX_CHICA_SCARE6, TX_CHICA_SCARE7,
 };
 
 void chica_load(void)
 {
-	which_room = 0;
-	which_room_timer = 0.0f;
-	which_spot = 0;
-	chica_blackout_timer = 0.0f;
-	chica_scared = 0;
-	move_timer = 0.0f;
-	chica_cam_last = 0;
-	chica_cam = 0;
-	game_jumpscare_flags &= ~(JUMPSCARE_FLAG_CHICA);
-	scare_timer = 0.0f;
+        which_room = 0;
+        which_room_timer = 0.0f;
+        which_spot = 0;
+        chica_blackout_timer = 0.0f;
+        chica_scared = 0;
+        move_timer = 0.0f;
+        chica_cam_last = 0;
+        chica_cam = 0;
+        game_jumpscare_flags &= ~(JUMPSCARE_FLAG_CHICA);
+        scare_timer = 0.0f;
 
-	graphics_load(chica_scare, CHICA_SCARE_FRAMES, chica_scare_paths);
+        graphics_load(chica_scare, CHICA_SCARE_FRAMES, chica_scare_paths);
 }
 
 void chica_unload(void)
 {
-	graphics_unload(chica_scare, CHICA_SCARE_FRAMES);
+        graphics_unload(chica_scare, CHICA_SCARE_FRAMES);
 }
 
 void chica_draw_scare(void)
 {
-	graphic_draw(chica_scare[(int)scare_timer], 0, 0, 0, 0, 0);
+        graphic_draw(chica_scare[(int)scare_timer], 0, 0, 0, 0, 0);
 }
 
 void chica_draw_debug(void)
 {
-	int w = vcon(35);
-	int h = w;
-	int x = vcon(cam_button_pos[chica_cam][0] - 317);
-	int y = vcon(cam_button_pos[chica_cam][1]);
-	int x0 = x;
-	int y0 = y;
-	int x1 = x + w;
-	int y1 = y + h;
+        int w = vcon(35);
+        int h = w;
+        int x = vcon(cam_button_pos[chica_cam][0] - 317);
+        int y = vcon(cam_button_pos[chica_cam][1]);
+        int x0 = x;
+        int y0 = y;
+        int x1 = x + w;
+        int y1 = y + h;
 
-	rdpq_set_mode_fill(RGBA32(0xDF, 0xCB, 0x00, 0xFF));
-	rdpq_fill_rectangle(x0, y0, x1, y1);
+        rdpq_set_mode_fill(RGBA32(0xDF, 0xCB, 0x00, 0xFF));
+        rdpq_fill_rectangle(x0, y0, x1, y1);
 }
 
 static void _chica_update_kitchen_volume(void)
 {
-	if (CAM_6 != chica_cam) {
-		mixer_ch_set_vol(SFX_CH_KITCHEN, 0, 0);
-		return;
-	}
+        if (CAM_6 != chica_cam) {
+        	mixer_ch_set_vol(SFX_CH_KITCHEN, 0, 0);
+        	return;
+        }
 
-	if (!camera_is_visible) {
-		mixer_ch_set_vol(SFX_CH_KITCHEN, 0.1f, 0.1f);
-		return;
-	}
+        if (!camera_is_visible) {
+        	mixer_ch_set_vol(SFX_CH_KITCHEN, 0.1f, 0.1f);
+        	return;
+        }
 
-	if (cam_selected == chica_cam)
-		mixer_ch_set_vol(SFX_CH_KITCHEN, 0.75f, 0.75f);
-	else
-		mixer_ch_set_vol(SFX_CH_KITCHEN, 0.2f, 0.2f);
-	
+        if (cam_selected == chica_cam)
+        	mixer_ch_set_vol(SFX_CH_KITCHEN, 0.75f, 0.75f);
+        else
+        	mixer_ch_set_vol(SFX_CH_KITCHEN, 0.2f, 0.2f);
+        
 }
 
 void chica_update(int *button_state_ptr, const float dt)
 {
         if (game_jumpscare_flags & JUMPSCARE_FLAG_CHICA) {
-		scare_timer += dt * speed_fps(50);
-		scare_timer = wrapf(scare_timer, CHICA_SCARE_FRAMES, NULL);
-		return;
-	}
-
-	bool cam_flip_down = (!camera_is_visible && camera_was_visible);
-	if (chica_cam == YOURE_FUCKED && cam_flip_down) {
-                game_jumpscare_flags |= JUMPSCARE_FLAG_CHICA;
-		wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
-		return;
-	}
-
-	_chica_update_kitchen_volume();
-	
-	kitchen_noise_timer += dt;
-	bool kitchen_noise_tick;
-	kitchen_noise_timer = wrapf(kitchen_noise_timer,
-			4, &kitchen_noise_tick);
-
-	if (kitchen_noise_tick) {
-		int kitchen_rand_val = rand() % 10;
-		/* I'm sorry I have to do this, but for some reason, the way
-		 * that Libdragon handles wav64_t, I have no choice */
-		switch(kitchen_rand_val) {
-		case 0:
-			wav64_play(&sfx_kitchen_0, SFX_CH_KITCHEN);
-			break;
-
-		case 1:
-			wav64_play(&sfx_kitchen_1, SFX_CH_KITCHEN);
-			break;
-
-		case 2:
-			wav64_play(&sfx_kitchen_2, SFX_CH_KITCHEN);
-			break;
-
-		case 3:
-			wav64_play(&sfx_kitchen_2, SFX_CH_KITCHEN);
-			break;
-
-		case 4:
-			wav64_play(&sfx_kitchen_3, SFX_CH_KITCHEN);
-			break;
-		}
-	}
-
-	which_room_timer += dt;
-	bool switch_which;
-	which_room_timer = wrapf(which_room_timer, 1, &switch_which);
-	if (switch_which)
-		which_room = rand() & 1;
-
-	chica_blackout_timer -= dt * 60;
-	chica_blackout_timer = CLAMP(chica_blackout_timer, 0, 10);
-
-	move_timer += dt;
-	bool try_move;
-	move_timer = wrapf(move_timer, MOVE_TIMER, &try_move);
-	if (!try_move)
-		return;
-
-	if ((1 + (rand() % 20)) > chica_ai_level)
-		return;
-
-	chica_cam_last = chica_cam;
-	int cam_next = new_cam_lut[chica_cam][which_room];
-	if (cam_next == YOURE_FUCKED && (*button_state_ptr & GAME_DOOR_BTN_RIGHT_DOOR)) {
-		cam_next = CAM_4A;
-		/* BULLSHIT FIX THIS SHOULDN'T HAVE TO BE HERE! */
-                camera_states[CAM_4A] |= (CHICA_BIT | ROOM_SPOT_BIT);
-		if (cam_selected == CAM_4A)
-			chica_blackout_timer = 10;
+        	scare_timer += dt * speed_fps(50);
+        	scare_timer = wrapf(scare_timer, CHICA_SCARE_FRAMES, NULL);
+        	return;
         }
 
-	if (cam_next < AT_DOOR) {
-		float foot_vol = footstep_vol_lut[cam_next];
-		mixer_ch_set_vol(SFX_CH_FOOTSTEPS, foot_vol, foot_vol);
-	}
+        bool cam_flip_down = (!camera_is_visible && camera_was_visible);
+        if (chica_cam == YOURE_FUCKED && cam_flip_down) {
+                game_jumpscare_flags |= JUMPSCARE_FLAG_CHICA;
+        	wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
+        	return;
+        }
 
-	wav64_play(&sfx_deep_step, SFX_CH_FOOTSTEPS);
-	chica_cam = cam_next;
-	// chica_cam = CAM_4B;
-	which_spot = rand() & 1;
+        _chica_update_kitchen_volume();
+        
+        kitchen_noise_timer += dt;
+        bool kitchen_noise_tick;
+        kitchen_noise_timer = wrapf(kitchen_noise_timer,
+        		4, &kitchen_noise_tick);
 
-	/* I have no fucking clue why I have to do this */
+        if (kitchen_noise_tick) {
+        	int kitchen_rand_val = rand() % 10;
+        	/* I'm sorry I have to do this, but for some reason, the way
+        	 * that Libdragon handles wav64_t, I have no choice */
+        	switch(kitchen_rand_val) {
+        	case 0:
+        		wav64_play(&sfx_kitchen_0, SFX_CH_KITCHEN);
+        		break;
+
+        	case 1:
+        		wav64_play(&sfx_kitchen_1, SFX_CH_KITCHEN);
+        		break;
+
+        	case 2:
+        		wav64_play(&sfx_kitchen_2, SFX_CH_KITCHEN);
+        		break;
+
+        	case 3:
+        		wav64_play(&sfx_kitchen_2, SFX_CH_KITCHEN);
+        		break;
+
+        	case 4:
+        		wav64_play(&sfx_kitchen_3, SFX_CH_KITCHEN);
+        		break;
+        	}
+        }
+
+        which_room_timer += dt;
+        bool switch_which;
+        which_room_timer = wrapf(which_room_timer, 1, &switch_which);
+        if (switch_which)
+        	which_room = rand() & 1;
+
+        chica_blackout_timer -= dt * 60;
+        chica_blackout_timer = CLAMP(chica_blackout_timer, 0, 10);
+
+        move_timer += dt;
+        bool try_move;
+        move_timer = wrapf(move_timer, MOVE_TIMER, &try_move);
+        if (!try_move)
+        	return;
+
+        if ((1 + (rand() % 20)) > chica_ai_level)
+        	return;
+
+        chica_cam_last = chica_cam;
+        int cam_next = new_cam_lut[chica_cam][which_room];
+        if (cam_next == YOURE_FUCKED && (*button_state_ptr & GAME_DOOR_BTN_RIGHT_DOOR)) {
+        	cam_next = CAM_4A;
+        	/* BULLSHIT FIX THIS SHOULDN'T HAVE TO BE HERE! */
+                camera_states[CAM_4A] |= (CHICA_BIT | ROOM_SPOT_BIT);
+        	if (cam_selected == CAM_4A)
+        		chica_blackout_timer = 10;
+        }
+
+        if (cam_next < AT_DOOR) {
+        	float foot_vol = footstep_vol_lut[cam_next];
+        	mixer_ch_set_vol(SFX_CH_FOOTSTEPS, foot_vol, foot_vol);
+        }
+
+        wav64_play(&sfx_deep_step, SFX_CH_FOOTSTEPS);
+        chica_cam = cam_next;
+        // chica_cam = CAM_4B;
+        which_spot = rand() & 1;
+
+        /* I have no fucking clue why I have to do this */
         if ((chica_cam_last != chica_cam) &&
             ((chica_cam_last == cam_selected) ||
              (chica_cam == cam_selected))) {
-        	chica_blackout_timer = 10;
-	}
+                chica_blackout_timer = 10;
+        }
 
-	if (chica_cam != AT_DOOR)
-		chica_scared = false;
+        if (chica_cam != AT_DOOR)
+        	chica_scared = false;
 
-	if (             (chica_cam == AT_DOOR && chica_cam_last != AT_DOOR) ||
-			(chica_cam != AT_DOOR && chica_cam_last == AT_DOOR))
-		*button_state_ptr &= ~GAME_DOOR_BTN_RIGHT_LIGHT;
+        if (             (chica_cam == AT_DOOR && chica_cam_last != AT_DOOR) ||
+        		(chica_cam != AT_DOOR && chica_cam_last == AT_DOOR))
+        	*button_state_ptr &= ~GAME_DOOR_BTN_RIGHT_LIGHT;
 }
