@@ -347,10 +347,10 @@ void camera_view_draw(void)
 		return;
 
 	case CAM_2B:
-		if ((game_goldfred_state !=
-                     GAME_GOLDFRED_STATE_IN_CAM2B) && 
-		    (game_goldfred_state !=
-                     GAME_GOLDFRED_STATE_READY_TO_ATTACK) ||
+		if (((game_goldfred_state !=
+                      GAME_GOLDFRED_STATE_IN_CAM2B) && 
+		     (game_goldfred_state !=
+                      GAME_GOLDFRED_STATE_READY_TO_ATTACK)) ||
 		    bonnie_cam == CAM_1B)
 			break;
 
