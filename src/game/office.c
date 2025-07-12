@@ -71,8 +71,12 @@ void office_update(const int button_state, struct update_params uparms)
         static bool chica_scared_last = false;
         if ((button_state & GAME_DOOR_BTN_RIGHT_LIGHT) && chica_cam == AT_DOOR)
                 chica_scared = true;
-        if (chica_scared && !chica_scared_last)
+
+        if (chica_scared && !chica_scared_last) {
+                mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.8f, 0.8f);
                 wav64_play(&sfx_window_scare, SFX_CH_AMBIENCE);
+        }
+
         chica_scared_last = chica_scared;
 
         bool do_rand;
