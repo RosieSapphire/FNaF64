@@ -128,26 +128,23 @@ void foxy_update(const int button_state, const float dt)
         	foxy_run_timer += dt * 60;
         	foxy_run_timer = CLAMP(foxy_run_timer, 0, 100);
         	if (foxy_run_timer == 100) {
-        		if (button_state & GAME_DOOR_BTN_LEFT_DOOR) {
+        		if (button_state & GAME_DOOR_BTN_LEFT_DOOR)
         			_foxy_trigger_reset();
-                        } else {
+                        else
         			_foxy_trigger_sfx_jumpscare();
-                        }
         	}
         }
 
-        if (foxy_progress == 3 &&
-            !(game_jumpscare_flags & JUMPSCARE_FLAG_FOXY)) {
+        if (foxy_progress == 3 && !(game_jumpscare_flags &
+                                    JUMPSCARE_FLAG_FOXY))
         	foxy_no_check_timer += dt * 60;
-        }
 
-        if (foxy_no_check_timer >= 1500 &&
-            !(game_jumpscare_flags & JUMPSCARE_FLAG_FOXY)) {
-        	if (button_state & GAME_DOOR_BTN_LEFT_DOOR) {
+        if (foxy_no_check_timer >= 1500 && !(game_jumpscare_flags &
+                                             JUMPSCARE_FLAG_FOXY)) {
+        	if (button_state & GAME_DOOR_BTN_LEFT_DOOR)
         		_foxy_trigger_reset();
-                } else {
+                else
         		_foxy_trigger_sfx_jumpscare();
-                }
         }
 
         _foxy_update_stun_timer(dt);

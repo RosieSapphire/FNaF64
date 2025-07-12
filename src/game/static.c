@@ -46,9 +46,8 @@ void static_update(const float dt)
 
         static_timer += dt * speed_fps(100);
         static_timer = wrapf(static_timer, 1.0f, &tick_frame);
-        if (!tick_frame) {
+        if (!tick_frame)
                 return;
-        }
 
         frame_last = static_frame;
         do {

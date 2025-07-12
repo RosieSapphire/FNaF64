@@ -234,11 +234,8 @@ static const char *camera_get_view_path(void)
         bitmask = (FREDDY_BIT | CHICA_BIT | BONNIE_BIT | ROOM_SPOT_BIT);
         for (i = 0; i < cam_state_counts[cam_selected]; ++i) {
         	if ((cam_states[cam_selected][i].state & bitmask) ==
-        			(camera_states[cam_selected] & bitmask)) {
-
-        		// debugf("%s\n", cam_states[cam_selected][i].path);
+        	    (camera_states[cam_selected] & bitmask))
         		return cam_states[cam_selected][i].path;
-        	}
         }
 
         char buf[64] = {0};
@@ -246,6 +243,7 @@ static const char *camera_get_view_path(void)
         buf[1] = 'b';
         for (i = 2; i < 2 + 16; ++i) {
         	int j = i - 2;
+
         	buf[i] = ((camera_states[cam_selected] & (1 << j)) >> j) + 48;
         }
 
@@ -324,6 +322,7 @@ void camera_view_draw(void)
         case CAM_2A:
         	if (foxy_run_timer > 0 && foxy_run_timer < 35) {
         		int frame = (foxy_run_timer / 35.0f) * FOXY_RUN_FRAMES;
+
         		frame = CLAMP(frame, 0, FOXY_RUN_FRAMES - 1);
         		graphic_draw(foxy_run[frame], view_turn,
                                      0, 0, 0, GFX_FLIP_NONE);
@@ -441,9 +440,8 @@ void camera_ui_draw(void)
                                      11, i, GFX_FLIP_NONE);
         }
 
-        if (camera_glitch_timer) {
+        if (camera_glitch_timer)
         	graphic_draw(missing_footage, 294, 90, 0, 0, GFX_FLIP_NONE);
-        }
 }
 
 static void camera_flip_update(const struct update_params uparms)
@@ -479,9 +477,9 @@ static void camera_update_turn(const struct update_params uparms)
         view_turn = lerpf(0, -640, view_turn_timer);
         switch(view_turn_state) {
         case 0:
-        	if (view_turn_timer < 1.0f)
+        	if (view_turn_timer < 1.0f) {
         		view_turn_timer += uparms.dt / 5.0f;
-        	else {
+        	} else {
         		view_turn_timer = 1.0f;
         		view_turn_state = 1;
         		view_stop_timer = 2;
@@ -550,6 +548,7 @@ static void camera_update_glitch_timer(double dt)
         			wav64_play(&sfx_cam_glitch_4, SFX_CH_CAMERA);
         			break;
         		}
+
         		camera_glitch_timer = 300;
 
         		if (!has_sfx_blip_flashped) {
@@ -557,6 +556,7 @@ static void camera_update_glitch_timer(double dt)
         			has_sfx_blip_flashped = true;
         		}
         	}
+
         	graphic_unload(views + cam_selected);
         	return;
         }
@@ -648,6 +648,7 @@ static void camera_update_robot_voice(double dt)
         if (bonnie_in_corner_cam_and_looking ||
             chica_in_corner_cam_and_looking) {
         	float vol = (float)(1 + (rand() % 5) * 5) / 100.0f;
+
         	mixer_ch_set_vol(SFX_CH_ROBOTVOICE, vol, vol);
         	return;
         }
@@ -680,11 +681,11 @@ void camera_update(int *button_state_ptr, const struct update_params uparms)
          * Refresh the camera states based on the
          * animatronics current positions.
          */
-        for (i = 0; i < CAM_COUNT; ++i) {
+        /* TODO: Do bit-shifting shit with this. */
+        for (i = 0; i < CAM_COUNT; ++i)
                 camera_states[i] = ((i == bonnie_cam) * BONNIE_BIT) |
                                    ((i == chica_cam) * CHICA_BIT) |
                                    ((i == freddy_cam) * FREDDY_BIT);
-        }
 
         camera_flip_update(uparms);
         camera_was_visible = camera_is_visible;
@@ -694,15 +695,17 @@ void camera_update(int *button_state_ptr, const struct update_params uparms)
         	_camera_views_unload(false);
 
         /* Handle SFX */
-        if (camera_is_visible) {
-        	mixer_ch_set_vol(SFX_CH_FAN, 0.1f, 0.1f);
-        } else {
-        	mixer_ch_set_vol(SFX_CH_FAN, 0.25f, 0.25f);
+        {
+                float vol;
+
+                vol = 0.1f + (camera_is_visible * 0.15f);
+        	mixer_ch_set_vol(SFX_CH_FAN, vol, vol);
         }
 
         if (!camera_was_visible && camera_is_visible) {
         	blip_flash_trigger(true);
-        	*button_state_ptr &= ~(GAME_DOOR_BTN_LEFT_LIGHT | GAME_DOOR_BTN_RIGHT_LIGHT);
+        	*button_state_ptr &= ~(GAME_DOOR_BTN_LEFT_LIGHT |
+                                       GAME_DOOR_BTN_RIGHT_LIGHT);
         }
         
         if (camera_is_using ^ camera_was_using) {

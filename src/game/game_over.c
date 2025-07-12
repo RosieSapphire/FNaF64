@@ -53,18 +53,19 @@ void game_over_draw(void)
         blip_flash_draw();
 }
 
+/* TODO: Reorganize variables. */
 enum scene game_over_update(struct update_params uparms)
 {
         over_timer += uparms.dt;
 
         bool show_over_screen = over_timer >= 10;
-        if (show_over_screen) {
+        if (show_over_screen)
         	sfx_stop_all_channels();
-        }
 
         bool attempt_skip = uparms.pressed.a ||
         	uparms.pressed.b || uparms.pressed.start;
         if (attempt_skip && show_over_screen) {
+                /* FIXME: Cringe. */
         	rdpq_call_deferred((void(*)(void *))_game_over_unload, NULL);
         	over_timer = 0.0f;
         	return SCENE_TITLE_SCREEN;

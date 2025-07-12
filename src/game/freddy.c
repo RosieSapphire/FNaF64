@@ -88,10 +88,10 @@ static void _freddy_handle_music_box(void)
 {
         mixer_ch_set_vol(SFX_CH_MUSICBOX, 0, 0);
         if (freddy_cam != CAM_6)
-        	return;
+                return;
 
         float vol = (camera_is_visible && (cam_selected == CAM_6))
-        	? 0.5f : 0.05f;
+                ? 0.5f : 0.05f;
         mixer_ch_set_vol(SFX_CH_MUSICBOX, vol, vol);
 }
 
@@ -100,129 +100,125 @@ void freddy_update(const int button_state, const float dt)
         _freddy_handle_music_box();
 
         if (ready_to_scare) {
-        	ready_scare_timer += dt;
-        	bool try_scare;
-        	ready_scare_timer = wrapf(ready_scare_timer, 1, &try_scare);
-        	if (try_scare && ((rand() % 4) == 0)) {
+                ready_scare_timer += dt;
+                bool try_scare;
+                ready_scare_timer = wrapf(ready_scare_timer, 1, &try_scare);
+                if (try_scare && ((rand() % 4) == 0)) {
                         game_jumpscare_flags |= JUMPSCARE_FLAG_FREDDY;
                         debugf("%d\n", game_jumpscare_flags);
-        		ready_to_scare = false;
-        		wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
-        		return;
-        	}
-        	return;
+                        ready_to_scare = false;
+                        wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
+                        return;
+                }
+                return;
         }
 
         if (game_jumpscare_flags & JUMPSCARE_FLAG_FREDDY) {
-        	freddy_scare_timer += dt * speed_fps(25);
-        	freddy_scare_timer =
-        		CLAMP(freddy_scare_timer, 0, FREDDY_SCARE_FRAME_CNT);
-        	return;
+                freddy_scare_timer += dt * speed_fps(25);
+                freddy_scare_timer = CLAMP(freddy_scare_timer, 0,
+                                           FREDDY_SCARE_FRAME_CNT);
+                return;
         }
 
         if (freddy_cam == AT_DOOR) {
-        	ready_to_scare = true;
-        	return;
+                ready_to_scare = true;
+                return;
         }
 
         if (move_state == 1)
-        	move_timer += dt * 60;
+                move_timer += dt * 60;
 
         opportunity_timer += dt;
         bool try_move;
         opportunity_timer = wrapf(opportunity_timer, MOVE_TIMER, &try_move);
         if (camera_is_visible && freddy_cam != CAM_4B) {
-        	if (cam_selected == freddy_cam) {
-        		move_timer = 0;
-        		return;
-        	}
+                if (cam_selected == freddy_cam) {
+                        move_timer = 0;
+                        return;
+                }
 
-        	return;
+                return;
         }
 
         if (move_timer >= 1000 - (freddy_ai_level * 100) && move_state == 1) {
-        	move_timer = 0;
-        	move_state = 2;
+                move_timer = 0;
+                move_state = 2;
         }
 
         if (try_move && (1 + (rand() % 20)) <= freddy_ai_level) {
-        	move_state = 1;
-        	return;
+                move_state = 1;
+                return;
         }
 
         if (move_state != 2)
-        	return;
+                return;
 
         if (freddy_cam == CAM_4B) {
-        	if (!camera_is_visible) {
-        		move_timer = 0;
-        		return;
-        	} else {
-        		if (freddy_cam == cam_selected) {
-        			move_timer = 0;
-        			return;
-        		}
-        	}
+                if (!camera_is_visible) {
+                        move_timer = 0;
+                        return;
+                } else if (freddy_cam == cam_selected) {
+                        move_timer = 0;
+                        return;
+                }
         }
 
         /*
         if (freddy_cam == CAM_4B) {
-        	if (!camera_is_visible)
-        		return;
+                if (!camera_is_visible)
+                        return;
         }
         */
 
         /* Don't move Freddy while Bonnie and Chica are on stage */
         if (((camera_states[CAM_1A] & BONNIE_BIT) ||
-            (camera_states[CAM_1A] & CHICA_BIT)) && freddy_cam == CAM_1A) {
-        	return;
-        }
+            (camera_states[CAM_1A] & CHICA_BIT)) && freddy_cam == CAM_1A)
+                return;
 
         freddy_cam_last = freddy_cam;
         int cam_next = new_cam_lut[freddy_cam];
         bool right_door_closed = button_state & GAME_DOOR_BTN_RIGHT_DOOR;
         if (freddy_cam == CAM_4B && camera_is_visible)
-        	if (right_door_closed)
-        		cam_next = CAM_4A;
+                if (right_door_closed)
+                        cam_next = CAM_4A;
 
         move_state = 0;
 
         if (cam_next < AT_DOOR) {
-        	float laugh_vol = vol_lut[cam_next][0];
-        	float foot_vol = vol_lut[cam_next][1];
-        	mixer_ch_set_vol(SFX_CH_FREDDYLAUGH, laugh_vol, laugh_vol);
-        	mixer_ch_set_vol(SFX_CH_FREDDYRUN, foot_vol, foot_vol);
+                float laugh_vol = vol_lut[cam_next][0];
+                float foot_vol = vol_lut[cam_next][1];
+                mixer_ch_set_vol(SFX_CH_FREDDYLAUGH, laugh_vol, laugh_vol);
+                mixer_ch_set_vol(SFX_CH_FREDDYRUN, foot_vol, foot_vol);
         }
 
         /* TODO: Motherfucking lookup table! */
         switch(rand() % 3) {
         case 0:
-        	wav64_play(&sfx_freddy_laugh_1, SFX_CH_FREDDYLAUGH);
-        	break;
+                wav64_play(&sfx_freddy_laugh_1, SFX_CH_FREDDYLAUGH);
+                break;
 
         case 1:
-        	wav64_play(&sfx_freddy_laugh_2, SFX_CH_FREDDYLAUGH);
-        	break;
+                wav64_play(&sfx_freddy_laugh_2, SFX_CH_FREDDYLAUGH);
+                break;
 
         case 2:
-        	wav64_play(&sfx_freddy_laugh_3, SFX_CH_FREDDYLAUGH);
-        	break;
+                wav64_play(&sfx_freddy_laugh_3, SFX_CH_FREDDYLAUGH);
+                break;
         }
 
         wav64_play(&sfx_freddy_run, SFX_CH_FREDDYRUN);
 
-        if (cam_next == CAM_6) {
-        	wav64_play(&sfx_music_box, SFX_CH_MUSICBOX);
-        } else {
-        	mixer_ch_stop(SFX_CH_MUSICBOX);
-        }
+        if (cam_next == CAM_6)
+                wav64_play(&sfx_music_box, SFX_CH_MUSICBOX);
+        else
+                mixer_ch_stop(SFX_CH_MUSICBOX);
 
         freddy_cam = cam_next;
 
         /* I have no fucking clue why I have to do this */
         if (freddy_cam_last < AT_DOOR) {
                 camera_states[freddy_cam_last] &= ~FREDDY_BIT;
-        	if (freddy_cam < AT_DOOR)
-                	camera_states[freddy_cam] |= FREDDY_BIT;
+                if (freddy_cam < AT_DOOR)
+                        camera_states[freddy_cam] |= FREDDY_BIT;
         }
 }

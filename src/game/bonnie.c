@@ -149,9 +149,9 @@ void bonnie_update(int *button_state_ptr, const float dt)
 
         bonnie_cam_last = bonnie_cam;
         int cam_next = new_cam_lut[bonnie_cam][which_room];
-        if (cam_next == YOURE_FUCKED && (*button_state_ptr & GAME_DOOR_BTN_LEFT_DOOR)) {
+        if (cam_next == YOURE_FUCKED &&
+            (*button_state_ptr & GAME_DOOR_BTN_LEFT_DOOR))
         	cam_next = CAM_1B;
-        }
 
         if (cam_next < AT_DOOR) {
         	float foot_vol = footstep_vol_lut[cam_next];
@@ -170,15 +170,13 @@ void bonnie_update(int *button_state_ptr, const float dt)
          */
         if ((bonnie_cam_last != bonnie_cam) &&
             ((bonnie_cam_last == cam_selected) ||
-             (bonnie_cam == cam_selected))) {
+             (bonnie_cam == cam_selected)))
                 bonnie_blackout_timer = 10;
-        }
 
         if (bonnie_cam != AT_DOOR)
         	bonnie_scared = false;
 
         if ((bonnie_cam == AT_DOOR && bonnie_cam_last != AT_DOOR) ||
-            (bonnie_cam != AT_DOOR && bonnie_cam_last == AT_DOOR)) {
+            (bonnie_cam != AT_DOOR && bonnie_cam_last == AT_DOOR))
         	*button_state_ptr &= ~GAME_DOOR_BTN_LEFT_LIGHT;
-        }
 }

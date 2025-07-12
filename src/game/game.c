@@ -368,7 +368,7 @@ static void game_office_view_draw(const float shotgun_shake_offset)
         }
 
         /* Determine view to show for office */
-        /* TODO: Indexify these. */
+        /* TODO: Indexify these and ternary this shit. */
         office_view_cur = 0;
         if (game_door_btn_states_cur & GAME_DOOR_BTN_LEFT_LIGHT) {
                 if (bonnie_cam == AT_DOOR)
@@ -437,7 +437,7 @@ static void game_office_elements_draw(const float shotgun_shake_offset)
         bitmask_left  = (GAME_DOOR_BTN_LEFT_DOOR | GAME_DOOR_BTN_LEFT_LIGHT);
         for (i = 0; i < 4; ++i) {
                 if (game_door_btn_states_left[i].state ==
-                        (game_door_btn_states_cur & bitmask_left)) {
+                    (game_door_btn_states_cur & bitmask_left)) {
                         left_index = game_door_btn_states_left[i].index;
                         break;
                 }
@@ -447,7 +447,7 @@ static void game_office_elements_draw(const float shotgun_shake_offset)
         bitmask_right = (GAME_DOOR_BTN_RIGHT_DOOR | GAME_DOOR_BTN_RIGHT_LIGHT);
         for (i = 0; i < 4; ++i) {
                 if (game_door_btn_states_right[i].state ==
-                        (game_door_btn_states_cur & bitmask_right)) {
+                    (game_door_btn_states_cur & bitmask_right)) {
                         right_index = game_door_btn_states_right[i].index;
                         break;
                 }
@@ -666,7 +666,7 @@ static void game_door_buttons_update_right(const struct update_params uparms)
         anim_frame = game_door_anim_timers[GAME_DOOR_RIGHT];
         if (uparms.pressed.b && (anim_frame == 0 || anim_frame == 14)) {
                 if (game_shotgun_broke_door_flags &
-                        GAME_SHOTGUN_BROKE_DOOR_RIGHT) {
+                    GAME_SHOTGUN_BROKE_DOOR_RIGHT) {
                         wav64_play(&sfx_error, SFX_CH_BLIP);
                 } else {
                         game_door_btn_states_cur ^= GAME_DOOR_BTN_RIGHT_DOOR;
@@ -707,8 +707,8 @@ static void game_shotgun_update(const struct update_params uparms)
         
         if (!uparms.pressed.z || game_shotgun_reload_timer > 0.f ||
             camera_is_visible) {
-                if (reload_frame_old > GAME_SHOTGUN_FRAME_PLAY_RELOAD_SFX &&
-                        reload_frame_cur <= GAME_SHOTGUN_FRAME_PLAY_RELOAD_SFX) {
+                if (reload_frame_old  > GAME_SHOTGUN_FRAME_PLAY_RELOAD_SFX &&
+                    reload_frame_cur <= GAME_SHOTGUN_FRAME_PLAY_RELOAD_SFX) {
                         wav64_play(&sfx_shotgun_reload, SFX_CH_SHOTTY2);
                 }
                 return;
@@ -720,17 +720,14 @@ static void game_shotgun_update(const struct update_params uparms)
         if (game_office_turn >= GAME_DOOR_LEFT_INTERACT_DIST) {
                 if (game_door_btn_states_cur &
                         GAME_DOOR_BTN_LEFT_DOOR) {
-                        game_door_btn_states_cur &=
-                                ~(GAME_DOOR_BTN_LEFT_DOOR);
+                        game_door_btn_states_cur &= ~(GAME_DOOR_BTN_LEFT_DOOR);
                         game_shotgun_broke_door_flags |=
                                 GAME_SHOTGUN_BROKE_DOOR_LEFT;
                 } else if (bonnie_cam == AT_DOOR) {
                         bonnie_ai_level = 0;
                         bonnie_cam = -1;
-                } else if (game_jumpscare_flags &
-                        JUMPSCARE_FLAG_FOXY) {
-                        game_jumpscare_flags &=
-                                ~(JUMPSCARE_FLAG_FOXY);
+                } else if (game_jumpscare_flags & JUMPSCARE_FLAG_FOXY) {
+                        game_jumpscare_flags &= ~(JUMPSCARE_FLAG_FOXY);
                         foxy_ai_level = 0;
                         foxy_progress = 0;
                         foxy_run_timer = 0.f;
@@ -738,10 +735,8 @@ static void game_shotgun_update(const struct update_params uparms)
                         foxy_use_run_timer = false;
                         mixer_ch_stop(SFX_CH_JUMPSCARE);
                 }
-        } else if (game_office_turn <=
-                GAME_DOOR_RIGHT_INTERACT_DIST) {
-                if (game_door_btn_states_cur &
-                        GAME_DOOR_BTN_RIGHT_DOOR) {
+        } else if (game_office_turn <= GAME_DOOR_RIGHT_INTERACT_DIST) {
+                if (game_door_btn_states_cur & GAME_DOOR_BTN_RIGHT_DOOR) {
                         game_door_btn_states_cur &=
                                 ~(GAME_DOOR_BTN_RIGHT_DOOR);
                         game_shotgun_broke_door_flags |=
@@ -885,9 +880,8 @@ enum scene game_update(struct update_params uparms)
                         return SCENE_TITLE_SCREEN;
                 }
 
-                if (uparms.pressed.b || uparms.pressed.a) {
+                if (uparms.pressed.b || uparms.pressed.a)
                         game_show_exit_prompt = false;
-                }
 
                 return SCENE_MAIN_GAME;
         }
@@ -918,9 +912,8 @@ enum scene game_update(struct update_params uparms)
 
         /* TODO: Add an indication on which button to press to turn off call. */
         if (!camera_is_visible && uparms.pressed.c_up &&
-            SAVE_NIGHT_NUM(save_data) <= 5) {
+            SAVE_NIGHT_NUM(save_data) <= 5)
                 mixer_ch_stop(SFX_CH_PHONECALL);
-        }
 
         if (game_check_cheat_code(uparms.pressed))
                 game_hour_cur = 6;

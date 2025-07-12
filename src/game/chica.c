@@ -192,7 +192,8 @@ void chica_update(int *button_state_ptr, const float dt)
 
         chica_cam_last = chica_cam;
         int cam_next = new_cam_lut[chica_cam][which_room];
-        if (cam_next == YOURE_FUCKED && (*button_state_ptr & GAME_DOOR_BTN_RIGHT_DOOR)) {
+        if (cam_next == YOURE_FUCKED &&
+            (*button_state_ptr & GAME_DOOR_BTN_RIGHT_DOOR)) {
         	cam_next = CAM_4A;
         	/* BULLSHIT FIX THIS SHOULDN'T HAVE TO BE HERE! */
                 camera_states[CAM_4A] |= (CHICA_BIT | ROOM_SPOT_BIT);
@@ -202,6 +203,7 @@ void chica_update(int *button_state_ptr, const float dt)
 
         if (cam_next < AT_DOOR) {
         	float foot_vol = footstep_vol_lut[cam_next];
+
         	mixer_ch_set_vol(SFX_CH_FOOTSTEPS, foot_vol, foot_vol);
         }
 
@@ -213,14 +215,13 @@ void chica_update(int *button_state_ptr, const float dt)
         /* I have no fucking clue why I have to do this */
         if ((chica_cam_last != chica_cam) &&
             ((chica_cam_last == cam_selected) ||
-             (chica_cam == cam_selected))) {
+             (chica_cam == cam_selected)))
                 chica_blackout_timer = 10;
-        }
 
         if (chica_cam != AT_DOOR)
         	chica_scared = false;
 
-        if (             (chica_cam == AT_DOOR && chica_cam_last != AT_DOOR) ||
-        		(chica_cam != AT_DOOR && chica_cam_last == AT_DOOR))
+        if ((chica_cam == AT_DOOR && chica_cam_last != AT_DOOR) ||
+            (chica_cam != AT_DOOR && chica_cam_last == AT_DOOR))
         	*button_state_ptr &= ~GAME_DOOR_BTN_RIGHT_LIGHT;
 }

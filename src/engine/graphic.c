@@ -8,9 +8,8 @@ static int local_loaded_cnt = 0;
 
 void graphic_load(struct graphic *o, const char *path)
 {
-        if (o->is_loaded) {
+        if (o->is_loaded)
                 return;
-        }
 
         o->spr = sprite_load(path);
         loaded_cnt++;
@@ -25,16 +24,14 @@ void graphics_load(struct graphic *o, int num, const char **paths)
 {
         int i;
 
-        for (i = 0; i < num; ++i) {
+        for (i = 0; i < num; ++i)
         	graphic_load(o + i, paths[i]);
-        }
 }
 
 void graphic_unload(struct graphic *o)
 {
-        if (!o->is_loaded) {
+        if (!o->is_loaded)
                 return;
-        }
 
         sprite_free(o->spr);
         o->spr = NULL;
@@ -47,9 +44,8 @@ void graphics_unload(struct graphic *o, int num)
 {
         int i;
 
-        for (i = 0; i < num; ++i) {
+        for (i = 0; i < num; ++i)
         	graphic_unload(o + i);
-        }
 }
 
 void graphic_draw(struct graphic o, int px, int py,

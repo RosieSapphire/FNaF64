@@ -492,6 +492,7 @@ enum scene title_update(const struct update_params uparms)
         /* Starting conditions. */
         if (uparms.pressed.start || uparms.pressed.a) {
                 uint8_t save_beaten_bits_tmp = save_data & SAVE_BEATEN_BITMASK;
+
                 switch(title_opt_cur) {
                 case TITLE_OPT_NEW_GAME:
                         /* Just reset the nights, not the stars */

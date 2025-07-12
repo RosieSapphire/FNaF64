@@ -72,6 +72,7 @@ static void power_down_unload(void)
         is_loaded = false;
 }
 
+/* TODO: Reorganize vars. */
 void power_down_draw(void)
 {
         if (!is_loaded)
@@ -139,7 +140,7 @@ enum scene power_down_update(struct update_params uparms)
         	freddy_music_timer = wrapf(freddy_music_timer,
         			5.0f, &shut_down);
         	if ((shut_down && ((rand() % 5) == 0)) ||
-        			freddy_music_timer_full >= 20) {
+        	    freddy_music_timer_full >= 20) {
         		freddy_state = 2;
         		sfx_stop_all_channels();
         		wav64_play(&sfx_fan, SFX_CH_FAN);
@@ -165,7 +166,7 @@ enum scene power_down_update(struct update_params uparms)
         		shut_down_flicker = 0;
         		debugf("Load freddy frames\n");
         		graphics_load(freddy_scare, FREDDY_SCARE_FRAMES,
-        				freddy_scare_paths);
+        			      freddy_scare_paths);
         	}
 
         	break;
@@ -178,10 +179,11 @@ enum scene power_down_update(struct update_params uparms)
         		wrapf(freddy_scare_rand_timer_loop, 2.0f,
         				&try_scare);
         	if ((try_scare && (rand() & 1)) ||
-        			freddy_scare_rand_timer >= 20) {
+        	    freddy_scare_rand_timer >= 20) {
         		freddy_state = 4;
         		wav64_play(&sfx_jumpscare, SFX_CH_JUMPSCARE);
         	}
+
         	break;
 
         case 4:

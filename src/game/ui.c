@@ -65,6 +65,7 @@ void ui_draw(void)
 
         for (i = 0; i < game_power_usage; ++i) {
         	int ind = CLAMP(i - 1, 0, 69);
+
         	graphic_draw_index_x(usage_atlas, 120 + i * 21,
                                      657, 6, ind, GFX_FLIP_NONE);
         }
@@ -72,12 +73,12 @@ void ui_draw(void)
         graphic_draw_index_y(night_atlas, 200, 632, 6,
                              (game_power_left % 100) / 10, GFX_FLIP_NONE);
         
-        if (game_power_left > 100) {
+        if (game_power_left > 100)
         	graphic_draw_index_y(night_atlas, 185, 632, 6,
                                      game_power_left / 100, GFX_FLIP_NONE);
-        }
 }
 
+/* TODO: Reorder vars. */
 void ui_update(const int button_state, const float dt)
 {
         game_power_timer += dt;

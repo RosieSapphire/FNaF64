@@ -81,27 +81,24 @@ void custom_night_draw(void)
                 return;
         }
         
-        if (!custom_is_loaded) {
+        if (!custom_is_loaded)
                 custom_night_load();
-        }
 
         rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
         rdpq_fill_rectangle(0, 0, 320, 240);
 
         rdpq_set_mode_standard();
-        for (i = 0; i < CUSTOM_ROBOT_CNT; ++i) {
+        for (i = 0; i < CUSTOM_ROBOT_CNT; ++i)
         	graphic_draw_index_y(custom_face_icons, custom_face_pos[i][0],
         			     custom_face_pos[i][1], 67, i,
                                      GFX_FLIP_NONE);
-        }
 
-        for (i = 0; i < CUSTOM_ROBOT_CNT << 1; ++i) {
+        for (i = 0; i < CUSTOM_ROBOT_CNT << 1; ++i)
         	graphic_draw_index_x(custom_buttons, bparms[i][0],
         			     bparms[i][1], bparms[i][2],
         			     bparms[i][3] +
                                      (2 * (custom_ai_selected == (i >> 1))),
                                      GFX_FLIP_NONE);
-        }
 
         rdpq_mode_alphacompare(true);
 
@@ -113,10 +110,9 @@ void custom_night_draw(void)
                 val = robot_ais[i];
                 ones = val % 10;
                 tens = val / 10;
-                for (j = 0; j < 1 + (tens > 0); ++j) {
+                for (j = 0; j < 1 + (tens > 0); ++j)
                 	graphic_draw_index_x(custom_nums, x - 36 * j, y,
                                              12, j ? tens : ones, 0);
-                }
         }
 }
 
@@ -143,11 +139,10 @@ enum scene custom_night_update(struct update_params uparms)
         custom_ai_selected += press_down * 2 - press_up * 2;
         custom_ai_selected &= 3;
 
-        if (uparms.held.a || uparms.held.b) {
+        if (uparms.held.a || uparms.held.b)
         	custom_held_timer += uparms.dt;
-        } else {
+        else
         	custom_held_timer = 0.f;
-        }
 
         ai_ptr_cur = ai_ptrs[custom_ai_selected];
         if (custom_held_timer >= CUSTOM_HELD_TIMER_START_TICKING) {
@@ -165,7 +160,7 @@ enum scene custom_night_update(struct update_params uparms)
         	sfx_stop_all_channels();
                 custom_night_unload();
         	if (freddy_ai_level == 1 && bonnie_ai_level == 9 &&
-        	    chica_ai_level == 8 && foxy_ai_level == 7) {
+        	    chica_ai_level  == 8 && foxy_ai_level   == 7) {
                         custom_was_that_the_bite_of_87 = true;
                         golden_freddy_scare_load();
                         golden_freddy_is_scaring = true;

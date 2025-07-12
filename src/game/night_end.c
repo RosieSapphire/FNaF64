@@ -94,9 +94,8 @@ void night_end_draw(void)
         const int five_start = 298, five_end = 188,
                   six_start  = 408, six_end  = 298;
 
-        if (!night_end_is_loaded) {
+        if (!night_end_is_loaded)
                 night_end_load();
-        }
 
         rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
         rdpq_fill_rectangle(0, 0, 320, 240);
@@ -139,7 +138,7 @@ enum scene night_end_update(const struct update_params uparms)
         night_end_timer += uparms.dt;
 
         if (night_end_timer >= NIGHT_END_TIMER_PLAY_CHEER &&
-                !night_end_played_cheer) {
+            !night_end_played_cheer) {
                 night_end_played_cheer = true;
                 mixer_ch_set_vol(SFX_CH_FAN, 0.8f, 0.8f);
                 wav64_play(game_won_by_murder ? &sfx_daaamn : &sfx_cheering,
