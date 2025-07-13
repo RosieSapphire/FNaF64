@@ -43,7 +43,7 @@ void foxy_load(void)
         foxy_run_timer = 0.0f;
         foxy_use_run_timer = false;
         num_door_pounds = 0;
-        graphics_load(foxy_run, FOXY_RUN_FRAMES, foxy_run_paths);
+        graphics_load(foxy_run, FOXY_RUN_FRAMES, foxy_run_paths, true);
 }
 
 void foxy_unload(void)

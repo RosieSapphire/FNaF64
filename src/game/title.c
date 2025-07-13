@@ -1,3 +1,5 @@
+/* TODO: POSSIBLE REFACTOR! */
+
 #include <stdlib.h>
 
 #include "config.h"
@@ -92,19 +94,19 @@ static void title_load(void)
 {
         /* Graphics */
         graphics_load(title_gfx_freddy_face, TITLE_GFX_FREDDY_FACE_CNT,
-                      title_gfx_freddy_face_paths);
-        graphic_load(&title_gfx_night_text, TX_NIGHT_TEXT);
-        graphic_load(&title_gfx_night_atlas, TX_NIGHT_NUM_ATLAS);
-        graphic_load(&title_gfx_star, TX_STAR);
-        graphic_load(&title_gfx_selector, TX_SELECTOR);
-        graphic_load(&title_gfx_fnaf_text, TX_TITLE_TEXT);
-        graphic_load(&title_gfx_opt_text, TX_TITLE_OPTIONS);
-        graphic_load(&title_gfx_settings_text, TX_SETTINGS_TEXT);
-        graphic_load(&title_gfx_settings_opt_text, TX_SETTINGS_OPTS);
-        graphic_load(&title_gfx_bind_btn_text, TX_BIND_BUTTONS_TEXT);
-        graphic_load(&title_gfx_settings_descs, TX_SETTINGS_DESCS);
-        graphic_load(&title_gfx_eeprom_err, TX_EEPROM_ERROR);
-        graphic_load(&title_gfx_newspaper, TX_NEWSPAPER);
+                      title_gfx_freddy_face_paths, true);
+        graphic_load(       &title_gfx_night_text,        TX_NIGHT_TEXT, true);
+        graphic_load(      &title_gfx_night_atlas,   TX_NIGHT_NUM_ATLAS, true);
+        graphic_load(             &title_gfx_star,              TX_STAR, true);
+        graphic_load(         &title_gfx_selector,          TX_SELECTOR, true);
+        graphic_load(        &title_gfx_fnaf_text,        TX_TITLE_TEXT, true);
+        graphic_load(         &title_gfx_opt_text,     TX_TITLE_OPTIONS, true);
+        graphic_load(    &title_gfx_settings_text,     TX_SETTINGS_TEXT, true);
+        graphic_load(&title_gfx_settings_opt_text,     TX_SETTINGS_OPTS, true);
+        graphic_load(    &title_gfx_bind_btn_text, TX_BIND_BUTTONS_TEXT, true);
+        graphic_load(   &title_gfx_settings_descs,    TX_SETTINGS_DESCS, true);
+        graphic_load(       &title_gfx_eeprom_err,      TX_EEPROM_ERROR, true);
+        graphic_load(        &title_gfx_newspaper,         TX_NEWSPAPER, true);
 
         blip_flash_trigger(true);
         wav64_play(&sfx_static, SFX_CH_STATIC);
@@ -148,18 +150,18 @@ static void title_load(void)
 
 static void title_unload(void)
 {
-        graphic_unload(&title_gfx_eeprom_err);
-        graphic_unload(&title_gfx_settings_descs);
-        graphic_unload(&title_gfx_bind_btn_text);
+        graphic_unload(       &title_gfx_eeprom_err);
+        graphic_unload(   &title_gfx_settings_descs);
+        graphic_unload(    &title_gfx_bind_btn_text);
         graphic_unload(&title_gfx_settings_opt_text);
-        graphic_unload(&title_gfx_settings_text);
-        graphic_unload(&title_gfx_newspaper);
-        graphic_unload(&title_gfx_night_atlas);
-        graphic_unload(&title_gfx_night_text);
-        graphic_unload(&title_gfx_opt_text);
-        graphic_unload(&title_gfx_fnaf_text);
-        graphic_unload(&title_gfx_selector);
-        graphic_unload(&title_gfx_star);
+        graphic_unload(    &title_gfx_settings_text);
+        graphic_unload(        &title_gfx_newspaper);
+        graphic_unload(      &title_gfx_night_atlas);
+        graphic_unload(       &title_gfx_night_text);
+        graphic_unload(         &title_gfx_opt_text);
+        graphic_unload(        &title_gfx_fnaf_text);
+        graphic_unload(         &title_gfx_selector);
+        graphic_unload(             &title_gfx_star);
         graphics_unload(title_gfx_freddy_face, TITLE_GFX_FREDDY_FACE_CNT);
         blip_destroy(&title_gfx_blip_loop_dls, TITLE_GFX_BLIP_LOOP_DL_CNT);
 
@@ -188,7 +190,7 @@ void title_draw(void)
                 face_cur = (title_face_state < TITLE_GFX_FREDDY_FACE_CNT) *
                         title_face_state;
                 rdpq_set_mode_copy(false);
-                graphic_draw(title_gfx_freddy_face[face_cur],
+                graphic_draw(title_gfx_freddy_face + face_cur,
                              0, 0, 0, 0, GFX_FLIP_NONE);
         }
 
@@ -236,15 +238,15 @@ void title_draw(void)
 
                 rdpq_set_mode_standard();
                 rdpq_mode_alphacompare(true);
-                graphic_draw(title_gfx_settings_text, 64,
+                graphic_draw(&title_gfx_settings_text, 64,
                              64, 0, 0, GFX_FLIP_NONE);
-                graphic_draw(title_gfx_settings_opt_text,
+                graphic_draw(&title_gfx_settings_opt_text,
                              128, 256, 0, 0, GFX_FLIP_NONE);
 
-                graphic_draw(title_gfx_selector, 40,
+                graphic_draw(&title_gfx_selector, 40,
                              sett_opt_cur_y_pos[title_opt_cur_setting],
                              0, 0, GFX_FLIP_NONE);
-                graphic_draw_index_y(title_gfx_settings_descs, 132, 162, 20,
+                graphic_draw_index_y(&title_gfx_settings_descs, 132, 162, 20,
                                      title_opt_cur_setting, GFX_FLIP_NONE);
 
                 /*
@@ -281,15 +283,15 @@ void title_draw(void)
                 rdpq_set_mode_standard();
                 rdpq_mode_alphacompare(1);
                 for (i = 0; i < star_cnt; ++i)
-                        graphic_draw(title_gfx_star, 93 + 77 * i,
+                        graphic_draw(&title_gfx_star, 93 + 77 * i,
                                      350, 28, 27, GFX_FLIP_NONE);
         }
 
-        graphic_draw_index_y(title_gfx_opt_text, 118, 420,
+        graphic_draw_index_y(&title_gfx_opt_text, 118, 420,
                              22 * title_opt_available, 0, GFX_FLIP_NONE);
-        graphic_draw(title_gfx_fnaf_text, 70, 68, 0, 0, GFX_FLIP_NONE);
-        graphic_draw(title_gfx_bind_btn_text, 558, 45, 0, 0, GFX_FLIP_NONE);
-        graphic_draw(title_gfx_selector, 40, 429 + title_opt_cur * 66,
+        graphic_draw(&title_gfx_fnaf_text, 70, 68, 0, 0, GFX_FLIP_NONE);
+        graphic_draw(&title_gfx_bind_btn_text, 558, 45, 0, 0, GFX_FLIP_NONE);
+        graphic_draw(&title_gfx_selector, 40, 429 + title_opt_cur * 66,
                      0, 0, GFX_FLIP_NONE);
 
         /*
@@ -297,9 +299,9 @@ void title_draw(void)
          * make sure that it can only go up to 5 (as per the original game).
          */
         if (title_opt_cur == TITLE_OPT_CONTINUE) {
-                graphic_draw(title_gfx_night_text, 444, 509,
+                graphic_draw(&title_gfx_night_text, 444, 509,
                              0, 0, GFX_FLIP_NONE);
-                graphic_draw_index_y(title_gfx_night_atlas, 512, 509, 6,
+                graphic_draw_index_y(&title_gfx_night_atlas, 512, 509, 6,
                                      CLAMP(SAVE_NIGHT_NUM(save_data), 1, 5),
                                      GFX_FLIP_NONE);
         }
@@ -317,7 +319,7 @@ void title_draw(void)
 
                 rdpq_set_mode_standard();
                 rdpq_mode_alphacompare(true);
-                graphic_draw(title_gfx_eeprom_err, 96, 168,
+                graphic_draw(&title_gfx_eeprom_err, 96, 168,
                              0, 0, GFX_FLIP_NONE);
         }
 
@@ -342,7 +344,7 @@ title_draw_newspaper:
                 rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY_CONST);
                 rdpq_set_prim_color(color_from_packed32(0xFFFFFFFF));
                 rdpq_set_fog_color(color_from_packed32(newspaper_alpha * 0xFF));
-                graphic_draw(title_gfx_newspaper, 0, 0, 0, 0, GFX_FLIP_NONE);
+                graphic_draw(&title_gfx_newspaper, 0, 0, 0, 0, GFX_FLIP_NONE);
         }
 }
 

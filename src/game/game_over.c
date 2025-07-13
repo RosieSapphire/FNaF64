@@ -1,3 +1,5 @@
+/* TODO: REFACTOR! */
+
 #include "engine/graphic.h"
 #include "engine/sfx.h"
 
@@ -15,8 +17,8 @@ static void _game_over_load(void)
 {
         if (is_loaded)
                 return;
-        graphic_load(&over_screen, TX_GAME_OVER_SCREEN);
-        graphic_load(&over_text, TX_GAME_OVER_TEXT);
+        graphic_load(&over_screen, TX_GAME_OVER_SCREEN, true);
+        graphic_load(  &over_text,   TX_GAME_OVER_TEXT, true);
         over_timer = 0.0f;
         blip_flash_trigger(true);
 
@@ -38,15 +40,17 @@ static void _game_over_unload(void)
 
 void game_over_draw(void)
 {
+        bool show_over_screen;
+
         _game_over_load();
 
-        bool show_over_screen = over_timer >= 10;
+        show_over_screen = (over_timer >= 10);
         if (show_over_screen) {
                 rdpq_set_mode_copy(false);
-                graphic_draw(over_screen, 0, 0, 0, 0, 0);
+                graphic_draw(&over_screen, 0, 0, 0, 0, GFX_FLIP_NONE);
                 rdpq_set_mode_standard();
                 rdpq_mode_alphacompare(true);
-                graphic_draw(over_text, 685, 636, 0, 0, GFX_FLIP_NONE);
+                graphic_draw(&over_text, 685, 636, 0, 0, GFX_FLIP_NONE);
         }
 
         static_draw(show_over_screen);

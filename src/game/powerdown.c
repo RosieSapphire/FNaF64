@@ -1,3 +1,5 @@
+/* TODO: REFACTOR! */
+
 #include <stdlib.h>
 
 #include "engine/graphic.h"
@@ -44,24 +46,26 @@ static float freddy_scare_anim_timer;
 
 static void power_down_load(void)
 {
-        show_up_timer = 0.0f;
-        total_timer = 0.0f;
-        freddy_state = 0;
-        freddy_flicker_val = 0;
-        freddy_flicker_timer = 0.0f;
-        freddy_music_timer = 0.0f;
-        freddy_music_timer_full = 0.0f;
-        freddy_scare_rand_timer_loop = 0.0f;
-        freddy_scare_rand_timer = 0.0f;
-        freddy_scare_anim_timer = 0.0f;
-        shut_down_flicker_timer = 0.0f;
-        shut_down_timer = 0.0f;
-        shut_down_flicker = 0;
-        graphics_load(room_views, 2, room_view_paths);
+
+        graphics_load(room_views, 2, room_view_paths, true);
+
         mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.6f, 0.6f);
         wav64_play(&sfx_power_down, SFX_CH_AMBIENCE);
 
-        is_loaded = true;
+        show_up_timer                = 0.f;
+        total_timer                  = 0.f;
+        freddy_state                 = 0;
+        freddy_flicker_val           = 0;
+        freddy_flicker_timer         = 0.f;
+        freddy_music_timer           = 0.f;
+        freddy_music_timer_full      = 0.f;
+        freddy_scare_rand_timer_loop = 0.f;
+        freddy_scare_rand_timer      = 0.f;
+        freddy_scare_anim_timer      = 0.f;
+        shut_down_flicker_timer      = 0.f;
+        shut_down_timer              = 0.f;
+        shut_down_flicker            = 0;
+        is_loaded                    = true;
 }
 
 static void power_down_unload(void)
@@ -91,13 +95,13 @@ void power_down_draw(void)
                         rdpq_set_mode_copy(false);
                         int frame = (freddy_scare_anim_timer / 40.0f) *
                                 FREDDY_SCARE_FRAMES;
-                        graphic_draw(freddy_scare[frame], 0, 0,
+                        graphic_draw(freddy_scare + frame, 0, 0,
                                      0, 0, GFX_FLIP_NONE);
                 }
                 return;
         }
 
-        graphic_draw(room_views[state], game_office_turn,
+        graphic_draw(room_views + state, game_office_turn,
                      0, 0, 0, GFX_FLIP_NONE);
         perspective_end();
 }
@@ -168,7 +172,7 @@ enum scene power_down_update(struct update_params uparms)
                         shut_down_flicker = 0;
                         debugf("Load freddy frames\n");
                         graphics_load(freddy_scare, FREDDY_SCARE_FRAMES,
-                                      freddy_scare_paths);
+                                      freddy_scare_paths, true);
                 }
 
                 break;

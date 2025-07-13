@@ -1,3 +1,5 @@
+/* TODO: POSSIBLE REFACTOR! */
+
 #include "engine/sfx.h"
 #include "engine/graphic.h"
 #include "engine/util.h"
@@ -72,11 +74,12 @@ static void night_end_load(void)
         mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.8f, 0.8f);
         wav64_play(&sfx_chimes, SFX_CH_AMBIENCE);
 
-        graphic_load(&night_end_gfx_am, TX_END_AM);
-        graphic_load(&night_end_gfx_six, TX_END_SIX);
-        graphic_load(&night_end_gfx_five, TX_END_FIVE);
+        graphic_load(  &night_end_gfx_am,   TX_END_AM, true);
+        graphic_load( &night_end_gfx_six,  TX_END_SIX, true);
+        graphic_load(&night_end_gfx_five, TX_END_FIVE, true);
+
         if (game_won_by_murder)
-                graphic_load(&night_end_gfx_damn_shell, TX_END_DAMN);
+                graphic_load(&night_end_gfx_damn_shell, TX_END_DAMN, true);
 
         night_end_played_cheer = false;
         night_end_is_loaded    = true;
@@ -108,13 +111,12 @@ void night_end_draw(void)
         rdpq_set_mode_standard();
 
         t = CLAMP((night_end_timer - 1) * 0.2f, 0, 1);
-        graphic_draw(game_won_by_murder ?
-                     night_end_gfx_damn_shell : night_end_gfx_six,
-                     390, lerpf(six_start, six_end, t),
+        graphic_draw(game_won_by_murder ? &night_end_gfx_damn_shell :
+                                          &night_end_gfx_six, 390,
+                     lerpf(six_start, six_end, t), -5, 0, GFX_FLIP_NONE);
+        graphic_draw(&night_end_gfx_five, 390, lerpf(five_start, five_end, t),
                      -5, 0, GFX_FLIP_NONE);
-        graphic_draw(night_end_gfx_five, 390, lerpf(five_start, five_end, t),
-                     -5, 0, GFX_FLIP_NONE);
-        graphic_draw(night_end_gfx_am, 486, 296, -5, 0, GFX_FLIP_NONE);
+        graphic_draw(&night_end_gfx_am, 486, 296, -5, 0, GFX_FLIP_NONE);
 
         rdpq_set_mode_fill(RGBA32(0x0, 0x0, 0x0, 0xFF));
         rdpq_fill_rectangle(vcon(339), vcon(168),

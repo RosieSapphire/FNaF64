@@ -30,9 +30,9 @@ static const int custom_face_pos[CUSTOM_ROBOT_CNT][2] = {
 static void custom_night_load(void)
 {
         /* Graphics */
-        graphic_load(&custom_face_icons, TX_FACE_ATLAS);
-        graphic_load(&custom_buttons,    TX_AI_BUTTONS);
-        graphic_load(&custom_nums,       TX_AI_NUM_ATLAS);
+        graphic_load(&custom_face_icons,   TX_FACE_ATLAS, true);
+        graphic_load(   &custom_buttons,   TX_AI_BUTTONS, true);
+        graphic_load(      &custom_nums, TX_AI_NUM_ATLAS, true);
 
         /* Variables */
         custom_ai_selected             = 0;
@@ -46,9 +46,9 @@ static void custom_night_load(void)
 
 static void custom_night_unload(void)
 {
-        graphic_unload(&custom_face_icons);
-        graphic_unload(&custom_buttons);
-        graphic_unload(&custom_nums);
+        graphics_unload(&custom_face_icons, 1);
+        graphics_unload(&custom_buttons,    1);
+        graphics_unload(&custom_nums,       1);
 
         custom_is_loaded = false;
 }
@@ -89,14 +89,15 @@ void custom_night_draw(void)
 
         rdpq_set_mode_standard();
         for (i = 0; i < CUSTOM_ROBOT_CNT; ++i)
-                graphic_draw_index_y(custom_face_icons, custom_face_pos[i][0],
-                                     custom_face_pos[i][1], 67, i,
-                                     GFX_FLIP_NONE);
+                graphic_draw_index_y(&custom_face_icons,
+                                     custom_face_pos[i][0],
+                                     custom_face_pos[i][1],
+                                     67, i, GFX_FLIP_NONE);
 
         for (i = 0; i < CUSTOM_ROBOT_CNT << 1; ++i)
-                graphic_draw_index_x(custom_buttons, bparms[i][0],
-                                     bparms[i][1], bparms[i][2],
-                                     bparms[i][3] +
+                graphic_draw_index_x(&custom_buttons,
+                                     bparms[i][0], bparms[i][1],
+                                     bparms[i][2], bparms[i][3] +
                                      (2 * (custom_ai_selected == (i >> 1))),
                                      GFX_FLIP_NONE);
 
@@ -111,8 +112,9 @@ void custom_night_draw(void)
                 ones = val % 10;
                 tens = val / 10;
                 for (j = 0; j < 1 + (tens > 0); ++j)
-                        graphic_draw_index_x(custom_nums, x - 36 * j, y,
-                                             12, j ? tens : ones, 0);
+                        graphic_draw_index_x(&custom_nums, x - 36 * j, y,
+                                             12, j ? tens : ones,
+                                             GFX_FLIP_NONE);
         }
 }
 

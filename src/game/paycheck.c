@@ -26,7 +26,8 @@ static void paycheck_load(void)
         };
 
         paycheck_timer = 0.f;
-        graphics_load(paycheck_screens, PAYCHECK_SCREEN_CNT, screen_paths);
+        graphics_load(paycheck_screens, PAYCHECK_SCREEN_CNT,
+                      screen_paths, true);
         mixer_ch_set_vol(SFX_CH_AMBIENCE, 0.8f, 0.8f);
         wav64_play(&sfx_music_box, SFX_CH_AMBIENCE);
 
@@ -70,7 +71,7 @@ void paycheck_draw(void)
          * get the same paycheck as night 6. However, you still get the
          * 3rd star, and it's marked on your save file.
          */
-        graphic_draw(paycheck_screens[SAVE_NIGHT_NUM(save_data) - 6],
+        graphic_draw(paycheck_screens + SAVE_NIGHT_NUM(save_data) - 6,
                      0, 0, 0, 0, GFX_FLIP_NONE);
 }
 

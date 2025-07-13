@@ -1,3 +1,5 @@
+/* TODO: POSSIBLE REFACTOR! */
+
 #include <stdlib.h>
 
 #include "engine/graphic.h"
@@ -25,7 +27,8 @@ static int   static_frame;
 
 void static_load(void)
 {
-        graphics_load(static_frames, STATIC_FRAME_CNT, static_frame_paths);
+        graphics_load(static_frames, STATIC_FRAME_CNT,
+                      static_frame_paths, true);
 
         static_timer = 0.f;
         static_frame = 0;
@@ -34,9 +37,11 @@ void static_load(void)
 void static_draw(const bool as_overlay)
 {
         rdpq_set_mode_standard();
+
         if (as_overlay)
                 rdpq_mode_blender(RDPQ_BLENDER_MULTIPLY);
-        graphic_draw(static_frames[static_frame], 0, 0, 0, 0, GFX_FLIP_NONE);
+
+        graphic_draw(static_frames + static_frame, 0, 0, 0, 0, GFX_FLIP_NONE);
 }
 
 void static_update(const float dt)

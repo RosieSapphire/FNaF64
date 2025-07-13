@@ -79,7 +79,7 @@ void chica_load(void)
         scare_timer           = 0.f;
         kitchen_noise_timer   = 0.f;
 
-        graphics_load(chica_scare, CHICA_SCARE_FRAMES, chica_scare_paths);
+        graphics_load(chica_scare, CHICA_SCARE_FRAMES, chica_scare_paths, true);
 }
 
 void chica_unload(void)
@@ -89,7 +89,7 @@ void chica_unload(void)
 
 void chica_draw_scare(void)
 {
-        graphic_draw(chica_scare[(int)scare_timer], 0, 0, 0, 0, 0);
+        graphic_draw(chica_scare + (int)scare_timer, 0, 0, 0, 0, 0);
 }
 
 void chica_draw_debug(void)

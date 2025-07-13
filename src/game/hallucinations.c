@@ -1,3 +1,5 @@
+/* TODO: REFACTOR! */
+
 #include <stdlib.h>
 
 #include "engine/graphic.h"
@@ -25,7 +27,7 @@ static float timeout;
 
 void hallucinations_load(void)
 {
-        graphics_load(visuals, NUM_HALLUC, visual_paths);
+        graphics_load(visuals, NUM_HALLUC, visual_paths, true);
         is_running = false;
         visible_val = 0;
         which_visual = 0;
@@ -47,7 +49,7 @@ void hallucinations_draw(void)
         if (!is_running || visible_val != 1)
                 return;
 
-        graphic_draw(visuals[which_visual], 0, 0, 0, 0, 0);
+        graphic_draw(visuals + which_visual, 0, 0, 0, 0, 0);
 }
 
 void hallucinations_update(double dt)

@@ -1,3 +1,5 @@
+/* TODO: REFACTOR! */
+
 #include <stdlib.h>
 
 #include "engine/graphic.h"
@@ -196,32 +198,32 @@ static struct graphic views_extra[VIEWS_EXTRA];
 
 void camera_load(void)
 {
-        flip_timer = 0.0f;
-        camera_was_using = false;
-        camera_is_using = false;
-        camera_was_visible = false;
-        camera_is_visible = false;
-        camera_glitch_timer = 0.0f;
-        button_blink_timer = 0.0f;
-        button_blink = 1;
-        view_turn = 0.0f;
-        flicker_timer = 0.0f;
-        flicker_val = 0;
-        cam_selected = CAM_1A;
+        flip_timer          = 0.f;
+        camera_was_using    = false;
+        camera_is_using     = false;
+        camera_was_visible  = false;
+        camera_is_visible   = false;
+        camera_glitch_timer = 0.f;
+        button_blink_timer  = 0.f;
+        button_blink        = 1;
+        view_turn           = 0.f;
+        flicker_timer       = 0.f;
+        flicker_val         = 0;
+        cam_selected        = CAM_1A;
 
         rspq_block_begin();
         rdpq_set_mode_fill(RGBA32(0xFF, 0xFF, 0xFF, 0xFF));
-        rdpq_fill_rectangle(10, 5, 311, 6);    // top
-        rdpq_fill_rectangle(10, 6, 11, 231);   // left
-        rdpq_fill_rectangle(310, 6, 311, 231); // right
-        rdpq_fill_rectangle(10, 230, 311, 231); // bottom
+        rdpq_fill_rectangle( 10,   5, 311,   6); // top
+        rdpq_fill_rectangle( 10,   6,  11, 231); // left
+        rdpq_fill_rectangle(310,   6, 311, 231); // right
+        rdpq_fill_rectangle( 10, 230, 311, 231); // bottom
         border_block = rspq_block_end();
 
-        graphics_load(flip_anim, FLIP_FRAMES, flip_anim_paths);
-        graphics_load(buttons, 2, button_paths);
-        graphic_load(&map, TX_CAM_MAP);
-        graphic_load(&name_atlas, TX_CAM_NAME_ATLAS);
-        graphic_load(&missing_footage, TX_CAM_CORRUPTED);
+        graphics_load(flip_anim, FLIP_FRAMES, flip_anim_paths, true);
+        graphics_load(  buttons,           2,    button_paths, true);
+        graphic_load(            &map,        TX_CAM_MAP, true);
+        graphic_load(     &name_atlas, TX_CAM_NAME_ATLAS, true);
+        graphic_load(&missing_footage,  TX_CAM_CORRUPTED, true);
 
         wav64_play(&sfx_robot_voice, SFX_CH_ROBOTVOICE);
 }
@@ -229,6 +231,7 @@ void camera_load(void)
 static const char *camera_get_view_path(void)
 {
         int i, bitmask;
+        char buf[64];
 
         bitmask = (FREDDY_BIT | CHICA_BIT | BONNIE_BIT | ROOM_SPOT_BIT);
         for (i = 0; i < cam_state_counts[cam_selected]; ++i) {
@@ -237,7 +240,7 @@ static const char *camera_get_view_path(void)
                         return cam_states[cam_selected][i].path;
         }
 
-        char buf[64] = {0};
+        memset(buf, 0, sizeof(buf));
         buf[0] = '0';
         buf[1] = 'b';
         for (i = 2; i < 2 + 16; ++i) {
@@ -251,6 +254,8 @@ static const char *camera_get_view_path(void)
 
 static void _camera_views_unload(bool exclude_current)
 {
+        /* Possible FIXME: What the fuck is going on here? */
+        
         int i, cam_last, cam_cur;
 
         cam_last = camera_states_last[cam_selected] &
@@ -259,14 +264,14 @@ static void _camera_views_unload(bool exclude_current)
                   ~(FACE_GLITCH_MASK | FLICKER_BIT);
         for (i = 0; i < CAM_COUNT; ++i) {
                 if (!exclude_current) {
-                        graphic_unload(views + i);
+                        graphics_unload(views + i, 1);
                         continue;
                 }
 
                 if (i == cam_selected && cam_last == cam_cur)
                         continue;
 
-                graphic_unload(views + i);
+                graphics_unload(views + i, 1);
         }
 }
 
@@ -293,7 +298,7 @@ void camera_flip_draw(void)
                 return;
 
         rdpq_set_mode_copy(true);
-        graphic_draw(flip_anim[frame], 0, 0, 0, 0, GFX_FLIP_NONE);
+        graphic_draw(flip_anim + frame, 0, 0, 0, 0, GFX_FLIP_NONE);
 }
 
 void camera_view_draw(void)
@@ -312,8 +317,9 @@ void camera_view_draw(void)
         _camera_views_unload(true);
         switch(cam_selected) {
         case CAM_1C:
-                graphic_load(views + cam_selected, fox_paths[foxy_progress]);
-                graphic_draw(views[cam_selected], view_turn,
+                graphic_load(views + cam_selected,
+                             fox_paths[foxy_progress], true);
+                graphic_draw(views + cam_selected, view_turn,
                              0, 0, 0, GFX_FLIP_NONE);
                 perspective_end();
                 return;
@@ -323,7 +329,7 @@ void camera_view_draw(void)
                         int frame = (foxy_run_timer / 35.0f) * FOXY_RUN_FRAMES;
 
                         frame = CLAMP(frame, 0, FOXY_RUN_FRAMES - 1);
-                        graphic_draw(foxy_run[frame], view_turn,
+                        graphic_draw(foxy_run + frame, view_turn,
                                      0, 0, 0, GFX_FLIP_NONE);
                         perspective_end();
                         return;
@@ -332,15 +338,16 @@ void camera_view_draw(void)
                 if (camera_states[CAM_2A] & FLICKER_BIT) {
                         /* FIXME: This will cause a crash... immediately... */
                         graphic_load(views + cam_selected,
-                                     camera_get_view_path());
-                        graphic_draw(views[cam_selected],
+                                     camera_get_view_path(), true);
+                        graphic_draw(views + cam_selected,
                                      view_turn, 0, 0, 0, GFX_FLIP_NONE);
                         perspective_end();
                         return;
                 }
 
-                graphic_load(views_extra, TX_CAM_2A_DARK);
-                graphic_draw(views_extra[0], view_turn, 0, 0, 0, GFX_FLIP_NONE);
+                graphic_load(views_extra, TX_CAM_2A_DARK, true);
+                graphic_draw(views_extra + 0, view_turn,
+                             0, 0, 0, GFX_FLIP_NONE);
                 perspective_end();
                 return;
 
@@ -352,8 +359,8 @@ void camera_view_draw(void)
                     bonnie_cam == CAM_1B)
                         break;
 
-                graphic_load(views_extra + 1, TX_CAM_2B_GOLD);
-                graphic_draw(views_extra[1], view_turn, 0, 0, 0, GFX_FLIP_NONE);
+                graphic_load(views_extra + 1, TX_CAM_2B_GOLD, true);
+                graphic_draw(views_extra + 1, view_turn, 0, 0, 0, GFX_FLIP_NONE);
                 perspective_end();
                 return;
 
@@ -362,9 +369,14 @@ void camera_view_draw(void)
                 rdpq_fill_rectangle(0, 0, 320, 240);
                 perspective_end();
 
+                /*
+                 * FIXME: Move this into `camera_ui_draw()` since that
+                 * gets drawn overtop of the static effect. When done
+                 * here, it just gets covered by the static.
+                 */
                 rdpq_set_mode_standard();
                 rdpq_mode_alphacompare(true);
-                graphic_draw(missing_footage, 294, 90, 0, 0, GFX_FLIP_NONE);
+                graphic_draw(&missing_footage, 294, 90, 0, 0, GFX_FLIP_NONE);
                 return;
 
         default:
@@ -387,8 +399,8 @@ void camera_view_draw(void)
 
                 if (glitch_val < 25) {
                         graphic_load(views + cam_selected,
-                                        camera_get_view_path());
-                        graphic_draw(views[cam_selected], view_turn,
+                                     camera_get_view_path(), true);
+                        graphic_draw(views + cam_selected, view_turn,
                                      0, 0, 0, GFX_FLIP_NONE);
                         perspective_end();
                         return;
@@ -396,17 +408,19 @@ void camera_view_draw(void)
 
                 if (glitch_val >= 25 && glitch_val < 29) {
                         int o = !i ? 1 : 3;
-                        graphic_load(views_extra + o, side_paths[i][0]);
-                        graphic_draw(views_extra[o], view_turn,
+                        graphic_load(views_extra + o, side_paths[i][0], true);
+                        graphic_draw(views_extra + o, view_turn,
                                      0, 0, 0, GFX_FLIP_NONE);
                         perspective_end();
                         return;
                 }
 
                 if (glitch_val >= 29) {
-                        int o = !i ? 2 : 4;
-                        graphic_load(views_extra + o, side_paths[i][1]);
-                        graphic_draw(views_extra[o], view_turn,
+                        int o;
+
+                        o = !i ? 2 : 4;
+                        graphic_load(views_extra + o, side_paths[i][1], true);
+                        graphic_draw(views_extra + o, view_turn,
                                      0, 0, 0, GFX_FLIP_NONE);
                         perspective_end();
                         return;
@@ -414,8 +428,8 @@ void camera_view_draw(void)
         }
 
         graphics_unload(views_extra, VIEWS_EXTRA);
-        graphic_load(views + cam_selected, camera_get_view_path());
-        graphic_draw(views[cam_selected], view_turn, 0, 0, 0, GFX_FLIP_NONE);
+        graphic_load(views + cam_selected, camera_get_view_path(), true);
+        graphic_draw(views + cam_selected, view_turn, 0, 0, 0, GFX_FLIP_NONE);
         perspective_end();
 }
 
@@ -427,20 +441,27 @@ void camera_ui_draw(void)
         rspq_block_run(border_block);
         rdpq_set_mode_standard();
         rdpq_mode_alphacompare(true);
-        graphic_draw(map, 531, 313, 0, 0, GFX_FLIP_NONE);
+        graphic_draw(&map, 531, 313, 0, 0, GFX_FLIP_NONE);
 
         for (i = 0; i < CAM_COUNT; ++i) {
-                bool blink = button_blink && i == cam_selected;
-                graphic_draw(buttons[blink], cam_button_pos[i][0] - 317,
-                                cam_button_pos[i][1], 29, 19, GFX_FLIP_NONE);
-                graphic_draw_index_x(name_atlas,
+                bool blink;
+
+                blink = button_blink && i == cam_selected;
+                graphic_draw(buttons + blink, cam_button_pos[i][0] - 317,
+                             cam_button_pos[i][1], 29, 19, GFX_FLIP_NONE);
+                graphic_draw_index_x(&name_atlas,
                                      cam_button_pos[i][0] - 317 - 24,
                                      cam_button_pos[i][1] - 12,
                                      11, i, GFX_FLIP_NONE);
         }
 
+        /*
+         * FIXME: This does not show up when the camera is blacked out,
+         * only when looking at the kitchen camera. Slight Mandella effect
+         * on my end. :p
+         */
         if (camera_glitch_timer)
-                graphic_draw(missing_footage, 294, 90, 0, 0, GFX_FLIP_NONE);
+                graphic_draw(&missing_footage, 294, 90, 0, 0, GFX_FLIP_NONE);
 }
 
 static void camera_flip_update(const struct update_params uparms)

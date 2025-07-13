@@ -1,3 +1,5 @@
+/* TODO: REFACTOR! */
+
 #include "engine/graphic.h"
 #include "engine/util.h"
 
@@ -16,27 +18,36 @@ static struct graphic night_atlas;
 static struct graphic power_left_text;
 static struct graphic usage_text;
 static struct graphic usage_atlas;
+static           bool ui_is_loaded = false;
 
 void ui_load(void)
 {
-        graphic_load(&night_text, TX_NIGHT_TEXT);
-        graphic_load(&am, TX_AM_SMALL);
-        graphic_load(&hour_atlas, TX_HOUR_ATLAS);
-        graphic_load(&night_atlas, TX_NIGHT_NUM_ATLAS);
-        graphic_load(&power_left_text, TX_POWER_LEFT_TEXT);
-        graphic_load(&usage_text, TX_USAGE_TEXT);
-        graphic_load(&usage_atlas, TX_USAGE_ATLAS);
+        assertf(!ui_is_loaded, "Trying to load already loaded UI.\n");
+
+        graphic_load(     &night_text,      TX_NIGHT_TEXT, true);
+        graphic_load(             &am,        TX_AM_SMALL, true);
+        graphic_load(     &hour_atlas,      TX_HOUR_ATLAS, true);
+        graphic_load(    &night_atlas, TX_NIGHT_NUM_ATLAS, true);
+        graphic_load(&power_left_text, TX_POWER_LEFT_TEXT, true);
+        graphic_load(     &usage_text,      TX_USAGE_TEXT, true);
+        graphic_load(    &usage_atlas,     TX_USAGE_ATLAS, true);
+
+        ui_is_loaded = true;
 }
 
 void ui_unload(void)
 {
-        graphic_unload(&night_text);
-        graphic_unload(&am);
-        graphic_unload(&hour_atlas);
-        graphic_unload(&night_atlas);
+        assertf(ui_is_loaded, "Trying to unload already unloaded UI.\n");
+
+        graphic_unload(     &night_text);
+        graphic_unload(             &am);
+        graphic_unload(     &hour_atlas);
+        graphic_unload(    &night_atlas);
         graphic_unload(&power_left_text);
-        graphic_unload(&usage_text);
-        graphic_unload(&usage_atlas);
+        graphic_unload(     &usage_text);
+        graphic_unload(    &usage_atlas);
+
+        ui_is_loaded = false;
 }
 
 void ui_draw(void)
@@ -45,35 +56,35 @@ void ui_draw(void)
 
         rdpq_set_mode_standard();
         rdpq_mode_alphacompare(true);
-        graphic_draw(am, 879, 30, 0, 0, GFX_FLIP_NONE);
-        graphic_draw(night_text, 828, 71, 0, 0, GFX_FLIP_NONE);
+        graphic_draw(&am, 879, 30, 0, 0, GFX_FLIP_NONE);
+        graphic_draw(&night_text, 828, 71, 0, 0, GFX_FLIP_NONE);
 
         if (game_hour_cur > 0) {
-                graphic_draw_index_y(hour_atlas, 843, 30,
+                graphic_draw_index_y(&hour_atlas, 843, 30,
                                      9, game_hour_cur, GFX_FLIP_NONE);
         } else {
-                graphic_draw_index_y(hour_atlas, 843 - 26,
+                graphic_draw_index_y(&hour_atlas, 843 - 26,
                                      30, 9, 1, GFX_FLIP_NONE);
-                graphic_draw_index_y(hour_atlas, 843, 30, 9, 2, GFX_FLIP_NONE);
+                graphic_draw_index_y(&hour_atlas, 843, 30, 9, 2, GFX_FLIP_NONE);
         }
 
-        graphic_draw_index_y(night_atlas, 903, 71, 6,
+        graphic_draw_index_y(&night_atlas, 903, 71, 6,
                              SAVE_NIGHT_NUM(save_data), GFX_FLIP_NONE);
-        graphic_draw(power_left_text, 106, 638, 68, 7, GFX_FLIP_NONE);
-        graphic_draw(usage_text, 74, 674, 36, 7, GFX_FLIP_NONE);
+        graphic_draw(&power_left_text, 106, 638, 68, 7, GFX_FLIP_NONE);
+        graphic_draw(&usage_text, 74, 674, 36, 7, GFX_FLIP_NONE);
 
         for (i = 0; i < game_power_usage; ++i) {
                 int ind = CLAMP(i - 1, 0, 69);
 
-                graphic_draw_index_x(usage_atlas, 120 + i * 21,
+                graphic_draw_index_x(&usage_atlas, 120 + i * 21,
                                      657, 6, ind, GFX_FLIP_NONE);
         }
 
-        graphic_draw_index_y(night_atlas, 200, 632, 6,
+        graphic_draw_index_y(&night_atlas, 200, 632, 6,
                              (game_power_left % 100) / 10, GFX_FLIP_NONE);
         
         if (game_power_left > 100)
-                graphic_draw_index_y(night_atlas, 185, 632, 6,
+                graphic_draw_index_y(&night_atlas, 185, 632, 6,
                                      game_power_left / 100, GFX_FLIP_NONE);
 }
 

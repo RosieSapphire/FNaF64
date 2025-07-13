@@ -38,7 +38,7 @@ static void which_night_load(void)
         int night_cur;
 
         /* Graphics */
-        graphic_load(&which_night_gfx_atlas, TX_WHICH_NIGHT_ATLAS);
+        graphic_load(&which_night_gfx_atlas, TX_WHICH_NIGHT_ATLAS, true);
 
         blip_flash_trigger(true);
 
@@ -61,6 +61,7 @@ static void which_night_load(void)
 static void which_night_unload(void)
 {
         graphic_unload(&which_night_gfx_atlas);
+
         which_night_is_loaded = false;
 }
 
@@ -74,9 +75,9 @@ void which_night_draw(void)
         rdpq_set_mode_fill(RGBA32(0, 0, 0, 0xFF));
         rdpq_fill_rectangle(0, 0, 320, 240);
         rdpq_set_mode_standard();
-        graphic_draw_index_y(which_night_gfx_atlas, 372, 270,
+        graphic_draw_index_y(&which_night_gfx_atlas, 372, 270,
                              11, 0, GFX_FLIP_NONE);
-        graphic_draw_index_y(which_night_gfx_atlas, 373, 336, 11,
+        graphic_draw_index_y(&which_night_gfx_atlas, 373, 336, 11,
                              SAVE_NIGHT_NUM(save_data), GFX_FLIP_NONE);
 
         fade_alpha =

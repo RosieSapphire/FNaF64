@@ -20,7 +20,7 @@ void golden_freddy_scare_load(void)
         if (golden_freddy_scare_is_loaded)
                 return;
 
-        graphic_load(&golden_freddy_gfx_scare, TX_GOLDEN_FREDDY_SCARE);
+        graphic_load(&golden_freddy_gfx_scare, TX_GOLDEN_FREDDY_SCARE, true);
         golden_freddy_scare_timer = 0.f;
         golden_freddy_is_scaring  = false;
         golden_freddy_was_scaring = false;
@@ -31,7 +31,7 @@ void golden_freddy_scare_load(void)
 void golden_freddy_scare_draw(void)
 {
         rdpq_set_mode_copy(true);
-        graphic_draw(golden_freddy_gfx_scare, 0, 0, 0, 0, GFX_FLIP_NONE);
+        graphic_draw(&golden_freddy_gfx_scare, 0, 0, 0, 0, GFX_FLIP_NONE);
 }
 
 void golden_freddy_scare_update(const float dt)

@@ -16,19 +16,30 @@ enum {
         GFX_FLIP_Y    = (1 << GFX_FLIP_Y_SHIFT)
 };
 
-struct graphic {
-        sprite_t *spr;
-        bool is_loaded;
+enum {
+        GFX_IS_LOADED_SHIFT,
+        GFX_SCALE_DOWN_SHIFT,
+        GFX_FLAG_CNT
 };
 
-void graphic_load(struct graphic *o, const char *path);
-void graphics_load(struct graphic *o, int num, const char **paths);
-void graphic_unload(struct graphic *o);
-void graphics_unload(struct graphic *o, int num);
-/* FIXME: Make these all pass as const pointers */
-void graphic_draw(struct graphic o, int px, int py,
-                  int ox, int oy, const uint8_t flip_flags);
-void graphic_draw_index_x(struct graphic o, int px, int py,
-                          int w, int i, const uint8_t flip_flags);
-void graphic_draw_index_y(struct graphic o, int px, int py,
-                          int h, int i, const uint8_t flip_flags);
+enum {
+        GFX_IS_LOADED  = (1 << GFX_IS_LOADED_SHIFT),
+        GFX_SCALE_DOWN = (1 << GFX_SCALE_DOWN_SHIFT)
+};
+
+struct graphic {
+        sprite_t *spr;
+        uint8_t flags;
+};
+
+void graphic_load(struct graphic *gfx, const char *path, const bool scale_down);
+void graphics_load(struct graphic *arr, const int cnt,
+                   const char **paths, const bool scale_down);
+void graphic_unload(struct graphic *gfx);
+void graphics_unload(struct graphic *arr, const int cnt);
+void graphic_draw(const struct graphic *gfx, const int px, const int py,
+                  const int ox, const int oy, const uint8_t flip_flags);
+void graphic_draw_index_x(const struct graphic *gfx, const int px, const int py,
+                          const int w, const int i, const uint8_t flip_flags);
+void graphic_draw_index_y(const struct graphic *gfx, const int px, const int py,
+                          const int h, const int i, const uint8_t flip_flags);

@@ -76,18 +76,19 @@ const char *bonnie_scare_paths[BONNIE_SCARE_FRAMES] = {
 
 void bonnie_load(void)
 {
-        which_room = 0;
-        which_room_timer = 0.0f;
-        which_spot = 0;
-        bonnie_blackout_timer = 0.0f;
-        bonnie_scared = 0;
-        move_timer = 0.0f;
-        bonnie_cam_last = 0;
-        bonnie_cam = 0;
+        which_room            = 0;
+        which_room_timer      = 0.f;
+        which_spot            = 0;
+        bonnie_blackout_timer = 0.f;
+        bonnie_scared         = 0;
+        move_timer            = 0.f;
+        bonnie_cam_last       = 0;
+        bonnie_cam            = 0;
         game_jumpscare_flags &= ~(GAME_JUMPSCARE_FLAG_BONNIE);
-        scare_timer = 0.0f;
+        scare_timer           = 0.0f;
 
-        graphics_load(bonnie_scare, BONNIE_SCARE_FRAMES, bonnie_scare_paths);
+        graphics_load(bonnie_scare, BONNIE_SCARE_FRAMES,
+                      bonnie_scare_paths, true);
 }
 
 void bonnie_unload(void)
@@ -97,7 +98,7 @@ void bonnie_unload(void)
 
 void bonnie_draw_scare(void)
 {
-        graphic_draw(bonnie_scare[(int)scare_timer], 0, 0, 0, 0, 0);
+        graphic_draw(bonnie_scare + (int)scare_timer, 0, 0, 0, 0, 0);
 }
 
 void bonnie_draw_debug(void)
